@@ -223,6 +223,7 @@ abstract class Let::Parser < Let::CharReader
         \{% begin %}
         \{{"union".id}} do
           {{ yield }}
+          parse('\0') { Token.new(:EOF) }
         end
         \{% end %}
       end
