@@ -3,7 +3,9 @@ require "../char_reader"
 abstract class Let::Parser < Let::CharReader
   def parse
     result = parse_root
-    result = raise_if_fail result, hook_could_not_parse_syntax % {got: char_to_s(peek_char), expected: "root"}
+    if result.is_a? Fail
+      raise_syntax_error hook_could_not_parse_syntax % {got: char_to_s(peek_char), expected: "root"}
+    end
 
     consume_char!('\0')
     result
@@ -80,7 +82,10 @@ abstract class Let::Parser < Let::CharReader
         {% end %}
       end
     end
-    raise_if_fail %result, ({{error}} || hook_unexpected_string) % {got: char_to_s(peek_char), expected: {{string}}.dump_unquoted }
+    if %result.is_a? Fail
+      raise_syntax_error ({{error}} || hook_unexpected_string) % {got: char_to_s(peek_char), expected: {{string}}.dump_unquoted }
+    end
+    %result
   end
 
   private macro consume_regex(regex)
@@ -221,7 +226,10 @@ abstract class Let::Parser < Let::CharReader
         end
         \{% end %}
       end
-      raise_if_fail %result, hook_unexpected_char % {got: char_to_s(peek_char), expected: nil }
+      if %result.is_a? Fail
+        raise_syntax_error hook_unexpected_char % {got: char_to_s(peek_char), expected: nil }
+      end
+      %result
     end
   end
 
@@ -328,14 +336,6 @@ abstract class Let::Parser < Let::CharReader
 
   def in_sequence?(*names)
     @sequence_name.in? names
-  end
-
-  private def raise_if_fail(result, error)
-    if result.is_a? Fail
-      raise_syntax_error(error)
-    else
-      result
-    end
   end
 
   macro forward_fail(result)
