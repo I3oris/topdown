@@ -106,6 +106,7 @@ abstract class Let::Parser < Let::CharReader
   end
 
   private macro consume_syntax(syntax_name, with_precedence = nil)
+    peek_char # skip char if any
     %result = parse_{{syntax_name.id}}({{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
       break Fail.new
@@ -115,6 +116,7 @@ abstract class Let::Parser < Let::CharReader
   end
 
   private macro consume_syntax!(syntax_name, error = nil, with_precedence = nil)
+    peek_char # skip char if any
     %result = parse_{{syntax_name.id}}({{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
       raise_syntax_error ({{error}} || hook_could_not_parse_syntax) % {got: char_to_s(peek_char), expected: {{syntax_name}} }
@@ -202,7 +204,9 @@ abstract class Let::Parser < Let::CharReader
   macro syntax(syntax_name, *prefixs, &block)
     private def parse_{{syntax_name.id}}(_precedence_)
       fail_zone do
-        fail_zone({% for p in prefixs %} parse({{p}}), {% end %}) {{block}}
+        sequence(name: {{syntax_name}}) do
+          fail_zone({% for p in prefixs %} parse({{p}}), {% end %}) {{block}}
+        end
       end
     end
   end
@@ -322,8 +326,8 @@ abstract class Let::Parser < Let::CharReader
     {{ yield }}
   end
 
-  def in_sequence?(name)
-    @sequence_name == name
+  def in_sequence?(*names)
+    @sequence_name.in? names
   end
 
   private def raise_if_fail(result, error)
