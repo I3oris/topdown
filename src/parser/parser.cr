@@ -395,9 +395,20 @@ abstract class Let::Parser < Let::CharReader
   # Appends a '\A' to begin of *regex* (forcing the regex to match at start)
   # Equivalent to `/\A#{regex}/` but done at compile time
   private macro regex_match_start(regex)
-    {% regex.options %} # TODO: interpolate options as well
-    {% str = regex.id[1...-1] %}
-    /\A(?-imsx:{{str}})/
+    {%
+      str = "(?"
+      str += 'i' if regex.options.includes?(:i)
+      str += "ms" if regex.options.includes?(:m)
+      str += 'x' if regex.options.includes?(:x)
+      str += '-'
+      str += 'i' unless regex.options.includes?(:i)
+      str += "ms" unless regex.options.includes?(:m)
+      str += 'x' unless regex.options.includes?(:x)
+      str += ':'
+      str += regex.source
+      str += ')'
+    %}
+    %r(\A{{str.id}})
   end
 
   def raise_syntax_error(message, location = self.location, string = self.string)
