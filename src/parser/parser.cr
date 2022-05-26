@@ -18,7 +18,6 @@ abstract class Let::Parser < Let::CharReader
   macro root(parselet)
     private def parse_root
       parse!({{parselet}}, with_precedence: 0)
-      # parse_object(_precedence_: 0)
     end
   end
 
@@ -167,7 +166,7 @@ abstract class Let::Parser < Let::CharReader
       %result = consume_token({{parselet[0]}})
 
     {% elsif parselet.is_a? Call && parselet.name == "|" %}
-      %result = simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence}})
+      %result = simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence || "_precedence_".id}}) # || 0 ?
 
     {% else %}
       {% raise "Unsuported ASTNode #{parselet.class_name} : #{parselet}" %}
@@ -206,14 +205,45 @@ abstract class Let::Parser < Let::CharReader
     {% end %}
   end
 
+  private macro infix(precedence, parselet, associativity = "right")
+    {% if parselet.is_a? SymbolLiteral %}
+      if _precedence_ < {{precedence}}
+        {% precedence -= 1 if associativity.id == "right".id %}
+        _left_ = forward_fail(infix_parse_{{parselet.id}}(_left_, _precedence_: {{precedence}}))
+      else
+        break Fail.new
+      end
+    {% else %}
+      {% raise "parselet for infix should be 'SymbolLiteral', not '#{parselet.class_name.id}'" %}
+    {% end %}
+  end
+
   macro syntax(syntax_name, *prefixs, &block)
     private def parse_{{syntax_name.id}}(_precedence_)
       fail_zone do
         sequence(name: {{syntax_name}}) do
-          fail_zone({% for p in prefixs %} parse({{p}}), {% end %}) {{block}}
+          prefixs = Tuple.new({% for p in prefixs %} parse({{p}}), {% end %})
+
+          fail_zone(*prefixs) {{block}}
         end
       end
     end
+  end
+
+  macro infix_syntax(syntax_name, *infixs, &block)
+    private def infix_parse_{{syntax_name.id}}(_left_, _precedence_)
+      fail_zone do
+        sequence(name: {{syntax_name}}) do
+          infixs = Tuple.new({% for i in infixs %} parse({{i}}), {% end %})
+
+          fail_zone(_left_, *infixs) {{ block }}
+        end
+      end
+    end
+  end
+
+  private def next_token
+    {% raise "No tokens definition found, use 'Let::Parser.tokens' macro to define tokens" %}
   end
 
   macro tokens(&block)
@@ -236,7 +266,7 @@ abstract class Let::Parser < Let::CharReader
 
   private macro simple_union(members, with_precedence)
     forward_fail(
-      fail_zone(self.location, {{with_precedence}}) do |old_location, _precedence|
+      fail_zone(self.location, {{with_precedence}}) do |old_location, _precedence_|
 
         {% for union_member in members %}
           self.location = old_location # not here?
