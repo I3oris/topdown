@@ -1,4 +1,5 @@
-require "../char_reader"
+require "./syntax_error"
+require "./tokens"
 
 abstract class Let::Parser < Let::CharReader
   def parse
@@ -21,24 +22,28 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
-  struct Fail
+  macro syntax(syntax_name, *prefixs, &block)
+    private def parse_{{syntax_name.id}}(_precedence_)
+      fail_zone do
+        sequence(name: {{syntax_name}}) do
+          prefixs = Tuple.new({% for p in prefixs %} parse({{p}}), {% end %})
+
+          fail_zone(*prefixs) {{block}}
+        end
+      end
+    end
   end
 
-  private def fail_zone(*args)
-    yield *args
-  end
+  macro infix_syntax(syntax_name, *infixs, &block)
+    private def infix_parse_{{syntax_name.id}}(_left_, _precedence_)
+      fail_zone do
+        sequence(name: {{syntax_name}}) do
+          infixs = Tuple.new({% for i in infixs %} parse({{i}}), {% end %})
 
-  macro capture
-    %pos = self.location.pos
-    {{ yield }}
-    self.string[%pos...self.location.pos]
-  end
-
-  macro partial_capture(&block)
-    {% raise "partial_capture should have one block argument" unless block.args[0] %}
-    {{block.args[0].id}} = String::Builder.new
-    {{ yield }}
-    {{block.args[0].id}}.to_s
+          fail_zone(_left_, *infixs) {{ block }}
+        end
+      end
+    end
   end
 
   private macro consume_char(char)
@@ -51,7 +56,7 @@ abstract class Let::Parser < Let::CharReader
 
   private macro consume_char!(char, error = nil)
     if peek_char != {{char}}
-      raise_syntax_error ({{error}} || hook_unexpected_char) % {got: char_to_s(peek_char), expected: char_to_s({{char}}) }
+      raise_syntax_error ({{error}} || hook_unexpected_char) % {got: char_to_s(peek_char), expected: char_to_s({{char}})}
     else
       next_char
     end
@@ -82,7 +87,7 @@ abstract class Let::Parser < Let::CharReader
       end
     end
     if %result.is_a? Fail
-      raise_syntax_error ({{error}} || hook_unexpected_string) % {got: char_to_s(peek_char), expected: {{string}}.dump_unquoted }
+      raise_syntax_error ({{error}} || hook_unexpected_string) % {got: char_to_s(peek_char), expected: {{string}}.dump_unquoted}
     end
     %result
   end
@@ -105,7 +110,7 @@ abstract class Let::Parser < Let::CharReader
       $0.each_char { |ch| increment_location(ch) }
       $0
     else
-      raise_syntax_error ({{error}} || hook_could_not_parse_regex) % {got: char_to_s(peek_char), expected: {{regex}}.source }
+      raise_syntax_error ({{error}} || hook_could_not_parse_regex) % {got: char_to_s(peek_char), expected: {{regex}}.source}
     end
   end
 
@@ -123,27 +128,9 @@ abstract class Let::Parser < Let::CharReader
     peek_char # skip char if any
     %result = parse_{{syntax_name.id}}({{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
-      raise_syntax_error ({{error}} || hook_could_not_parse_syntax) % {got: char_to_s(peek_char), expected: {{syntax_name}} }
+      raise_syntax_error ({{error}} || hook_could_not_parse_syntax) % {got: char_to_s(peek_char), expected: {{syntax_name}}}
     else
       %result
-    end
-  end
-
-  private macro consume_token(type)
-    %token = next_token
-    if %token.type != {{type}}
-      break Fail.new
-    else
-      %token.value
-    end
-  end
-
-  private macro consume_token!(token_type, error = nil)
-    %token = next_token
-    if %token.type != {{token_type}}
-      raise_syntax_error ({{error}} || hook_unexpected_token) % {got: %token.type, expected: {{token_type}} }
-    else
-      %token.value
     end
   end
 
@@ -205,7 +192,7 @@ abstract class Let::Parser < Let::CharReader
     {% end %}
   end
 
-  private macro infix(precedence, parselet, associativity = "right")
+  macro infix(precedence, parselet, associativity = "right")
     {% if parselet.is_a? SymbolLiteral %}
       if _precedence_ < {{precedence}}
         {% precedence -= 1 if associativity.id == "right".id %}
@@ -216,52 +203,6 @@ abstract class Let::Parser < Let::CharReader
     {% else %}
       {% raise "parselet for infix should be 'SymbolLiteral', not '#{parselet.class_name.id}'" %}
     {% end %}
-  end
-
-  macro syntax(syntax_name, *prefixs, &block)
-    private def parse_{{syntax_name.id}}(_precedence_)
-      fail_zone do
-        sequence(name: {{syntax_name}}) do
-          prefixs = Tuple.new({% for p in prefixs %} parse({{p}}), {% end %})
-
-          fail_zone(*prefixs) {{block}}
-        end
-      end
-    end
-  end
-
-  macro infix_syntax(syntax_name, *infixs, &block)
-    private def infix_parse_{{syntax_name.id}}(_left_, _precedence_)
-      fail_zone do
-        sequence(name: {{syntax_name}}) do
-          infixs = Tuple.new({% for i in infixs %} parse({{i}}), {% end %})
-
-          fail_zone(_left_, *infixs) {{ block }}
-        end
-      end
-    end
-  end
-
-  private def next_token
-    {% raise "No tokens definition found, use 'Let::Parser.tokens' macro to define tokens" %}
-  end
-
-  macro tokens(&block)
-    private def next_token
-      _precedence_ = 0
-      %result = fail_zone do
-        \{% begin %}
-        \{{"union".id}} do
-          {{ yield }}
-          parse('\0') { Token.new(:EOF) }
-        end
-        \{% end %}
-      end
-      if %result.is_a? Fail
-        raise_syntax_error hook_unexpected_char % {got: char_to_s(peek_char), expected: nil }
-      end
-      %result
-    end
   end
 
   private macro simple_union(members, with_precedence)
@@ -283,7 +224,7 @@ abstract class Let::Parser < Let::CharReader
     )
   end
 
-  macro union(&members)
+  private macro _union_(&members)
     {% members = members.body.is_a?(Expressions) ? members.body.expressions : [members.body] %}
     {% prefix_members = members.reject do |m|
          m.is_a?(Call) && m.name == "infix"
@@ -293,30 +234,30 @@ abstract class Let::Parser < Let::CharReader
          m.is_a?(Call) && m.name == "infix"
        end %}
 
-    begin
-      _left_ = simple_union({{prefix_members}}, with_precedence: 0) # _precedence = 0 because prefix are not subject to precedende
+    _left_ = simple_union({{prefix_members}}, with_precedence: 0) # _precedence = 0 because prefix are not subject to precedende
 
-      {% unless infixs_members.empty? %}
-        loop do
-          simple_union({{infixs_members}}, with_precedence: _precedence_)
-        end
-      {% end %}
-      _left_
-    end
+    {% unless infixs_members.empty? %}
+      loop do
+        simple_union({{infixs_members}}, with_precedence: _precedence_)
+      end
+    {% end %}
+    _left_
+  end
+
+  macro union(&members)
+    _union_ {{members}}
   end
 
   macro maybe(&)
     %old_location = self.location
-    begin
-      %result = fail_zone do
-        {{ yield }}
-      end
-      if %result.is_a? Fail
-        self.location = %old_location
-        nil
-      else
-        %result
-      end
+    %result = fail_zone do
+      {{ yield }}
+    end
+    if %result.is_a? Fail
+      self.location = %old_location
+      nil
+    else
+      %result
     end
   end
 
@@ -339,14 +280,41 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
-  macro repeat_union(&)
+  macro repeat_union(&block)
     repeat do
-      \{% begin %}
-      \{{"union".id}} do
-        {{ yield }}
+      _union_ do
+        {{block.body}}
       end
-      \{% end %}
     end
+  end
+
+  struct Fail
+  end
+
+  private def fail_zone(*args)
+    yield *args
+  end
+
+  macro forward_fail(result)
+    %result = {{result}}
+    if %result.is_a? Fail
+      break Fail.new
+    else
+      %result
+    end
+  end
+
+  macro capture
+    %pos = self.location.pos
+    {{ yield }}
+    self.string[%pos...self.location.pos]
+  end
+
+  macro partial_capture(&block)
+    {% raise "partial_capture should have one block argument" unless block.args[0] %}
+    {{block.args[0].id}} = String::Builder.new
+    {{ yield }}
+    {{block.args[0].id}}.to_s
   end
 
   @sequence_name = :main
@@ -367,56 +335,6 @@ abstract class Let::Parser < Let::CharReader
 
   def in_sequence?(*names)
     @sequence_name.in? names
-  end
-
-  macro forward_fail(result)
-    %result = {{result}}
-    if %result.is_a? Fail
-      break Fail.new
-    else
-      %result
-    end
-  end
-
-  class SyntaxError < Exception
-    def initialize(@message : String, @location : Location, @string : String)
-    end
-
-    def show_location(io)
-      line_number, line_pos = @location.line_number, @location.line_pos
-      io << "at [#{line_number}:#{line_pos}]\n"
-
-      lines = @string.split('\n')
-      start = {0, line_number - 2}.max
-      end_ = {line_number + 2, lines.size}.min
-      return if start > end_
-
-      lines[start..end_].each_with_index do |l, i|
-        io << l << '\n'
-        if start + i == line_number
-          line_pos.times { io << ' ' }
-          io << "^\n"
-        end
-      end
-    end
-
-    def inspect_with_backtrace(io)
-      io << message << " (" << self.class << ")\n"
-
-      show_location(io)
-
-      backtrace?.try &.each do |frame|
-        io.print "  from "
-        io.puts frame
-      end
-
-      if cause = @cause
-        io << "Caused by: "
-        cause.inspect_with_backtrace(io)
-      end
-
-      io.flush
-    end
   end
 
   private def char_to_s(char)
@@ -440,29 +358,5 @@ abstract class Let::Parser < Let::CharReader
       str += ')'
     %}
     %r(\A{{str.id}})
-  end
-
-  def raise_syntax_error(message, location = self.location, string = self.string)
-    raise SyntaxError.new message, location, string
-  end
-
-  def hook_unexpected_char
-    "Unexpected character '%{got}', expected '%{expected}'"
-  end
-
-  def hook_unexpected_string
-    "Unexpected character '%{got}', expected matching with \"%{expected}\""
-  end
-
-  def hook_unexpected_token
-    "Unexpected token '%{got}', expected '%{expected}'"
-  end
-
-  def hook_could_not_parse_regex
-    "Unexpected character '%{got}', expected matching the patern /%{expected}/"
-  end
-
-  def hook_could_not_parse_syntax
-    "Could not parse syntax '%{expected}'"
   end
 end

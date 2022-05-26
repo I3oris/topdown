@@ -12,22 +12,13 @@ class Let::CharReader
     @char_reader = Char::Reader.new(string)
   end
 
-  def skip_char?(char : Char)
-    false
-  end
-
   def peek_char
-    while skip_char?(char = @char_reader.current_char)
-      # next_char
+    while hook_skip_char?(char = @char_reader.current_char)
       @char_reader.next_char unless char == '\0'
       increment_location(char)
     end
     char
   end
-
-  # def peek_char : Char
-  #   @char_reader.current_char
-  # end
 
   def next_char : Char
     char = @char_reader.current_char
@@ -35,7 +26,7 @@ class Let::CharReader
 
     increment_location(char)
 
-    if skip_char?(char)
+    if hook_skip_char?(char)
       char = next_char
     end
     char
@@ -54,12 +45,6 @@ class Let::CharReader
   def string=(string : String)
     @char_reader = Char::Reader.new(string)
     self.location = Location.new(0, 0, 0)
-  end
-
-  @[Deprecated]
-  def with_string(string : String) : self
-    self.string = string
-    self
   end
 
   private def increment_location(char)
