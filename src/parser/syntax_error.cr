@@ -1,8 +1,10 @@
 abstract class Let::Parser < Let::CharReader
+  # TODO: docs
   class SyntaxError < Exception
     def initialize(@message : String, @location : Location, @string : String)
     end
 
+    # TODO: docs
     def show_location(io)
       line_number, line_pos = @location.line_number, @location.line_pos
       io << "at [#{line_number}:#{line_pos}]\n"
@@ -40,6 +42,7 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
+  # TODO: docs
   def raise_syntax_error(message, location = self.location, string = self.string)
     raise SyntaxError.new message, location, string
   end

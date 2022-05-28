@@ -1,4 +1,5 @@
 abstract class Let::Parser < Let::CharReader
+  # TODO: docs
   record Token, type : Symbol, value = "" do
     def is?(type : Symbol)
       @type == type
@@ -14,6 +15,7 @@ abstract class Let::Parser < Let::CharReader
     {% raise "No tokens definition found, use 'Let::Parser.tokens' macro to define tokens" %}
   end
 
+  # TODO: docs
   macro tokens(&block)
     private def next_token
       _precedence_ = 0
@@ -24,7 +26,7 @@ abstract class Let::Parser < Let::CharReader
         end
       end
       if %result.is_a? Fail
-        raise_syntax_error hook_unexpected_char % {got: char_to_s(peek_char), expected: nil}
+        raise_syntax_error hook_unexpected_char % {got: char_to_s(peek_char), expected: nil} # TODO: change this
       end
       %result
     end
@@ -48,6 +50,7 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
+  # TODO: docs
   def each_token
     until (token = next_token).is?(:EOF)
       yield token

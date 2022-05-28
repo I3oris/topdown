@@ -1,7 +1,51 @@
 require "./syntax_error"
 require "./tokens"
 
+# # Parser:
+# TODO: docs
+# ### Precedence:
+# Example of a `:ternary_if`:
+# ```
+# syntax(:expression) do
+#   union do
+#     parse(/\d+/, &.to_i)
+#     infix 1, :plus
+#     infix 9, :ternary_if
+#   end
+# end
+#
+# infix_syntax(:plus, '+') do |left|
+#   GenericAST.new(left, parse!(:expression))
+# end
+#
+# infix_syntax(:ternary_if, '?') do |cond|
+#   then_arm = parse!(:expression)
+#   parse!(':')
+#   else_arm = parse!(:expression)
+#   GenericAST.new(cond, then_arm, else_arm)
+# end
+# ```
+# Here the `:ternary_if` have been defined with a higher precedence, so `"1+1?2:3+3"` will be parsed as (`1` + (`1?2:3`)) + `3`.
+#
+# However the above example doesn't parse `"1+1?2+2:3+3"`
+# => raises `"Unexpected character '+', expected ':'"`.
+#
+# This happen because when parsing the `then_arm`, it hit a '+', that have smaller precedence,
+# so the parsing of `:expression` finish, to let the '+' catch it as a left.
+# however, after `then_arm` we expects a ':', so it fails.
+#
+# To solve that without change the precedence of the hole `:ternary_if`, precedence can be set only for the `then_arm`:
+# ```
+# then_arm = parse(:expression, with_precedence: 0)
+# ```
+#
+# `with_precedence: 0` means: 'inside the then arm, act as if the `:ternary_if` have a precedence 0'.
 abstract class Let::Parser < Let::CharReader
+  # Parses the string contained in this parser.
+  #
+  # Returns the result the root syntax.
+  # Expects `eof` after parsing root syntax.
+  # Raises `SyntaxError` is fail to parse.
   def parse
     result = parse_root
     if result.is_a? Fail
@@ -16,12 +60,20 @@ abstract class Let::Parser < Let::CharReader
     {% raise "Root syntax is not definied, use 'Let::Parser.root' macro to define the root" %}
   end
 
+  # Defines the main syntax to parse.
+  #
+  # *parselet*: the syntax name or the parselet to be the root.
+  # Could be `StringLiteral`|`CharLiteral`|`RegexLiteral`|`SymbolLiteral`|`ArrayLiteral`|`Call`,
+  # see [`Parse.parse`](#parse(parselet%2Cwith_precedence%3Dnil%2C%26block)-macro)
   macro root(parselet)
     private def parse_root
       parse!({{parselet}}, with_precedence: 0)
     end
   end
 
+  # Defines a syntax that can be called with `parse(SymbolLiteral)`.
+  #
+  # TODO: docs
   macro syntax(syntax_name, *prefixs, &block)
     private def parse_{{syntax_name.id}}(_precedence_)
       fail_zone do
@@ -34,6 +86,7 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
+  # TODO: docs
   macro infix_syntax(syntax_name, *infixs, &block)
     private def infix_parse_{{syntax_name.id}}(_left_, _precedence_)
       fail_zone do
@@ -87,7 +140,7 @@ abstract class Let::Parser < Let::CharReader
       end
     end
     if %result.is_a? Fail
-      raise_syntax_error ({{error}} || hook_unexpected_string) % {got: char_to_s(peek_char), expected: {{string}}.dump_unquoted}
+      raise_syntax_error ({{error}} || hook_could_not_parse_string) % {got: char_to_s(peek_char), expected: {{string}}.dump_unquoted}
     end
     %result
   end
@@ -134,6 +187,49 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
+  # Parse the given *parselet*.
+  #
+  # #### parselet:
+  # *parselet* could be one of the following:
+  # * a `CharLiteral`, to parse exactly one `Char`
+  # * a `StringLiteral`, to parse an exact `String`
+  # * a `RegexLiteral`, to parse the given pattern, returns the matched `String`. ($~, $0, $1, ... could be used after)
+  # * a `SymbolLiteral`, to parse an entire `syntax`, returns the result of the syntax.
+  # * an one-value `ArrayLiteral`, to parse a `Token`, returns the value of matched token.
+  #  NOTE: the type of token should correspond to the type of tokens defined with `Parser.tokens`.
+  # * a '|' (`Call`), to parse an union, see `Parser.union`.
+  #  ```
+  # parse('💎')   # => '💎'
+  # parse("foo") # => "foo"
+  # parse(/\d+/, &.to_i)
+  # parse(/"(([^"\\]|\\.)*)"/) { $1 }
+  # parse(:expression)       # => AST
+  # parse([:"+="])           # => "+="
+  # parse([TokenType::PLUS]) # => "+"
+  #
+  # parse("foo" | :value | '💎')
+  # # equivalent to:
+  # union do
+  #   parse("foo")
+  #   parse(:value)
+  #   parse('💎')
+  # end
+  #  ```
+  #
+  # #### failure:
+  # If the given *parselet* fails to parse, it `break` the current sequence. Failure is catch by the surrounding context.
+  # * inside an `union`, tell the union that member have fail. The union tries to parse the next member.
+  # * inside a `maybe`, the maybe will return `nil`.
+  # * inside a `repeat`, make to repeat to stop.
+  # * inside a `syntax`, the syntax is considered to fail, it will in turn `break` or raises.
+  #
+  # #### block:
+  # A *block* could be given to let return the value of the block.
+  #
+  # #### precedence:
+  # *with_precedence* could be specified (`NumberLiteral`), the given *parselet* will be parsed as if the contained syntax have this precedence.
+  # Allow to handle multi-precedence for ternary-or-more operator.
+  #
   macro parse(parselet, with_precedence = nil, &block)
     {% parselet = parselet.expressions[0] if parselet.is_a?(Expressions) && parselet.expressions.size == 1 %}
 
@@ -164,6 +260,19 @@ abstract class Let::Parser < Let::CharReader
     {% end %}
   end
 
+  # Similar to [`Parse.parse`](#parse(parselet%2Cwith_precedence%3Dnil%2C%26block)-macro), but raises if the parsing fail.
+  #
+  # *error* could be given (`StringLiteral`) to customize error message.
+  #
+  # Following interpolations are available:
+  #  * `%{got}`: The character causing the failure
+  #  * `%{expected}`: The expected `Char`, `String`, `Regex`, `Token` of syntax name (`Symbol`)
+  #
+  # #### failure:
+  # Because it raises, this shouldn't be used as first *parselet* inside an `union`, `maybe`, `repeat` and `syntax`.
+  # This would raises before the surrounding context could try an other solution.
+  #
+  # However, this should generally be used everywhere else, to allow more localized errors.
   macro parse!(parselet, error = nil, with_precedence = nil, &block)
     {% if parselet.is_a? CharLiteral %}
       %result = consume_char!({{parselet}}, error: {{error}})
@@ -192,6 +301,7 @@ abstract class Let::Parser < Let::CharReader
     {% end %}
   end
 
+  # TODO: docs
   macro infix(precedence, parselet, associativity = "right")
     {% if parselet.is_a? SymbolLiteral %}
       if _precedence_ < {{precedence}}
@@ -244,10 +354,67 @@ abstract class Let::Parser < Let::CharReader
     _left_
   end
 
+  # Tries to parse each member of the union, returns the result of the first that succeed.
+  #
+  # ```
+  # union do
+  #   parse('1')
+  #   parse('2')
+  #   sequence do
+  #     parse('a')
+  #     parse('b')
+  #     parse!('c')
+  #   end
+  #   parse('a')
+  # end
+  # ```
+  # ```
+  # "1"   # => '1'
+  # "abc" # => 'c'
+  # "ab*" # => "Unexpected character '*', expected 'c'"
+  # "a"   # => 'a'
+  # "*"   # => "Could not parse syntax ':main'
+  # ```
+  #
+  # #### members:
+  # Members are delimited by each expression in the `Expressions` of the given block.
+  # NOTE: a block `begin`/`end` doesn't group a member sine it is inlined by the crystal parser. Use `sequence` instead.
+  #
+  # #### failure:
+  # If all members of the union fail, the union is considered to fail, and will `break` the current sequence
+  #
+  # #### infix:
+  # `infix` members could be added to an union.
+  #
+  # `infix` members are always treated after each normal members, in the order there are defined.
+  # An union act as follow:
+  # 1) Tries to parse normal member.
+  # 2) If succeed, tries `infix` member an give the previous result as `left` of the `infix_syntax`.
+  # 3) `infix_syntax` is executed, it will potentially absorb `syntax` with higher precedence.
+  # 4) Repeat step 2.+3. until there are no more infix to parse.
+  #
   macro union(&members)
     _union_ {{members}}
   end
 
+  # Parses the sequence inside the block, returns `nil` if it fail.
+  #
+  # ```
+  # x = parse('1').to_i
+  # y =
+  #   maybe do
+  #     parse('+')
+  #     parse!('1').to_i
+  #   end
+  # parse!(';')
+  # x + (y || 0)
+  # ```
+  # ```
+  # "1;"   # => 1
+  # "1+1;" # => 2
+  # "1+*;" # => "Unexpected character '*', expected '1'"
+  # "1*;"  # => "Unexpected character '*', expected ';'"
+  # ```
   macro maybe(&)
     %old_location = self.location
     %result = fail_zone do
@@ -261,6 +428,23 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
+  # Parses the sequence inside the block until it fail.
+  #
+  # ```
+  # x = parse('1').to_i
+  # repeat do
+  #   parse('+')
+  #   x += parse!('1').to_i
+  # end
+  # parse!(';')
+  # x
+  # ```
+  # ```
+  # "1;"         # => 1
+  # "1+1+1+1+1;" # => 5
+  # "1+1+1+*;"   # => "Unexpected character '*', expected '1'"
+  # "1*;"        # => "Unexpected character '*', expected ';'"
+  # ```
   macro repeat(&)
     %old_location = self.location
     loop do
@@ -270,6 +454,23 @@ abstract class Let::Parser < Let::CharReader
     self.location = %old_location
   end
 
+  # Parses the sequence inside the block until it fail, with a *separator* parselet between each iteration.
+  #
+  # ```
+  # x = 0
+  # parse('(')
+  # repeat(',') do
+  #   x += parse('1').to_i
+  # end
+  # parse!(')')
+  # x
+  # ```
+  # ```
+  # "()"          # => 1
+  # "(1,1,1,1,1)" # => 5
+  # "(1,1,)"      # => "Unexpected character ',', expected ')'"
+  # "(11)"        # => "Unexpected character '1', expected ')'"
+  # ```
   macro repeat(separator, &)
     maybe do
       {{ yield }}
@@ -280,6 +481,7 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
+  # Equivalent to `repeat { union { ... } }`
   macro repeat_union(&block)
     repeat do
       _union_ do
@@ -288,13 +490,23 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
-  struct Fail
+  # Equivalent to `maybe { union { ... } }`
+  macro maybe_union(&block)
+    maybe do
+      _union_ do
+        {{block.body}}
+      end
+    end
+  end
+
+  private struct Fail
   end
 
   private def fail_zone(*args)
     yield *args
   end
 
+  # TODO: docs
   macro forward_fail(result)
     %result = {{result}}
     if %result.is_a? Fail
@@ -304,12 +516,45 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
-  macro capture
+  # Captures all characters parsed inside the *block*.
+  #
+  # Returns a `String`
+  # NOTE: Doesn't skip characters skipped by `hook_skip_char?`, use `partial_capture` instead.
+  #
+  # ```
+  # capture do
+  #   repeat(/ +/) do
+  #     parse(/\w+/)
+  #   end
+  # end
+  # ```
+  # ```
+  # "a   bc d e"  # => "a   bc d e"
+  # "Hello World" # => "Hello World"
+  # ```
+  macro capture(&)
     %pos = self.location.pos
     {{ yield }}
     self.string[%pos...self.location.pos]
   end
 
+  # Captures chosen characters parsed inside the *block*.
+  #
+  # Yields a `String::Builder` in which characters to capture can be added.
+  #
+  # Returns a `String`.
+  #
+  # ```
+  # partial_capture do |io|
+  #   repeat(/ +/) do
+  #     io << parse(/\w+/)
+  #   end
+  # end
+  # ```
+  # ```
+  # "a   bc d e"  # => "abcde"
+  # "Hello World" # => "HelloWorld"
+  # ```
   macro partial_capture(&block)
     {% raise "partial_capture should have one block argument" unless block.args[0] %}
     {{block.args[0].id}} = String::Builder.new
@@ -319,6 +564,7 @@ abstract class Let::Parser < Let::CharReader
 
   @sequence_name = :main
 
+  # TODO: docs
   macro sequence(name, &)
     %prev_name = @sequence_name
     begin
@@ -329,10 +575,12 @@ abstract class Let::Parser < Let::CharReader
     end
   end
 
+  # TODO: docs
   macro sequence(&)
     {{ yield }}
   end
 
+  # TODO: docs
   def in_sequence?(*names)
     @sequence_name.in? names
   end

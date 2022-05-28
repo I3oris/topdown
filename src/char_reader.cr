@@ -1,17 +1,21 @@
+# TODO: docs
 record Let::Location,
   pos : Int32,
   line_number : Int32,
   line_pos : Int32
 
+# TODO: docs
 class Let::CharReader
   @char_reader : Char::Reader
   @line_number = 0
   @line_pos = 0
 
+  # TODO: docs
   def initialize(string : String)
     @char_reader = Char::Reader.new(string)
   end
 
+  # TODO: docs
   def peek_char
     while hook_skip_char?(char = @char_reader.current_char)
       @char_reader.next_char unless char == '\0'
@@ -20,6 +24,7 @@ class Let::CharReader
     char
   end
 
+  # TODO: docs
   def next_char : Char
     char = @char_reader.current_char
     @char_reader.next_char unless char == '\0'
@@ -32,16 +37,19 @@ class Let::CharReader
     char
   end
 
+  # TODO: docs
   def each_char(& : Char ->)
     until (ch = self.next_char) == '\0'
       yield ch
     end
   end
 
+  # TODO: docs
   def string : String
     @char_reader.string
   end
 
+  # TODO: docs
   def string=(string : String)
     @char_reader = Char::Reader.new(string)
     self.location = Location.new(0, 0, 0)
@@ -56,10 +64,12 @@ class Let::CharReader
     end
   end
 
+  # TODO: docs
   def location : Location
     Location.new(@char_reader.pos, @line_number, @line_pos)
   end
 
+  # TODO: docs
   def location=(location : Location)
     @char_reader.pos = location.pos
     @line_number = location.line_number
