@@ -22,14 +22,9 @@ class TopDown::CharReader
 
   # TODO: docs
   def next_char : Char
-    char = @char_reader.current_char
+    char = peek_char
     @char_reader.next_char unless char == '\0'
-
     increment_location(char)
-
-    if hook_skip_char?(char)
-      char = next_char
-    end
     char
   end
 
