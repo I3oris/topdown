@@ -68,8 +68,8 @@ class Let::CharReader
   @line_pos = 0
 
   # TODO: docs
-  def initialize(string : String)
-    @char_reader = Char::Reader.new(string)
+  def initialize(source : String)
+    @char_reader = Char::Reader.new(source)
   end
 
   # TODO: docs
@@ -102,13 +102,13 @@ class Let::CharReader
   end
 
   # TODO: docs
-  def string : String
+  def source : String
     @char_reader.string
   end
 
   # TODO: docs
-  def string=(string : String)
-    @char_reader = Char::Reader.new(string)
+  def source=(source : String)
+    @char_reader = Char::Reader.new(source)
     self.location = Location.new(0, 0, 0)
   end
 

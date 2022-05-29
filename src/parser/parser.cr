@@ -41,7 +41,7 @@ require "./tokens"
 #
 # `with_precedence: 0` means: 'inside the then arm, act as if the `:ternary_if` have a precedence 0'.
 abstract class Let::Parser < Let::CharReader
-  # Parses the string contained in this parser.
+  # Parses the source contained in this parser.
   #
   # Returns the result the root syntax.
   # Expects `eof` after parsing root syntax.
@@ -147,7 +147,7 @@ abstract class Let::Parser < Let::CharReader
 
   private macro consume_regex(regex)
     peek_char # skip char if any
-    if regex_match_start({{regex}}) =~ self.string[self.location.pos..]
+    if regex_match_start({{regex}}) =~ self.source[self.location.pos..]
       @char_reader.pos += $0.size
       $0.each_char { |ch| increment_location(ch) }
       $0
@@ -158,7 +158,7 @@ abstract class Let::Parser < Let::CharReader
 
   private macro consume_regex!(regex, error = nil)
     peek_char # skip char if any
-    if regex_at_start({{regex}}) =~ self.string[self.location.pos..]
+    if regex_at_start({{regex}}) =~ self.source[self.location.pos..]
       @char_reader.pos += $0.size
       $0.each_char { |ch| increment_location(ch) }
       $0
@@ -535,7 +535,7 @@ abstract class Let::Parser < Let::CharReader
   macro capture(&)
     %pos = self.location.pos
     {{ yield }}
-    self.string[%pos...self.location.pos]
+    self.source[%pos...self.location.pos]
   end
 
   # Captures chosen characters parsed inside the *block*.
