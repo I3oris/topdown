@@ -40,7 +40,7 @@ require "./tokens"
 # ```
 #
 # `with_precedence: 0` means: 'inside the then arm, act as if the `:ternary_if` have a precedence 0'.
-abstract class Let::Parser < Let::CharReader
+abstract class TopDown::Parser < TopDown::CharReader
   # Parses the source contained in this parser.
   #
   # Returns the result the root syntax.
@@ -57,7 +57,7 @@ abstract class Let::Parser < Let::CharReader
   end
 
   private def parse_root
-    {% raise "Root syntax is not definied, use 'Let::Parser.root' macro to define the root" %}
+    {% raise "Root syntax is not definied, use 'TopDown::Parser.root' macro to define the root" %}
   end
 
   # Defines the main syntax to parse.

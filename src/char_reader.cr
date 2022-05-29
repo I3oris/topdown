@@ -1,7 +1,7 @@
 require "./location"
 
 # TODO: docs
-class Let::CharReader
+class TopDown::CharReader
   @char_reader : Char::Reader
   @line_number = 0
   @line_pos = 0

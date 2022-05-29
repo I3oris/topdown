@@ -1,5 +1,5 @@
 # TODO: docs
-record Let::Location,
+record TopDown::Location,
   pos : Int32,
   line_number : Int32,
   line_pos : Int32 do

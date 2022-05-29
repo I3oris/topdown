@@ -1,4 +1,4 @@
-abstract class Let::Parser < Let::CharReader
+abstract class TopDown::Parser < TopDown::CharReader
   # TODO: docs
   def hook_unexpected_char
     "Unexpected character '%{got}', expected '%{expected}'"
@@ -25,7 +25,7 @@ abstract class Let::Parser < Let::CharReader
   end
 end
 
-class Let::CharReader
+class TopDown::CharReader
   # TODO: docs
   def hook_skip_char?(char : Char)
     false

@@ -1,4 +1,4 @@
-abstract class Let::Parser < Let::CharReader
+abstract class TopDown::Parser < TopDown::CharReader
   # TODO: docs
   record Token, type : Symbol, value = "" do
     def is?(type : Symbol)
@@ -12,7 +12,7 @@ abstract class Let::Parser < Let::CharReader
   end
 
   private def next_token
-    {% raise "No tokens definition found, use 'Let::Parser.tokens' macro to define tokens" %}
+    {% raise "No tokens definition found, use 'TopDown::Parser.tokens' macro to define tokens" %}
   end
 
   # TODO: docs

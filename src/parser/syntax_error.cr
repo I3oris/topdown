@@ -1,4 +1,4 @@
-abstract class Let::Parser < Let::CharReader
+abstract class TopDown::Parser < TopDown::CharReader
   # TODO: docs
   class SyntaxError < Exception
     def initialize(@message : String, @source : String, @begin_location : Location, @end_location : Location = begin_location)
