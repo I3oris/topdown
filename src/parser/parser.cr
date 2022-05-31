@@ -100,6 +100,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_char(char)
+    skip_chars
     if peek_char != {{char}}
       break Fail.new
     else
@@ -108,6 +109,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_char!(char, error = nil)
+    skip_chars
     if peek_char != {{char}}
       raise_syntax_error ({{error}} || hook_unexpected_char) % {got: char_to_s(peek_char), expected: char_to_s({{char}})}
     else
@@ -116,6 +118,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_not_char(char)
+    skip_chars
     if peek_char == {{char}} || peek_char == '\0'
       break Fail.new
     else
@@ -125,18 +128,22 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   private macro consume_string(string)
     capture do
-      {% for c in string.chars %}
-        consume_char({{c}})
-      {% end %}
+      no_skip do
+        {% for c in string.chars %}
+          consume_char({{c}})
+        {% end %}
+      end
     end
   end
 
   private macro consume_string!(string, error = nil)
     %result = fail_zone do
       capture do
-        {% for c in string.chars %}
-          consume_char({{c}})
-        {% end %}
+        no_skip do
+          {% for c in string.chars %}
+            consume_char({{c}})
+          {% end %}
+        end
       end
     end
     if %result.is_a? Fail
@@ -146,7 +153,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_regex(regex)
-    peek_char # skip char if any
+    skip_chars
     if regex_match_start({{regex}}) =~ self.source[self.location.pos..]
       @char_reader.pos += $0.size
       $0.each_char { |ch| increment_location(ch) }
@@ -157,7 +164,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_regex!(regex, error = nil)
-    peek_char # skip char if any
+    skip_chars
     if regex_at_start({{regex}}) =~ self.source[self.location.pos..]
       @char_reader.pos += $0.size
       $0.each_char { |ch| increment_location(ch) }
@@ -168,7 +175,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_syntax(syntax_name, with_precedence = nil)
-    peek_char # skip char if any
+    skip_chars
     %result = parse_{{syntax_name.id}}({{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
       break Fail.new
@@ -178,7 +185,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_syntax!(syntax_name, error = nil, with_precedence = nil)
-    peek_char # skip char if any
+    skip_chars
     %result = parse_{{syntax_name.id}}({{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
       raise_syntax_error ({{error}} || hook_could_not_parse_syntax) % {got: char_to_s(peek_char), expected: {{syntax_name}}}
@@ -497,6 +504,37 @@ abstract class TopDown::Parser < TopDown::CharReader
         {{block.body}}
       end
     end
+  end
+
+  private def skip_chars
+  end
+
+  # TODO: docs
+  macro skip(&members)
+    private def skip_chars
+      if @no_skip_nest == 0
+        no_skip do
+          loop do
+            _union_ do
+              {{ yield }}
+            end
+          end
+        end
+      end
+    end
+  end
+
+  @no_skip_nest = 0
+
+  # TODO: docs
+  macro no_skip(&)
+    begin
+      @no_skip_nest += 1
+      %ret = {{ yield }}
+    ensure
+      @no_skip_nest -= 1
+    end
+    %ret
   end
 
   private struct Fail

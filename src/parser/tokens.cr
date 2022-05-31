@@ -20,9 +20,11 @@ abstract class TopDown::Parser < TopDown::CharReader
     private def next_token
       _precedence_ = 0
       %result = fail_zone do
-        _union_ do
-          {{ yield }}
-          parse('\0') { Token.new(:EOF) }
+        no_skip do
+          _union_ do
+            {{ yield }}
+            parse('\0') { Token.new(:EOF) }
+          end
         end
       end
       if %result.is_a? Fail
@@ -33,6 +35,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_token(type)
+    skip_chars
     %token = next_token
     if %token.is?({{type}})
       %token.value
@@ -42,6 +45,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_token!(token_type, error = nil)
+    skip_chars
     %token = next_token
     if %token.is?({{token_type}})
       %token.value

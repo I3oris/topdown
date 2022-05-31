@@ -13,11 +13,7 @@ class TopDown::CharReader
 
   # TODO: docs
   def peek_char
-    while hook_skip_char?(char = @char_reader.current_char)
-      @char_reader.next_char unless char == '\0'
-      increment_location(char)
-    end
-    char
+    @char_reader.current_char
   end
 
   # TODO: docs
