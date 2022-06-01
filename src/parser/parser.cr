@@ -573,7 +573,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   macro capture(&)
     %pos = self.location.pos
     {{ yield }}
-    self.source[%pos...self.location.pos]
+    String.new(self.source.to_slice[%pos...self.location.pos])
   end
 
   # Captures chosen characters parsed inside the *block*.
