@@ -1,21 +1,21 @@
 abstract class TopDown::Parser < TopDown::CharReader
   # TODO: docs
   class SyntaxError < Exception
-    def initialize(@message : String, @source : String, @begin_location : Location, @end_location : Location = begin_location)
+    def initialize(@message : String, @source : String, @location : Location, @begin_location : Location = end_location)
     end
 
     def to_s(io)
       io << message << "\n"
 
       io << "At [#{@begin_location.line_number}:#{@begin_location.line_pos}]:\n"
-      @begin_location.show_in_source(io, @source, end_location: @end_location)
+      @location.show_in_source(io, @source, begin_location: @begin_location)
     end
 
     def inspect_with_backtrace(io)
       io << message << " (" << self.class << ")\n"
 
       io << "At [#{@begin_location.line_number}:#{@begin_location.line_pos}]\n"
-      @begin_location.show_in_source(io, @source, end_location: @end_location)
+      @location.show_in_source(io, @source, begin_location: @begin_location)
 
       backtrace?.try &.each do |frame|
         io.print "  from "
@@ -32,7 +32,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   # TODO: docs
-  def raise_syntax_error(message : String, begin_location : Location = self.location, end_location : Location = begin_location, source : String = self.source)
-    raise SyntaxError.new message, source, begin_location, end_location
+  def raise_syntax_error(message : String, location : Location = self.location, begin_location : Location = location, source : String = self.source)
+    raise SyntaxError.new message, source, location, begin_location
   end
 end

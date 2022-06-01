@@ -4,6 +4,7 @@ zero = TopDown::Location.new(0, 0, 0)
 l1 = TopDown::Location.new(5, line_number: 0, line_pos: 5)
 l2 = TopDown::Location.new(17, line_number: 0, line_pos: 17)
 l3 = TopDown::Location.new(32, line_number: 1, line_pos: 13)
+l_end_line = TopDown::Location.new(18, line_number: 0, line_pos: 18)
 
 source = <<-SOURCE
   puts "Hello World"
@@ -27,7 +28,7 @@ describe TopDown::Location do
 
   it "show in source l1-l2" do
     output = String.build do |io|
-      l1.show_in_source(io, source, end_location: l2)
+      l2.show_in_source(io, source, begin_location: l1)
     end
 
     output.should eq <<-OUTPUT
@@ -40,7 +41,7 @@ describe TopDown::Location do
 
   it "show in source l1-l3" do
     output = String.build do |io|
-      l1.show_in_source(io, source, end_location: l3)
+      l3.show_in_source(io, source, begin_location: l1)
     end
 
     output.should eq <<-OUTPUT
@@ -54,12 +55,25 @@ describe TopDown::Location do
 
   it "show in source zero-l1" do
     output = String.build do |io|
-      zero.show_in_source(io, source, end_location: l1)
+      l1.show_in_source(io, source, begin_location: zero)
     end
 
     output.should eq <<-OUTPUT
          0 | puts "Hello World"
              ^~~~~
+         1 | puts "Hello 💎"
+         2 | puts "Hello ♥"\n
+      OUTPUT
+  end
+
+  it "show in source on '\\n'" do
+    output = String.build do |io|
+      l_end_line.show_in_source(io, source)
+    end
+
+    output.should eq <<-OUTPUT
+         0 | puts "Hello World"
+                               ^
          1 | puts "Hello 💎"
          2 | puts "Hello ♥"\n
       OUTPUT

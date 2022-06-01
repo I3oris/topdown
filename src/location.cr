@@ -6,16 +6,16 @@ record TopDown::Location,
   include Comparable(Location)
 
   # TODO: docs
-  def show_in_source(io : IO, source : String, radius : Int32 = 2, end_location : Location = self)
-    diff_location = end_location - self
+  def show_in_source(io : IO, source : String, radius : Int32 = 2, begin_location : Location = self)
+    diff_location = self - begin_location
 
     cursor_size = diff_location.pos
     cursor_n = 0
     each_lines_in_radius(source, radius) do |line, i|
       io << line_prelude(i) << line << '\n'
 
-      if @line_number <= i <= end_location.line_number
-        offset = (i == @line_number) ? @line_pos : 0
+      if begin_location.line_number <= i <= @line_number
+        offset = (i == begin_location.line_number) ? begin_location.line_pos : 0
 
         (line_prelude(i).size + offset).times { io << ' ' }
 
@@ -24,6 +24,8 @@ record TopDown::Location,
           cursor_n += 1
           break if cursor_n >= cursor_size
         end
+
+        io << cursor_char(cursor_n) if offset == line.size
         cursor_n += 1
 
         io << '\n'
