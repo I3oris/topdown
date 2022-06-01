@@ -64,7 +64,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # *parselet*: the syntax name or the parselet to be the root.
   # Could be `StringLiteral`|`CharLiteral`|`RegexLiteral`|`SymbolLiteral`|`ArrayLiteral`|`Call`,
-  # see [`Parse.parse`](#parse(parselet%2Cwith_precedence%3Dnil%2C%26block)-macro)
+  # see [`Parser.parse`](#parse(parselet,with_precedence=nil,&block)-macro)
   macro root(parselet)
     private def parse_root
       parse!({{parselet}}, with_precedence: 0)
@@ -267,7 +267,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% end %}
   end
 
-  # Similar to [`Parse.parse`](#parse(parselet%2Cwith_precedence%3Dnil%2C%26block)-macro), but raises if the parsing fail.
+  # Similar to [`Parser.parse`](#parse(parselet,with_precedence=nil,&block)-macro), but raises if the parsing fail.
   #
   # *error* could be given (`StringLiteral`) to customize error message.
   #
