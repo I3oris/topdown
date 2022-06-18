@@ -58,7 +58,7 @@ class TopDown::CharReader
 
   # TODO: docs
   def location=(location : Location)
-    @char_reader.pos = location.pos
+    @char_reader.pos = location.pos unless @char_reader.pos == location.pos
     @line_number = location.line_number
     @line_pos = location.line_pos
   end
