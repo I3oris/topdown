@@ -24,15 +24,15 @@ TODO: Write usage instructions here
 
 ## Roadmap
 
-[ ] Write docs
-[ ] Write spec
-[ ] Write readme
-[ ] Write examples
-[ ] Write benchmarks
-[ ] Improve error handling
-[ ] Improve tokens
-[ ] Improve characters parsing
-[ ] Improve unions
+- [ ] Write docs
+- [ ] Write spec
+- [ ] Write readme
+- [ ] Write examples
+- [ ] Write benchmarks
+- [ ] Improve error handling
+- [ ] Improve tokens
+- [ ] Improve characters parsing
+- [ ] Improve unions
 
 ## Development
 
