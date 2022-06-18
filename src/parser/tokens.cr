@@ -15,7 +15,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private def next_token
+  private def next_token?
     {% raise "No tokens definition found, use 'TopDown::Parser.tokens' macro to define tokens" %}
   end
 
