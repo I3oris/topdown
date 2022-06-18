@@ -1,13 +1,17 @@
 abstract class TopDown::Parser < TopDown::CharReader
   # TODO: docs
-  record Token, type : Symbol, value = "" do
-    def is?(type : Symbol)
+  record Token(TokenType), type : TokenType, value = "" do
+    def is?(type : TokenType)
       @type == type
     end
 
     def to_s(io)
       value = ":#{@value}".dump_unquoted unless value.empty?
-      io << "Token[#{type.to_s.dump_unquoted}#{value}]"
+      io << "[#{type.to_s.dump_unquoted}#{value}]"
+    end
+
+    def inspect(io)
+      to_s(io)
     end
   end
 
@@ -17,13 +21,13 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   # TODO: docs
   macro tokens(&block)
-    private def next_token
+    private def next_token?
       _precedence_ = 0
       %result = fail_zone do
         no_skip do
           _union_ do
             {{ yield }}
-            parse('\0') { Token.new(:EOF) }
+            parse('\0') { nil }
           end
         end
       end
@@ -36,8 +40,8 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   private macro consume_token(type)
     skip_chars
-    %token = next_token
-    if %token.is?({{type}})
+    %token = next_token?
+    if %token && %token.is?({{type}})
       %token.value
     else
       break Fail.new
@@ -47,18 +51,35 @@ abstract class TopDown::Parser < TopDown::CharReader
   private macro consume_token!(token_type, error = nil)
     skip_chars
     %begin_location = self.location
-    %token = next_token
-    if %token.is?({{token_type}})
+    %token = next_token?
+    if %token && %token.is?({{token_type}})
       %token.value
     else
-      raise_syntax_error ({{error}} || hook_unexpected_token) % {got: %token.type, expected: {{token_type}}}, begin_location: %begin_location
+      raise_syntax_error ({{error}} || hook_unexpected_token) % {got: %token.try &.type, expected: {{token_type}}}, begin_location: %begin_location
     end
   end
 
   # TODO: docs
-  def each_token
-    until (token = next_token).is?(:EOF)
+  def each_token(eof = nil, &) : Nil
+    begin_location = self.location
+
+    skip_chars
+    while token = next_token?
+      break if eof && token.is?(eof)
+
       yield token
+      skip_chars
     end
+    self.location = begin_location
+  end
+
+  # TODO: docs
+  def tokens(eof = nil)
+    tokens = [] of typeof(next_token?.not_nil!)
+
+    each_token(eof) do |token|
+      tokens << token
+    end
+    tokens
   end
 end
