@@ -537,7 +537,8 @@ abstract class TopDown::Parser < TopDown::CharReader
     %ret
   end
 
-  private struct Fail
+  # TODO: docs
+  struct Fail
   end
 
   private def fail_zone(*args)
