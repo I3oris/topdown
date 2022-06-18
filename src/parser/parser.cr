@@ -385,7 +385,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # #### members:
   # Members are delimited by each expression in the `Expressions` of the given block.
-  # NOTE: a block `begin`/`end` doesn't group a member sine it is inlined by the crystal parser. Use `sequence` instead.
+  # NOTE: a block `begin`/`end` doesn't group a member since it is inlined by the crystal parser. Use `sequence` instead.
   #
   # #### failure:
   # If all members of the union fail, the union is considered to fail, and will `break` the current sequence
