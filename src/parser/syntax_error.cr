@@ -1,9 +1,14 @@
 abstract class TopDown::Parser < TopDown::CharReader
   # TODO: docs
   class SyntaxError < Exception
-    def initialize(@message : String, @source : String, @location : Location, @begin_location : Location = end_location)
+    # TODO: docs
+    property source, location, begin_location
+
+    # TODO: docs
+    def initialize(@message : String, @source : String, @location : Location, @begin_location : Location = location)
     end
 
+    # TODO: docs
     def to_s(io)
       io << message << "\n"
 
@@ -11,6 +16,7 @@ abstract class TopDown::Parser < TopDown::CharReader
       @location.show_in_source(io, @source, begin_location: @begin_location)
     end
 
+    # TODO: docs
     def inspect_with_backtrace(io)
       io << message << " (" << self.class << ")\n"
 
