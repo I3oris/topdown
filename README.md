@@ -1,6 +1,6 @@
 # TopDown
 
-TODO: Write a description here
+TODO: Write a description here : /!\ This is a draft.
 
 ## Installation
 
@@ -9,7 +9,7 @@ TODO: Write a description here
    ```yaml
    dependencies:
      topdown:
-       github: your-github-user/topdown
+       github: I3oris/topdown
    ```
 
 2. Run `shards install`
@@ -21,6 +21,18 @@ require "topdown"
 ```
 
 TODO: Write usage instructions here
+
+## Roadmap
+
+[ ] Write docs
+[ ] Write spec
+[ ] Write readme
+[ ] Write examples
+[ ] Write benchmarks
+[ ] Improve error handling
+[ ] Improve tokens
+[ ] Improve characters parsing
+[ ] Improve unions
 
 ## Development
 
