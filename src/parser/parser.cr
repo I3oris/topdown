@@ -49,7 +49,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   def parse
     result = parse_root
     if result.is_a? Fail
-      raise_syntax_error hook_could_not_parse_syntax % {got: char_to_s(peek_char), expected: "root"}
+      raise_syntax_error error_message(->hook_could_not_parse_syntax(Char, Symbol), got: peek_char, expected: :root)
     end
 
     consume_char!('\0')
@@ -111,7 +111,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   private macro consume_char!(char, error = nil)
     skip_chars
     if peek_char != {{char}}
-      raise_syntax_error ({{error}} || hook_unexpected_char) % {got: char_to_s(peek_char), expected: char_to_s({{char}})}
+      raise_syntax_error error_message({{error}} || ->hook_unexpected_char(Char, Char), got: peek_char, expected: {{char}})
     else
       next_char
     end
@@ -147,7 +147,7 @@ abstract class TopDown::Parser < TopDown::CharReader
       end
     end
     if %result.is_a? Fail
-      raise_syntax_error ({{error}} || hook_could_not_parse_string) % {got: char_to_s(peek_char), expected: {{string}}.dump_unquoted}
+      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_string(Char, String), got: peek_char, expected: {{string}})
     end
     %result
   end
@@ -170,7 +170,7 @@ abstract class TopDown::Parser < TopDown::CharReader
       $0.each_char { |ch| increment_location(ch) }
       $0
     else
-      raise_syntax_error ({{error}} || hook_could_not_parse_regex) % {got: char_to_s(peek_char), expected: {{regex}}.source}
+      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_regex(Char, Regex), got: peek_char, expected: {{regex}})
     end
   end
 
@@ -188,7 +188,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     skip_chars
     %result = parse_{{syntax_name.id}}({{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
-      raise_syntax_error ({{error}} || hook_could_not_parse_syntax) % {got: char_to_s(peek_char), expected: {{syntax_name}}}
+      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}})
     else
       %result
     end
@@ -558,7 +558,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # Captures all characters parsed inside the *block*.
   #
   # Returns a `String`
-  # NOTE: Doesn't skip characters skipped by `hook_skip_char?`, use `partial_capture` instead.
+  # NOTE: Doesn't `skip` characters, use `partial_capture` instead.
   #
   # ```
   # capture do
@@ -622,10 +622,6 @@ abstract class TopDown::Parser < TopDown::CharReader
   # TODO: docs
   def in_sequence?(*names)
     @sequence_name.in? names
-  end
-
-  private def char_to_s(char)
-    char == '\0' ? "EOF" : char.to_s.dump_unquoted
   end
 
   # Appends a '\A' to begin of *regex* (forcing the regex to match at start)

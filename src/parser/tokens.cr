@@ -32,7 +32,7 @@ abstract class TopDown::Parser < TopDown::CharReader
         end
       end
       if %result.is_a? Fail
-        raise_syntax_error hook_unexpected_char % {got: char_to_s(peek_char), expected: nil} # TODO: change this
+        raise_syntax_error error_message(->hook_could_not_parse_token(Char, Nil), got: peek_char, expected: nil)
       end
       %result
     end
@@ -55,7 +55,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     if %token && %token.is?({{token_type}})
       %token.value
     else
-      raise_syntax_error ({{error}} || hook_unexpected_token) % {got: %token.try &.type, expected: {{token_type}}}, begin_location: %begin_location
+      raise_syntax_error error_message({{error}} || ->hook_unexpected_token(typeof(%token), typeof({{token_type}})), got: %token, expected: {{token_type}}), begin_location: %begin_location
     end
   end
 

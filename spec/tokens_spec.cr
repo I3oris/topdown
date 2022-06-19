@@ -87,8 +87,7 @@ describe TopDown::Parser::Token do
     parser.source = "hey=§"
     parser.spec_next_token.should eq TopDown::Parser::Token.new(:name, "hey")
     parser.spec_next_token.should eq TopDown::Parser::Token.new(:"=")
-    # TODO: Improve this error:
-    e = expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '\\u00A7', expected ''") do
+    e = expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§'") do
       parser.spec_next_token
     end
     e.location.should eq TopDown::Location.new(4, line_number: 0, line_pos: 4)
@@ -100,8 +99,7 @@ describe TopDown::Parser::Token do
     parser.source = "  hey\t\n=\n   § "
     parser.spec_next_token.should eq TopDown::Parser::Token.new(:name, "hey")
     parser.spec_next_token.should eq TopDown::Parser::Token.new(:"=")
-    # TODO: Improve this error:
-    e = expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '\\u00A7', expected ''") do
+    e = expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§'") do
       parser.spec_next_token
     end
     e.location.should eq TopDown::Location.new(12, line_number: 2, line_pos: 3)
