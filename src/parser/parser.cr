@@ -45,7 +45,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # Returns the result the root syntax.
   # Expects `eof` after parsing root syntax.
-  # Raises `SyntaxError` is fail to parse.
+  # Raises `SyntaxError` if fail to parse.
   def parse
     result = parse_root
     if result.is_a? Fail
