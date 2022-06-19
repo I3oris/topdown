@@ -165,7 +165,7 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   private macro consume_regex!(regex, error = nil)
     skip_chars
-    if regex_at_start({{regex}}) =~ self.source[self.location.pos..]
+    if regex_match_start({{regex}}) =~ self.source[self.location.pos..]
       @char_reader.pos += $0.size
       $0.each_char { |ch| increment_location(ch) }
       $0
@@ -530,7 +530,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   macro no_skip(&)
     begin
       @no_skip_nest += 1
-      %ret = {{ yield }}
+      %ret = ({{ yield }})
     ensure
       @no_skip_nest -= 1
     end

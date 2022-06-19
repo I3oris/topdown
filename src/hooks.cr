@@ -21,7 +21,7 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   # TODO: docs
   def hook_could_not_parse_regex(got : Char, expected : Regex)
-    "Unexpected character '#{dump_in_error(got)}', expected patern /#{dump_in_error(expected)}/"
+    "Unexpected character '#{dump_in_error(got)}', expected patern #{dump_in_error(expected)}"
   end
 
   # TODO: docs
