@@ -1,14 +1,16 @@
 abstract class TopDown::Parser < TopDown::CharReader
-  # TODO: docs
+  # Exception raised by the parser during `Parser#parse` and all instantiation of `Parser.parse!`.
+  #
+  # Contains `source` and `location` information, which are displayed when the error is dump.
+  #
+  # Use `Parser#raise_syntax_error` to raise a `SyntaxError` directly at parser location.
   class SyntaxError < Exception
-    # TODO: docs
-    property source, location, begin_location
+    property message, source, location, begin_location
 
-    # TODO: docs
     def initialize(@message : String, @source : String, @location : Location, @begin_location : Location = location)
     end
 
-    # TODO: docs
+    # Displays `message` and shows in `source` the range `begin_location`:`location`.
     def to_s(io)
       io << message << "\n"
 
@@ -16,7 +18,7 @@ abstract class TopDown::Parser < TopDown::CharReader
       @location.show_in_source(io, @source, begin_location: @begin_location)
     end
 
-    # TODO: docs
+    # Displays `message` with backtrace and shows in `source` the range `begin_location`:`location`.
     def inspect_with_backtrace(io)
       io << message << " (" << self.class << ")\n"
 
@@ -37,7 +39,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  # TODO: docs
+  # Raises a `SyntaxError` at current `location` and current `source`.
   def raise_syntax_error(message : String, location : Location = self.location, begin_location : Location = location, source : String = self.source)
     raise SyntaxError.new message, source, location, begin_location
   end
@@ -67,7 +69,7 @@ abstract class TopDown::Parser < TopDown::CharReader
       obj.to_s
     end
       .chars.join do |c|
-        c.printable? ? c : c.to_s.dump_unquoted
-      end
+      c.printable? ? c : c.to_s.dump_unquoted
+    end
   end
 end

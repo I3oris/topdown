@@ -43,7 +43,7 @@ require "./tokens"
 abstract class TopDown::Parser < TopDown::CharReader
   # Parses the source contained in this parser.
   #
-  # Returns the result the root syntax.
+  # Returns the result of the root syntax.
   # Expects `eof` after parsing root syntax.
   # Raises `SyntaxError` if fail to parse.
   def parse
@@ -267,7 +267,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% end %}
   end
 
-  # Similar to [`Parser.parse`](#parse(parselet,with_precedence=nil,&block)-macro), but raises if the parsing fail.
+  # Similar to [`Parser.parse`](#parse(parselet,with_precedence=nil,&block)-macro), but raises `SyntaxError` if the parsing fail.
   #
   # *error* could be given (`StringLiteral`) to customize error message.
   #
@@ -473,7 +473,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # x
   # ```
   # ```
-  # "()"          # => 1
+  # "()"          # => 0
   # "(1,1,1,1,1)" # => 5
   # "(1,1,)"      # => "Unexpected character ',', expected ')'"
   # "(11)"        # => "Unexpected character '1', expected ')'"
