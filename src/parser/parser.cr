@@ -3,6 +3,10 @@ require "./tokens"
 
 # # Parser:
 # TODO: docs
+# NOTE:
+# In this documentation, `"foo" # ~> result` is used as a shortcut for
+# `Parser.new("foo").parse # => result`
+#
 # ### Precedence:
 # Example of a `:ternary_if`:
 # ```
@@ -376,11 +380,11 @@ abstract class TopDown::Parser < TopDown::CharReader
   # end
   # ```
   # ```
-  # "1"   # => '1'
-  # "abc" # => 'c'
-  # "ab*" # => "Unexpected character '*', expected 'c'"
-  # "a"   # => 'a'
-  # "*"   # => "Could not parse syntax ':main'
+  # "1"   # ~> '1'
+  # "abc" # ~> 'c'
+  # "ab*" # ~> "Unexpected character '*', expected 'c'"
+  # "a"   # ~> 'a'
+  # "*"   # ~> "Could not parse syntax ':main'
   # ```
   #
   # #### members:
@@ -404,7 +408,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     _union_ {{members}}
   end
 
-  # Parses the sequence inside the block, returns `nil` if it fail.
+  # Parses the sequence inside the block, returns `nil` if it fails.
   #
   # ```
   # x = parse('1').to_i
@@ -417,10 +421,10 @@ abstract class TopDown::Parser < TopDown::CharReader
   # x + (y || 0)
   # ```
   # ```
-  # "1;"   # => 1
-  # "1+1;" # => 2
-  # "1+*;" # => "Unexpected character '*', expected '1'"
-  # "1*;"  # => "Unexpected character '*', expected ';'"
+  # "1;"   # ~> 1
+  # "1+1;" # ~> 2
+  # "1+*;" # ~> "Unexpected character '*', expected '1'"
+  # "1*;"  # ~> "Unexpected character '*', expected ';'"
   # ```
   macro maybe(&)
     %old_location = self.location
@@ -435,7 +439,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  # Parses the sequence inside the block until it fail.
+  # Repeatedly parses the sequence inside the block until it fails.
   #
   # ```
   # x = parse('1').to_i
@@ -447,10 +451,10 @@ abstract class TopDown::Parser < TopDown::CharReader
   # x
   # ```
   # ```
-  # "1;"         # => 1
-  # "1+1+1+1+1;" # => 5
-  # "1+1+1+*;"   # => "Unexpected character '*', expected '1'"
-  # "1*;"        # => "Unexpected character '*', expected ';'"
+  # "1;"         # ~> 1
+  # "1+1+1+1+1;" # ~> 5
+  # "1+1+1+*;"   # ~> "Unexpected character '*', expected '1'"
+  # "1*;"        # ~> "Unexpected character '*', expected ';'"
   # ```
   macro repeat(&)
     %old_location = self.location
@@ -461,7 +465,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     self.location = %old_location
   end
 
-  # Parses the sequence inside the block until it fail, with a *separator* parselet between each iteration.
+  # Repeatedly parses the sequence inside the block until it fails, with a *separator* parselet between each iteration.
   #
   # ```
   # x = 0
@@ -473,10 +477,10 @@ abstract class TopDown::Parser < TopDown::CharReader
   # x
   # ```
   # ```
-  # "()"          # => 0
-  # "(1,1,1,1,1)" # => 5
-  # "(1,1,)"      # => "Unexpected character ',', expected ')'"
-  # "(11)"        # => "Unexpected character '1', expected ')'"
+  # "()"          # ~> 0
+  # "(1,1,1,1,1)" # ~> 5
+  # "(1,1,)"      # ~> "Unexpected character ',', expected ')'"
+  # "(11)"        # ~> "Unexpected character '1', expected ')'"
   # ```
   macro repeat(separator, &)
     maybe do
@@ -558,7 +562,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # Captures all characters parsed inside the *block*.
   #
   # Returns a `String`
-  # NOTE: Doesn't `skip` characters, use `partial_capture` instead.
+  # NOTE: `skip` characters are still captured, use `partial_capture` instead.
   #
   # ```
   # capture do
@@ -568,8 +572,8 @@ abstract class TopDown::Parser < TopDown::CharReader
   # end
   # ```
   # ```
-  # "a   bc d e"  # => "a   bc d e"
-  # "Hello World" # => "Hello World"
+  # "a   bc d e"  # ~> "a   bc d e"
+  # "Hello World" # ~> "Hello World"
   # ```
   macro capture(&)
     %pos = self.location.pos
@@ -591,8 +595,8 @@ abstract class TopDown::Parser < TopDown::CharReader
   # end
   # ```
   # ```
-  # "a   bc d e"  # => "abcde"
-  # "Hello World" # => "HelloWorld"
+  # "a   bc d e"  # ~> "abcde"
+  # "Hello World" # ~> "HelloWorld"
   # ```
   macro partial_capture(&block)
     {% raise "partial_capture should have one block argument" unless block.args[0] %}
