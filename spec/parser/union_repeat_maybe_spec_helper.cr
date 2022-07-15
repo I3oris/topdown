@@ -83,5 +83,21 @@ module TopDown::Spec
     end
   end
 
+  class MaybeParser < ParserBase
+    def_parse_wrapper :maybe_char { maybe { parse('a') } }
+    def_parse_wrapper :maybe_string { maybe { parse("bbb") } }
+    def_parse_wrapper :maybe_regex { maybe { parse(/c+/) } }
+    def_parse_wrapper :maybe_parselet_union { maybe { parse('a' | "bbb" | /c+/) } }
+
+    def_parse_wrapper :maybe_union do
+      maybe_union do
+        parse('a')
+        parse("bbb")
+        parse(/c+/)
+      end
+    end
+  end
+
   class_getter union_parser = UnionParser.new("")
+  class_getter maybe_parser = MaybeParser.new("")
 end

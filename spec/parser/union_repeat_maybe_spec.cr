@@ -121,4 +121,38 @@ describe TopDown::Parser do
     parser.source = "bbc"
     parser.spec_parse_union_complex.should be_a TopDown::Parser::Fail
   end
+
+  it "parses maybe" do
+    parser = TopDown::Spec.maybe_parser
+
+    parser.source = "a"
+    parser.spec_parse_maybe_char.should eq 'a'
+    parser.source = "§"
+    parser.spec_parse_maybe_char.should be_nil
+    parser.location.should eq zero
+
+    parser.source = "bbb"
+    parser.spec_parse_maybe_string.should eq "bbb"
+    parser.source = "bb§"
+    parser.spec_parse_maybe_string.should be_nil
+    parser.location.should eq zero
+
+    parser.source = "cc"
+    parser.spec_parse_maybe_regex.should eq "cc"
+    parser.source = "§"
+    parser.spec_parse_maybe_regex.should be_nil
+    parser.location.should eq zero
+
+    parser.source = "bbb"
+    parser.spec_parse_maybe_parselet_union.should eq "bbb"
+    parser.source = "§"
+    parser.spec_parse_maybe_parselet_union.should be_nil
+    parser.location.should eq zero
+
+    parser.source = "cc"
+    parser.spec_parse_maybe_union.should eq "cc"
+    parser.source = "§"
+    parser.spec_parse_maybe_union.should be_nil
+    parser.location.should eq zero
+  end
 end
