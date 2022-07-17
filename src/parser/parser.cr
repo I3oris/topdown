@@ -61,7 +61,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private def parse_root
-    {% raise "Root syntax is not definied, use 'TopDown::Parser.root' macro to define the root" %}
+    {% raise "Root syntax is not defined, use 'TopDown::Parser.root' macro to define the root" %}
   end
 
   # Defines the main syntax to parse.
@@ -263,7 +263,7 @@ abstract class TopDown::Parser < TopDown::CharReader
       %result = simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence || "_precedence_".id}}) # || 0 ?
 
     {% else %}
-      {% raise "Unsuported ASTNode #{parselet.class_name} : #{parselet}" %}
+      {% raise "Unsupported ASTNode #{parselet.class_name} : #{parselet}" %}
     {% end %}
 
     {% if block %}
@@ -304,7 +304,7 @@ abstract class TopDown::Parser < TopDown::CharReader
       %result = simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence}})
 
     {% else %}
-      {% raise "Unsuported ASTNode #{parselet.class_name} : #{parselet}" %}
+      {% raise "Unsupported ASTNode #{parselet.class_name} : #{parselet}" %}
     {% end %}
 
     {% if block %}
