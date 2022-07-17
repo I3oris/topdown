@@ -441,6 +441,7 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   # Repeatedly parses the sequence inside the block until it fails.
   #
+  # Returns `nil`. Results should be either collected by `capture` or stored inside a variable or array.
   # ```
   # x = parse('1').to_i
   # repeat do
@@ -463,10 +464,12 @@ abstract class TopDown::Parser < TopDown::CharReader
       {{ yield }}
     end
     self.location = %old_location
+    nil
   end
 
   # Repeatedly parses the sequence inside the block until it fails, with a *separator* parselet between each iteration.
   #
+  # Returns `nil`. Results should be either collected by `capture` or stored inside a variable or array.
   # ```
   # x = 0
   # parse('(')
