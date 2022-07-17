@@ -98,6 +98,26 @@ module TopDown::Spec
     end
   end
 
+  class RepeatParser < ParserBase
+    def_parse_wrapper :rep_char { capture { repeat { parse('a') } } }
+    def_parse_wrapper :rep_string { capture { repeat { parse("bbb") } } }
+    def_parse_wrapper :rep_regex { capture { repeat { parse(/c+;/) } } }
+    def_parse_wrapper :rep_parselet_union { capture { repeat { parse('a' | "bbb" | /c+/) } } }
+
+    def_parse_wrapper :rep_union do
+      capture do
+        repeat_union do
+          parse('a')
+          parse("bbb")
+          parse(/c+/)
+        end
+      end
+    end
+
+    def_parse_wrapper :rep_with_sep { capture { repeat(',') { parse(/\w+/) } } }
+  end
+
   class_getter union_parser = UnionParser.new("")
   class_getter maybe_parser = MaybeParser.new("")
+  class_getter repeat_parser = RepeatParser.new("")
 end

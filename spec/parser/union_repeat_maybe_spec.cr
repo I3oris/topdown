@@ -155,4 +155,43 @@ describe TopDown::Parser do
     parser.spec_parse_maybe_union.should be_nil
     parser.location.should eq zero
   end
+
+  it "parses repeat" do
+    parser = TopDown::Spec.repeat_parser
+
+    parser.source = "aaa"
+    parser.spec_parse_rep_char.should eq "aaa"
+    parser.source = "a"
+    parser.spec_parse_rep_char.should eq "a"
+    parser.source = "§"
+    parser.spec_parse_rep_char.should eq ""
+
+    parser.source = "bbbbbb"
+    parser.spec_parse_rep_string.should eq "bbbbbb"
+    parser.source = "bbbb§"
+    parser.spec_parse_rep_string.should eq "bbb"
+    parser.source = "§"
+    parser.spec_parse_rep_string.should eq ""
+
+
+    parser.source = "cc;c;cccc;"
+    parser.spec_parse_rep_regex.should eq "cc;c;cccc;"
+    parser.source = "cc;c§"
+    parser.spec_parse_rep_regex.should eq "cc;"
+    parser.source = "§"
+    parser.spec_parse_rep_regex.should eq ""
+
+    parser.source = "bbbaaccc"
+    parser.spec_parse_rep_parselet_union.should eq "bbbaaccc"
+    parser.source = "abb§"
+    parser.spec_parse_rep_parselet_union.should eq "a"
+    parser.source = "§"
+    parser.spec_parse_rep_parselet_union.should eq ""
+
+    parser.source = "abbbac"
+    parser.spec_parse_rep_union.should eq "abbbac"
+
+    parser.source = "ab,bb,ac"
+    parser.spec_parse_rep_with_sep.should eq "ab,bb,ac"
+  end
 end
