@@ -1,6 +1,20 @@
 # TopDown
 
-TODO: Write a description here : /!\ This is a draft.
+TopDown is a [crystal](https://crystal-lang.org) shard for writing a simple or evolved parser.
+
+TopDown is at an early development stage.
+
+It aims to keep itself simple and efficient thanks to [Top down operator precedence and Pratt Parsing](https://en.wikipedia.org/wiki/Operator-precedence_parser) in which it's inspired.
+
+TopDown supports both token and tokenless parsing, each having their pros and cons, but each can fit better whether the use case.
+
+Operator precedence can be handled rather naturally and doesn't involve complex machinery under the hood, simply recursive descent under top down parsing theory.
+
+<!-- This lead TopDown to be very fast. (benchmark are not yet ready) -->
+
+TopDown is designed to be extensible. Writing parsing rules is made in code directly, allowing to insert custom behaviour in each step of parsing, storing state for a state-based parser, or make more complex parsing operation.
+
+Finally, TopDown is lightweight and doesn't require any dependencies.
 
 ## Installation
 
