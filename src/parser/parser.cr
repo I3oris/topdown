@@ -131,6 +131,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_string(string)
+    skip_chars
     capture do
       no_skip do
         {% for c in string.chars %}
@@ -141,6 +142,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro consume_string!(string, error = nil)
+    skip_chars
     %result = fail_zone do
       capture do
         no_skip do
