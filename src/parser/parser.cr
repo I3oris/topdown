@@ -79,25 +79,12 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # TODO: docs
   macro syntax(syntax_name, *prefixs, &block)
-    private def parse_{{syntax_name.id}}(_precedence_)
+    private def parse_{{syntax_name.id}}(_left_, _precedence_)
       fail_zone do
         sequence(name: {{syntax_name}}) do
           prefixs = Tuple.new({% for p in prefixs %} parse({{p}}), {% end %})
 
           fail_zone(*prefixs) {{block}}
-        end
-      end
-    end
-  end
-
-  # TODO: docs
-  macro infix_syntax(syntax_name, *infixs, &block)
-    private def infix_parse_{{syntax_name.id}}(_left_, _precedence_)
-      fail_zone do
-        sequence(name: {{syntax_name}}) do
-          infixs = Tuple.new({% for i in infixs %} parse({{i}}), {% end %})
-
-          fail_zone(_left_, *infixs) {{ block }}
         end
       end
     end
@@ -182,7 +169,7 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   private macro consume_syntax(syntax_name, with_precedence = nil)
     skip_chars
-    %result = parse_{{syntax_name.id}}({{with_precedence || "_precedence_".id}})
+    %result = parse_{{syntax_name.id}}(nil, {{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
       break Fail.new
     else
@@ -192,7 +179,7 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   private macro consume_syntax!(syntax_name, error = nil, with_precedence = nil)
     skip_chars
-    %result = parse_{{syntax_name.id}}({{with_precedence || "_precedence_".id}})
+    %result = parse_{{syntax_name.id}}(nil, {{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
       raise_syntax_error error_message({{error}} || ->hook_could_not_parse_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}})
     else
@@ -240,7 +227,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # A *block* could be given to let return the value of the block.
   #
   # #### precedence:
-  # *with_precedence* could be specified (`NumberLiteral`), the given *parselet* will be parsed as if the contained syntax have this precedence.
+  # *with_precedence* (`NumberLiteral`) changes the `current_precedence`, the given *parselet* will be parsed as if the contained syntax have this precedence.
   # Allow to handle multi-precedence for ternary-or-more operator.
   #
   macro parse(parselet, with_precedence = nil, &block)
@@ -319,13 +306,49 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% if parselet.is_a? SymbolLiteral %}
       if _precedence_ < {{precedence}}
         {% precedence -= 1 if associativity.id == "right".id %}
-        _left_ = forward_fail(infix_parse_{{parselet.id}}(_left_, _precedence_: {{precedence}}))
+        _left_ = forward_fail(parse_{{parselet.id}}(_left_, _precedence_: {{precedence}}))
       else
         break Fail.new
       end
     {% else %}
       {% raise "parselet for infix should be 'SymbolLiteral', not '#{parselet.class_name.id}'" %}
     {% end %}
+  end
+
+  # In the context of an `infix` member, returns the `left` result of the current `union`.
+  #
+  # Returns `nil` in a context other than inside an `infix`.
+  #
+  # Each time a `union` member is successfully parsed, `left` value is updated.
+  #
+  # As an `union` continue parsing `infix` until possible,
+  # `left` allows to retrieve the subsequent results.
+  #
+  # ```
+  # syntax(:exp) do
+  #   union do
+  #     parse('a')
+  #     infix(1, :comma)
+  #   end
+  # end
+  # ```
+  # ```
+  # syntax(:comma) do
+  #   l = left() # left returns either
+  #   r = parse(:exp)
+  #   "#{l}, #{r}"
+  # end
+  # ```
+  macro left
+    _left_
+  end
+
+  # Returns the current precedence.
+  #
+  # Initially zero.
+  # Changes inside an `infix` or when `with_precedence` is used.
+  macro current_precedence
+    _precedence_
   end
 
   private macro simple_union(members, with_precedence)
@@ -357,7 +380,7 @@ abstract class TopDown::Parser < TopDown::CharReader
          m.is_a?(Call) && m.name == "infix"
        end %}
 
-    _left_ = simple_union({{prefix_members}}, with_precedence: 0) # _precedence = 0 because prefix are not subject to precedende
+    _left_ = simple_union({{prefix_members}}, with_precedence: 0) # precedence = 0 because prefix are not subject to precedence
 
     {% unless infixs_members.empty? %}
       loop do
@@ -401,11 +424,15 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # `infix` members are always treated after each normal members, in the order there are defined.
   # An union act as follow:
-  # 1) Tries to parse normal member.
-  # 2) If succeed, tries `infix` member an give the previous result as `left` of the `infix_syntax`.
-  # 3) `infix_syntax` is executed, it will potentially absorb `syntax` with higher precedence.
-  # 4) Repeat step 2.+3. until there are no more infix to parse.
+  # 1) Tries to parse each normal member.
+  # 2) When one succeed, store the result. `left` allows to retrieve this result.
+  # 3) Tries to parse `infix` members whose precedence is greater than current precedence (initial is zero).
+  # 4) Inner of `infix` is executed, it potentially triggers parsing of this union recursively, but current precedence is sets to the `infix` precedence.
+  # 5) When one fully succeed, store the result. `left` is updated.
+  # 6) Repeats step 3-5) until there no more infix.
+  # 7) Returns last result.
   #
+  # This is the TopDown operator precedence algorithm precedence climbing
   macro union(&members)
     _union_ {{members}}
   end

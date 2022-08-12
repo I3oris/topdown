@@ -173,7 +173,6 @@ describe TopDown::Parser do
     parser.source = "§"
     parser.spec_parse_rep_string.should eq ""
 
-
     parser.source = "cc;c;cccc;"
     parser.spec_parse_rep_regex.should eq "cc;c;cccc;"
     parser.source = "cc;c§"
