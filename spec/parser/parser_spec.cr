@@ -238,4 +238,42 @@ describe TopDown::Parser do
     parser.spec_parse_syn_blockless.should be_a TopDown::Parser::Fail
     # parser.location.should eq zero # PENDING
   end
+
+  it "parses with skip" do
+    parser = TopDown::Spec.skip_parser
+
+    parser.source = "abbc;ab bcc"
+    parser.spec_parse_with_skip.should eq [{a: 'a', b: "bb", c: "c"}, 'a', "b b", "cc"]
+
+    parser.source = " a  bb\nc ;\t\ta b b  cc\n"
+    parser.spec_parse_with_skip.should eq [{a: 'a', b: "bb", c: "c"}, 'a', "b b", "cc"]
+  end
+
+  it "fails parsing with skip" do
+    parser = TopDown::Spec.skip_parser
+
+    parser.source = " a  b   bcc"
+    parser.spec_parse_with_skip.should eq ['a']
+    parser.location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 2)
+
+    parser.source = "abb"
+    parser.spec_parse_with_skip.should eq ['a']
+    parser.location.should eq TopDown::Location.new(1, line_number: 0, line_pos: 1)
+  end
+
+  it "parses with skip syntax" do
+    parser = TopDown::Spec.skip_syntax_parser
+
+    parser.source = "((aaa))"
+    parser.spec_parse_exp.should eq "aaa"
+
+    parser.source = " ( ( aaa)  )"
+    parser.spec_parse_exp.should eq "aaa"
+
+    parser.source = "#(ccc) ( #(cc#(c)c#()) ( aaa#())  )# cc"
+    parser.spec_parse_exp.should eq "aaa"
+
+    parser.source = "(aaa)"
+    parser.spec_parse_exp_with_no_skip.should eq "aaa"
+  end
 end

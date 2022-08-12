@@ -81,8 +81,82 @@ module TopDown::Spec
     syntax(:blockless_syntax, 'a', "bb", /c+/, ';') { |a, b, c, d| {a, b, c, d} } # TODO: make it really block less!
   end
 
+  class SkipParser < ParserBase
+    skip do
+      parse(' ' | '\n' | '\t')
+    end
+
+    syntax(:syntax) do
+      a = parse('a')
+      b = parse("bb")
+      c = parse(/c+/)
+      parse!(';')
+      {a: a, b: b, c: c}
+    end
+
+    def_parse_wrapper(:with_skip) do
+      result = [] of Char | String | NamedTuple(a: Char, b: String, c: String)
+      repeat do
+        result << union do
+          parse(:syntax)
+          parse('a')
+          parse("b b")
+          parse(/c+/)
+        end
+      end
+      result
+    end
+
+    def_parse_wrapper :with_no_skip do
+      result = [] of Char | String | NamedTuple(a: Char, b: String, c: String)
+      repeat do
+        result << union do
+          noskip { parse(:syntax) }
+          parse('a')
+          parse("b b")
+          parse(/c+/)
+        end
+      end
+      result
+    end
+  end
+
+  class EmptySkipParser < ParserBase
+    skip { }
+
+    def_parse_wrapper :empty_skip { parse('a', "bb", /c+/, ';') }
+  end
+
+  class SkipSyntaxParser < ParserBase
+    skip do
+      parse(' ')
+      parse(:nested_comment)
+      parse(/#.*/)
+    end
+
+    syntax :nested_comment, "#(" do
+      repeat_union do
+        parse(:nested_comment)
+        consume_not_char(')')
+      end
+      parse(')')
+    end
+
+    syntax :exp, '(' do
+      exp = parse!(/\w+/ | :exp)
+      parse!(')')
+      exp
+    end
+
+    def_parse_wrapper(:exp) { parse(:exp) }
+    def_parse_wrapper(:exp_with_no_skip) { parse(:exp) }
+  end
+
   class_getter char_parser = CharParser.new("")
   class_getter string_parser = StringParser.new("")
   class_getter regex_parser = RegexParser.new("")
   class_getter syntax_parser = SyntaxParser.new("")
+  class_getter skip_parser = SkipParser.new("")
+  class_getter empty_skip_parser = EmptySkipParser.new("")
+  class_getter skip_syntax_parser = SkipSyntaxParser.new("")
 end
