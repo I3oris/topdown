@@ -79,6 +79,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # TODO: docs
   macro syntax(syntax_name, *prefixs, &block)
+    @[AlwaysInline]
     private def parse_{{syntax_name.id}}(_left_, _precedence_)
       fail_zone do
         sequence(name: {{syntax_name}}) do
