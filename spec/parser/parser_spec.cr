@@ -5,13 +5,15 @@ zero = TopDown::Location.new(0, 0, 0)
 describe TopDown::Parser do
   it "parses char" do
     parser = TopDown::Spec.char_parser
-    parser.source = "abcdef"
+    parser.source = "abcdef#*"
     parser.spec_parse_ch_a.should eq 'a'
     parser.spec_parse_ch_b!.should eq 'b'
     parser.spec_parse_ch_c_with_error!.should eq 'c'
     parser.spec_parse_ch_d_with_error_proc!.should eq 'd'
     parser.spec_parse_ch_e_with_block.should eq({"Custom return", 'e'})
     parser.spec_parse_ch_f_with_block!.should eq({"Custom return", 'f'})
+    parser.spec_parse_ch_not_a.should eq '#'
+    parser.spec_parse_ch_any.should eq '*'
   end
 
   it "fails parsing char" do
@@ -47,11 +49,18 @@ describe TopDown::Parser do
       parser.spec_parse_ch_f_with_block!
     end
     parser.location.should eq zero
+
+    parser.source = "a"
+    parser.spec_parse_ch_not_a.should be_a TopDown::Parser::Fail
+
+    parser.source = ""
+    parser.spec_parse_ch_not_a.should be_a TopDown::Parser::Fail
+    parser.spec_parse_ch_any.should be_a TopDown::Parser::Fail
   end
 
   it "parses string" do
     parser = TopDown::Spec.string_parser
-    parser.source = "abcdefghijklmnopqr"
+    parser.source = "abcdefghijklmnopqr*+-"
     parser.spec_parse_str_abc.should eq "abc"
     parser.spec_parse_str_def!.should eq "def"
     parser.spec_parse_str_empty.should eq ""
@@ -59,6 +68,8 @@ describe TopDown::Parser do
     parser.spec_parse_str_jkl_with_error_proc!.should eq "jkl"
     parser.spec_parse_str_mno_with_block.should eq({"Custom return", "mno"})
     parser.spec_parse_str_pqr_with_block!.should eq({"Custom return", "pqr"})
+    parser.spec_parse_str_not_abc.should be_nil
+    parser.location.should eq TopDown::Location.new(19, line_number: 0, line_pos: 19)
   end
 
   it "fails parsing string" do
@@ -97,6 +108,10 @@ describe TopDown::Parser do
     expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected 'pqr'") do
       parser.spec_parse_str_pqr_with_block!
     end
+    # parser.location.should eq zero # PENDING
+
+    parser.source = "abc"
+    parser.spec_parse_str_not_abc.should be_a TopDown::Parser::Fail
     # parser.location.should eq zero # PENDING
   end
 

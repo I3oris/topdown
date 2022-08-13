@@ -118,6 +118,14 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
+  private macro consume_any_char
+    if peek_char == '\0'
+      break Fail.new
+    else
+      next_char
+    end
+  end
+
   private macro consume_string(string)
     skip_chars
     capture do
@@ -144,6 +152,21 @@ abstract class TopDown::Parser < TopDown::CharReader
       raise_syntax_error error_message({{error}} || ->hook_could_not_parse_string(Char, String), got: peek_char, expected: {{string}})
     end
     %result
+  end
+
+  private macro consume_not_string(string)
+    %old_location = self.location
+    %result = fail_zone do
+      consume_string({{string}})
+    end
+    if %result.is_a? Fail
+      self.location = %old_location
+      break Fail.new if peek_char == '\0'
+      next_char
+      nil
+    else
+      break Fail.new
+    end
   end
 
   private macro consume_regex(regex)
@@ -188,6 +211,18 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
+  private macro consume_not(parselet)
+    {% if parselet.is_a? CharLiteral %}
+      consume_not_char({{parselet}})
+    {% elsif parselet.is_a? StringLiteral %}
+      consume_not_string({{parselet}})
+    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
+      consume_not_token({{parselet[0]}})
+    {% else %}
+      {% raise "'not' arguments should be 'CharLiteral', 'StringLiteral' or 'ArrayLiteral' not #{parselet.class_name}: #{parselet}" %}
+    {% end %}
+  end
+
   # Parse the given *parselet*.
   #
   # #### parselet:
@@ -198,13 +233,17 @@ abstract class TopDown::Parser < TopDown::CharReader
   # * a `SymbolLiteral`, to parse an entire `syntax`, returns the result of the syntax.
   # * an one-value `ArrayLiteral`, to parse a `Token`, returns the value of matched token.
   #  NOTE: the type of token should correspond to the type of tokens defined with `Parser.tokens`.
-  # * a '|' (`Call`), to parse an union, see `Parser.union`.
+  # * a `Call`:
+  #   * `|`: to parse an union, see `Parser.union`.
+  #   * `any`, to parse any `Char` except EOF.
+  #   * `[any]`, to parse any token except EOF.
+  #   * `not(parselet)`, to parse any char, except if *parselet* matches.
   #  ```
   # parse('💎')   # => '💎'
   # parse("foo") # => "foo"
   # parse(/\d+/, &.to_i)
   # parse(/"(([^"\\]|\\.)*)"/) { $1 }
-  # parse(:expression)       # => AST
+  # parse(:expression)
   # parse([:"+="])           # => "+="
   # parse([TokenType::PLUS]) # => "+"
   #
@@ -215,6 +254,12 @@ abstract class TopDown::Parser < TopDown::CharReader
   #   parse(:value)
   #   parse('💎')
   # end
+  #
+  # parse(any)         # any char except '\0'
+  # parse([any])       # any token except EOF
+  # parse(not('\n'))   # any char except '\n' & EOF
+  # parse(not([:"+"])) # any token except :"+" & EOF
+  # parse(not("foo"))  # any char or fail on "foo".
   #  ```
   #
   # #### failure:
@@ -246,11 +291,20 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% elsif parselet.is_a? SymbolLiteral %}
       %result = consume_syntax({{parselet}}, with_precedence: {{with_precedence}})
 
-    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
-      %result = consume_token({{parselet[0]}})
-
     {% elsif parselet.is_a? Call && parselet.name == "|" %}
       %result = simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence || "_precedence_".id}}) # || 0 ?
+
+    {% elsif parselet.is_a? Call && parselet.name == "not" %}
+      %result = consume_not({{parselet.args[0]}})
+
+    {% elsif parselet.is_a? Call && parselet.name == "any" %}
+      %result = consume_any_char
+
+    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 && parselet[0].is_a? Call && parselet[0].name == "any" %}
+      %result = consume_any_token
+
+    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
+      %result = consume_token({{parselet[0]}})
 
     {% else %}
       {% raise "Unsupported ASTNode #{parselet.class_name} : #{parselet}" %}
@@ -263,11 +317,12 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   # Similar to [`Parser.parse`](#parse(parselet,with_precedence=nil,&block)-macro), but raises `SyntaxError` if the parsing fail.
   #
-  # *error* could be given (`StringLiteral`) to customize error message.
-  #
-  # Following interpolations are available:
-  #  * `%{got}`: The character causing the failure
-  #  * `%{expected}`: The expected `Char`, `String`, `Regex`, `Token` of syntax name (`Symbol`)
+  # *error*: allows to customize error message, it can be:
+  # * a `StringLiteral`:
+  #   Following percent interpolations are available:
+  #   * `%{got}`: The character or token causing the failure.
+  #   * `%{expected}`: The expected `Char`, `String`, `Regex`, `Token` or syntax name (`Symbol`).
+  # * a `ProcLiteral` taking two arguments: 'got' and 'expected', with types explained above.
   #
   # #### failure:
   # Because it raises, this shouldn't be used as first *parselet* inside an `union`, `maybe`, `repeat` and `syntax`.

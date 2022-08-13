@@ -157,4 +157,18 @@ describe TopDown::Parser::Token do
     e.location.should eq TopDown::Location.new(10, line_number: 0, line_pos: 10)
     e.begin_location.should eq TopDown::Location.new(6, line_number: 0, line_pos: 6)
   end
+
+  it "parses not token" do
+    parser = TopDown::Spec.token_parser
+    parser.source = "1+x"
+    parser.spec_parse_not_name.should eq "1"
+    parser.spec_parse_not_name.should eq ""
+    parser.spec_parse_not_name.should be_a TopDown::Parser::Fail
+
+    parser.source = "1+x"
+    parser.spec_parse_any.should eq "1"
+    parser.spec_parse_any.should eq ""
+    parser.spec_parse_any.should eq "x"
+    parser.spec_parse_any.should be_a TopDown::Parser::Fail
+  end
 end

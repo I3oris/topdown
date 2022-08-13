@@ -20,6 +20,8 @@ module TopDown::Spec
     end
     def_parse_wrapper :ch_e_with_block { parse('e') { |ch| {"Custom return", ch} } }
     def_parse_wrapper :ch_f_with_block! { parse!('f') { |ch| {"Custom return", ch} } }
+    def_parse_wrapper(:ch_not_a) { parse(not('a')) }
+    def_parse_wrapper(:ch_any) { parse(any) }
   end
 
   class StringParser < ParserBase
@@ -32,6 +34,7 @@ module TopDown::Spec
     def_parse_wrapper :str_mno_with_block { parse("mno") { |str| {"Custom return", str} } }
     def_parse_wrapper :str_pqr_with_block! { parse!("pqr") { |str| {"Custom return", str} } }
     def_parse_wrapper :str_empty { parse("") }
+    def_parse_wrapper :str_not_abc { parse(not("abc")) }
   end
 
   class RegexParser < ParserBase
