@@ -48,6 +48,7 @@ module TopDown::Spec
     def_parse_wrapper :rgx_i! { parse!(/a+/i) }
     def_parse_wrapper :rgx_m! { parse!(/b+\nc+/m) }
     # def_parse_wrapper :rgx_x! { parse!(/  d+ #comment/x) } # PENDING
+    def_parse_wrapper :rgx_non_ascii { parse(/💎+/) }
   end
 
   class SyntaxParser < ParserBase

@@ -177,6 +177,17 @@ describe TopDown::Parser do
     # parser.location.should eq zero
   end
 
+  it "parses non ascii regex" do
+    parser = TopDown::Spec.regex_parser
+    parser.source = "💎💎aaa💎"
+
+    parser.spec_parse_rgx_non_ascii.should eq "💎💎"
+    parser.peek_char.should eq 'a'
+    parser.spec_parse_rgx_a.should eq "aaa"
+    parser.peek_char.should eq '💎'
+    parser.spec_parse_rgx_non_ascii.should eq "💎"
+  end
+
   it "parses syntax" do
     parser = TopDown::Spec.syntax_parser
     parser.source = "abbc;abbcc;abbccc;abbcccc;abbccc;abbcc;abbc;abbcc;"

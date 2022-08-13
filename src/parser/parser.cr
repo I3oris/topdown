@@ -147,8 +147,8 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   private macro consume_regex(regex)
     skip_chars
-    if regex_match_start({{regex}}) =~ self.source[self.location.pos..]
-      @char_reader.pos += $0.size
+    if regex_match_start({{regex}}) =~ String.new(self.source.to_slice[self.location.pos..])
+      @char_reader.pos += $0.bytesize
       $0.each_char { |ch| increment_location(ch) }
       $0
     else
@@ -158,8 +158,8 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   private macro consume_regex!(regex, error = nil)
     skip_chars
-    if regex_match_start({{regex}}) =~ self.source[self.location.pos..]
-      @char_reader.pos += $0.size
+    if regex_match_start({{regex}}) =~ String.new(self.source.to_slice[self.location.pos..])
+      @char_reader.pos += $0.bytesize
       $0.each_char { |ch| increment_location(ch) }
       $0
     else
