@@ -38,14 +38,14 @@ TODO: Write usage instructions here
 
 ## Roadmap
 
-- [ ] Write docs
-- [ ] Write spec
-- [ ] Write readme
-- [ ] Write examples
-- [ ] Write benchmarks
+- [ ] Write docs (in progress)
+- [ ] Write spec (in progress)
+- [ ] Write readme (in progress)
+- [ ] Write examples (in progress)
+- [x] Write benchmarks
 - [ ] Improve error handling
 - [ ] Improve tokens
-- [ ] Improve characters parsing
+- [x] Improve characters parsing
 - [ ] Improve unions
 
 ## Development
