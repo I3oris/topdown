@@ -266,7 +266,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # If the given *parselet* fails to parse, it `break` the current sequence. Failure is catch by the surrounding context.
   # * inside an `union`, tell the union that member have fail. The union tries to parse the next member.
   # * inside a `maybe`, the maybe will return `nil`.
-  # * inside a `repeat`, make to repeat to stop.
+  # * inside a `repeat`, make the repeat to stop.
   # * inside a `syntax`, the syntax is considered to fail, it will in turn `break` or raises.
   #
   # #### block:
@@ -488,7 +488,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # 6) Repeats step 3-5) until there no more infix.
   # 7) Returns last result.
   #
-  # This is the TopDown operator precedence algorithm precedence climbing
+  # This is mainly the top-down operator precedence algorithm, also known as precedence climbing.
   macro union(&members)
     _union_ {{members}}
   end
