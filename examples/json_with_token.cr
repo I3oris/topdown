@@ -166,4 +166,4 @@ json = %q(
   }
 )
 
-pp JSONParser.new(json).parse
+pp JSONParserWithToken.new(json).parse
