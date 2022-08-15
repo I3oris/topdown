@@ -6,7 +6,7 @@ module TopDown::Spec
   class ParserBase < TopDown::Parser
     macro def_parse_wrapper(name, &)
       def spec_parse_{{name.id}}(_precedence_ = 0)
-        fail_zone { {{ yield }} }
+        handle_fail { {{ yield }} }
       end
     end
   end

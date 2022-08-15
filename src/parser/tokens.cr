@@ -23,7 +23,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   macro tokens(&block)
     private def next_token?
       _precedence_ = 0
-      %result = fail_zone do
+      %result = handle_fail do
         no_skip do
           _union_ do
             {{ yield }}

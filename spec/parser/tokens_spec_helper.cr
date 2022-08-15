@@ -20,11 +20,11 @@ module TopDown::Spec
 
     macro def_parse_wrapper(parselet, def_name, error)
       def spec_parse_{{def_name.id}}
-        fail_zone { parse({{parselet}}) }
+        handle_fail { parse({{parselet}}) }
       end
 
       def spec_parse_{{def_name.id}}_with_error!
-        fail_zone { parse!({{parselet}}, error: {{error}}) }
+        handle_fail { parse!({{parselet}}, error: {{error}}) }
       end
     end
   end

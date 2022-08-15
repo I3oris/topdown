@@ -81,12 +81,10 @@ abstract class TopDown::Parser < TopDown::CharReader
   macro syntax(syntax_name, *prefixs, &block)
     @[AlwaysInline]
     private def parse_{{syntax_name.id}}(_left_, _precedence_)
-      fail_zone do
-        sequence(name: {{syntax_name}}) do
-          prefixs = Tuple.new({% for p in prefixs %} parse({{p}}), {% end %})
+      handle_fail do
+        prefixs = Tuple.new({% for p in prefixs %} parse({{p}}), {% end %})
 
-          fail_zone(*prefixs) {{block}}
-        end
+        handle_fail(*prefixs) {{block}}
       end
     end
   end
@@ -139,7 +137,7 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   private macro consume_string!(string, error = nil)
     skip_chars
-    %result = fail_zone do
+    %result = handle_fail do
       capture do
         no_skip do
           {% for c in string.chars %}
@@ -156,7 +154,7 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   private macro consume_not_string(string)
     %old_location = self.location
-    %result = fail_zone do
+    %result = handle_fail do
       consume_string({{string}})
     end
     if %result.is_a? Fail
@@ -311,7 +309,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% end %}
 
     {% if block %}
-      fail_zone(%result) {{ block }}
+      handle_fail(%result) {{ block }}
     {% end %}
   end
 
@@ -353,7 +351,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% end %}
 
     {% if block %}
-      fail_zone(%result) {{ block }}
+      handle_fail(%result) {{ block }}
     {% end %}
   end
 
@@ -409,11 +407,11 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   private macro simple_union(members, with_precedence)
     forward_fail(
-      fail_zone(self.location, {{with_precedence}}) do |old_location, _precedence_|
+      handle_fail(self.location, {{with_precedence}}) do |old_location, _precedence_|
 
         {% for union_member in members %}
-          self.location = old_location # not here?
-          %result = fail_zone do
+          self.location = old_location
+          %result = handle_fail do
             {{ union_member }}
           end
 
@@ -513,7 +511,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # ```
   macro maybe(&)
     %old_location = self.location
-    %result = fail_zone do
+    %result = handle_fail do
       {{ yield }}
     end
     if %result.is_a? Fail
@@ -633,7 +631,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   struct Fail
   end
 
-  private def fail_zone(*args)
+  private def handle_fail(*args)
     yield *args
   end
 
@@ -693,27 +691,9 @@ abstract class TopDown::Parser < TopDown::CharReader
     {{block.args[0].id}}.to_s
   end
 
-  @sequence_name = :main
-
-  # TODO: docs
-  macro sequence(name, &)
-    %prev_name = @sequence_name
-    begin
-      @sequence_name = {{name.id.symbolize}}
-      {{ yield }}
-    ensure
-      @sequence_name = %prev_name
-    end
-  end
-
   # TODO: docs
   macro sequence(&)
     {{ yield }}
-  end
-
-  # TODO: docs
-  def in_sequence?(*names)
-    @sequence_name.in? names
   end
 
   # Appends a '\A' to begin of *regex* (forcing the regex to match at start)
