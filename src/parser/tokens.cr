@@ -105,14 +105,14 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private macro consume_token!(token_type, error = nil)
+  private macro consume_token!(token_type, error = nil, at = nil)
     skip_chars
     %begin_location = self.location
     %token = next_token?
     if %token && %token.is?({{token_type}})
       %token.value
     else
-      raise_syntax_error error_message({{error}} || ->hook_unexpected_token(typeof(%token), typeof({{token_type}})), got: %token, expected: {{token_type}}), begin_location: %begin_location
+      raise_syntax_error error_message({{error}} || ->hook_unexpected_token(typeof(%token), typeof({{token_type}})), got: %token, expected: {{token_type}}), at: ({{at}}) || (%begin_location..)
     end
   end
 

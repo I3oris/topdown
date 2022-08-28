@@ -81,6 +81,8 @@ abstract class TopDown::Parser < TopDown::CharReader
   macro syntax(syntax_name, *prefixs, &block)
     @[AlwaysInline]
     private def parse_{{syntax_name.id}}(_left_, _precedence_)
+      _begin_location_ = self.location
+
       handle_fail do
         prefixs = Tuple.new({% for p in prefixs %} parse({{p}}), {% end %})
 
@@ -98,10 +100,10 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private macro consume_char!(char, error = nil)
+  private macro consume_char!(char, error = nil, at = nil)
     skip_chars
     if peek_char != {{char}}
-      raise_syntax_error error_message({{error}} || ->hook_unexpected_char(Char, Char), got: peek_char, expected: {{char}})
+      raise_syntax_error error_message({{error}} || ->hook_unexpected_char(Char, Char), got: peek_char, expected: {{char}}), at: ({{at || "self.location".id}})
     else
       next_char
     end
@@ -135,7 +137,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private macro consume_string!(string, error = nil)
+  private macro consume_string!(string, error = nil, at = nil)
     skip_chars
     %result = handle_fail do
       capture do
@@ -147,7 +149,7 @@ abstract class TopDown::Parser < TopDown::CharReader
       end
     end
     if %result.is_a? Fail
-      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_string(Char, String), got: peek_char, expected: {{string}})
+      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_string(Char, String), got: peek_char, expected: {{string}}), at: ({{at || "self.location".id}})
     end
     %result
   end
@@ -178,14 +180,14 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private macro consume_regex!(regex, error = nil)
+  private macro consume_regex!(regex, error = nil, at = nil)
     skip_chars
     if regex_match_start({{regex}}) =~ String.new(self.source.to_slice[self.location.pos..])
       @char_reader.pos += $0.bytesize
       $0.each_char { |ch| increment_location(ch) }
       $0
     else
-      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_regex(Char, Regex), got: peek_char, expected: {{regex}})
+      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_regex(Char, Regex), got: peek_char, expected: {{regex}}), at: ({{at || "self.location".id}})
     end
   end
 
@@ -199,11 +201,11 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private macro consume_syntax!(syntax_name, error = nil, with_precedence = nil)
+  private macro consume_syntax!(syntax_name, error = nil, at = nil, with_precedence = nil)
     skip_chars
     %result = parse_{{syntax_name.id}}(nil, {{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
-      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}})
+      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}}), at: ({{at || "self.location".id}})
     else
       %result
     end
@@ -322,26 +324,28 @@ abstract class TopDown::Parser < TopDown::CharReader
   #   * `%{expected}`: The expected `Char`, `String`, `Regex`, `Token` or syntax name (`Symbol`).
   # * a `ProcLiteral` taking two arguments: 'got' and 'expected', with types explained above.
   #
+  # *at*: indicates where the error is raised, it can be a `Location`, `Range(Location, Location)` or `Range(Location, Nil)`.
+  #
   # #### failure:
   # Because it raises, this shouldn't be used as first *parselet* inside an `union`, `maybe`, `repeat` and `syntax`.
   # This would raises before the surrounding context could try an other solution.
   #
   # However, this should generally be used everywhere else, to allow more localized errors.
-  macro parse!(parselet, error = nil, with_precedence = nil, &block)
+  macro parse!(parselet, error = nil, at = nil, with_precedence = nil, &block)
     {% if parselet.is_a? CharLiteral %}
-      %result = consume_char!({{parselet}}, error: {{error}})
+      %result = consume_char!({{parselet}}, error: {{error}}, at: {{at}})
 
     {% elsif parselet.is_a? StringLiteral %}
-      %result = consume_string!({{parselet}}, error: {{error}})
+      %result = consume_string!({{parselet}}, error: {{error}}, at: {{at}})
 
     {% elsif parselet.is_a? RegexLiteral %}
-      %result = consume_regex!({{parselet}}, error: {{error}})
+      %result = consume_regex!({{parselet}}, error: {{error}}, at: {{at}})
 
     {% elsif parselet.is_a? SymbolLiteral %}
-      %result = consume_syntax!({{parselet}}, error: {{error}}, with_precedence: {{with_precedence}})
+      %result = consume_syntax!({{parselet}}, error: {{error}}, at: {{at}}, with_precedence: {{with_precedence}})
 
     {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
-      %result = consume_token!({{parselet[0]}}, error: {{error}})
+      %result = consume_token!({{parselet[0]}}, error: {{error}}, at: {{at}})
 
     {% elsif parselet.is_a? Call && parselet.name == "|" %}
       %result = simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence}})
@@ -404,6 +408,13 @@ abstract class TopDown::Parser < TopDown::CharReader
   # Changes inside an `infix` or when `with_precedence` is used.
   macro current_precedence
     _precedence_
+  end
+
+  # Returns the `Location` at the beginning of the `syntax`.
+  #
+  # The given location is after skipping characters.
+  macro begin_location
+    _begin_location_
   end
 
   private macro simple_union(members, with_precedence)

@@ -40,8 +40,20 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   # Raises a `SyntaxError` at current `location` and current `source`.
-  def raise_syntax_error(message : String, location : Location = self.location, begin_location : Location = location, source : String = self.source)
-    raise SyntaxError.new message, source, location, begin_location
+  #
+  # *location* could be a range between two `Location`. A endless range mean a location up to `self.location`.
+  def raise_syntax_error(message : String, at location : Location = self.location, source : String = self.source)
+    raise SyntaxError.new message, source, location, location
+  end
+
+  # :ditto:
+  def raise_syntax_error(message : String, at location : Range(Location, Location), source : String = self.source)
+    raise SyntaxError.new message, source, location.end, location.begin
+  end
+
+  # :ditto:
+  def raise_syntax_error(message : String, at location : Range(Location, Nil), source : String = self.source)
+    raise SyntaxError.new message, source, self.location, location.begin
   end
 
   private def error_message(error, got, expected)
