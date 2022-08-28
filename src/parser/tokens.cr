@@ -1,15 +1,36 @@
 abstract class TopDown::Parser < TopDown::CharReader
-  # TODO: docs
+  # A type that can be returned when using [`Parser.tokens`](../Parser.html#tokens(&block)-macro).
+  #
+  # It's composed from a generic `type` (usually a `Symbol` or an `Enum`), and a `value`.
+  # ```
+  # tokens do
+  #   parse('+') { Token.new(:"+") }
+  #   parse(/\w+/) { Token.new(:name, $0) }
+  #   parse('*') { Token(MyTokenTypeEnum).new(:STAR) }
+  # end
+  # ```
+  #
+  # NOTE: Currently only a `String` `value` is supported, this may change in the future.
   record Token(TokenType), type : TokenType, value = "" do
+    # Returns true if *type* is equal to this token `type`.
+    #
+    # A similar method should be implemented on any class used for [`Parser.tokens`](../Parser.html#tokens(&block)-macro).
     def is?(type : TokenType)
       @type == type
     end
 
+    # Display the token.
+    #
+    # ```
+    # Token.new(:"+").to_s         # => "[+]"
+    # Token.new(:name, "foo").to_s # => "[name:foo]"
+    # ```
     def to_s(io)
       value = ":#{@value}".dump_unquoted unless value.empty?
       io << "[#{type.to_s.dump_unquoted}#{value}]"
     end
 
+    # Same as `to_s`.
     def inspect(io)
       to_s(io)
     end
@@ -19,7 +40,43 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% raise "No tokens definition found, use 'TopDown::Parser.tokens' macro to define tokens" %}
   end
 
-  # TODO: docs
+  # This macro allows to define how token are parsed.
+  #
+  # Members of the *block* works similarity to an `union`, on which each member would correspond a token.
+  #
+  # ```
+  # tokens do
+  #   parse('+') { Token.new(:"+") }
+  #   parse('-') { Token.new(:"-") }
+  #   parse("**") { Token.new(:"**") }
+  #   parse('*') { Token.new(:"*") }
+  #   parse('/') { Token.new(:"/") }
+  #   parse('\n') { Token.new(:new_line) }
+  # end
+  # ```
+  # Hence, the order of token matter, if `'*'` is moved before `"**"`, two token `:"*"` would be parsed and `:"**"` would never.
+  #
+  # The returned result should an object that implements a method `is?(type)`,
+  # which will allow `parse([<token_type>])` to know if the object is of type `<token_type>`.
+  #
+  #
+  # Member can be any usual `parse`, meaning a `syntax` can be used:
+  #
+  # ```
+  # tokens do
+  #   ...
+  #   parse(:tk_string) { |str| Token.new(:string, str) }
+  # end
+  #
+  # syntax(:tk_string, '"') do
+  #   partial_capture do |io|
+  #     io << repeat { parse(not('"')) }
+  #     parse!('"')
+  #   end
+  # end
+  # ```
+  #
+  # Moreover, characters are never skipped while parsing tokens (and all inner syntax calls), see `no_skip`.
   macro tokens(&block)
     private def next_token?
       _precedence_ = 0
@@ -78,7 +135,12 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  # TODO: docs
+  # Yields successively parsed tokens.
+  #
+  # Stops when EOF is hit, or raises if a token fail to parse.
+  #
+  # The token type *eof* can be given to stop at that type.
+  # Can be useful if a EOF token have been defined.
   def each_token(eof = nil, &) : Nil
     begin_location = self.location
 
@@ -92,7 +154,12 @@ abstract class TopDown::Parser < TopDown::CharReader
     self.location = begin_location
   end
 
-  # TODO: docs
+  # Returns the array of parsed tokens.
+  #
+  # Stops when EOF is hit, or raises if a token fail to parse.
+  #
+  # The token type *eof* can be given to stop at that type.
+  # Can be useful if a EOF token have been defined.
   def tokens(eof = nil)
     tokens = [] of typeof(next_token?.not_nil!)
 

@@ -86,7 +86,7 @@ class TopDown::CharReader
   # The *location* should be well formed, otherwise error display won't be right.
   # It is recommended to always use a location got by `self.location`.
   #
-  # This methods is used backtrack the parser.
+  # This methods is used to backtrack the parser.
   # However, prefer using `Parser.union`, `Parser.maybe`, and `Parser.repeat` over manual backtracks.
   def location=(location : Location)
     @char_reader.pos = location.pos unless @char_reader.pos == location.pos
