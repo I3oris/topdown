@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Crystal Docs 1.4.1">
+<meta name="crystal_docs.project_version" content="main">
+<meta name="crystal_docs.project_name" content="topdown">
+
+
+
+<link href="../../css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../js/doc.js"></script>
+
+  <meta name="repository-name" content="topdown">
+  <title>TopDown::Parser::SyntaxError - topdown main</title>
+  <script type="text/javascript">
+    CrystalDocs.base_path = "../../";
+  </script>
+</head>
+<body>
+
+<svg class="hidden">
+  <symbol id="octicon-link" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+  </symbol>
+</svg>
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="project-summary">
+      <h1 class="project-name">
+        <a href="../../index.html">
+          topdown
+        </a>
+      </h1>
+
+      <span class="project-version">
+        main
+      </span>
+    </div>
+  </div>
+
+  <div class="search-results hidden">
+    <ul class="search-list"></ul>
+  </div>
+
+  <div class="types-list">
+    <ul>
+  
+  <li class="parent open current" data-id="topdown/TopDown" data-name="topdown">
+      <a href="../../TopDown.html">TopDown</a>
+      
+        <ul>
+  
+  <li class=" " data-id="topdown/TopDown/CharReader" data-name="topdown::charreader">
+      <a href="../../TopDown/CharReader.html">CharReader</a>
+      
+    </li>
+  
+  <li class=" " data-id="topdown/TopDown/Location" data-name="topdown::location">
+      <a href="../../TopDown/Location.html">Location</a>
+      
+    </li>
+  
+  <li class="parent open current" data-id="topdown/TopDown/Parser" data-name="topdown::parser">
+      <a href="../../TopDown/Parser.html">Parser</a>
+      
+        <ul>
+  
+  <li class=" " data-id="topdown/TopDown/Parser/Fail" data-name="topdown::parser::fail">
+      <a href="../../TopDown/Parser/Fail.html">Fail</a>
+      
+    </li>
+  
+  <li class=" current" data-id="topdown/TopDown/Parser/SyntaxError" data-name="topdown::parser::syntaxerror">
+      <a href="../../TopDown/Parser/SyntaxError.html">SyntaxError</a>
+      
+    </li>
+  
+  <li class=" " data-id="topdown/TopDown/Parser/Token" data-name="topdown::parser::token(tokentype)">
+      <a href="../../TopDown/Parser/Token.html">Token</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+  </div>
+</div>
+
+
+<div class="main-content">
+<h1 class="type-name">
+
+  <span class="kind">class</span> TopDown::Parser::SyntaxError
+
+</h1>
+
+
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../TopDown/Parser/SyntaxError.html">TopDown::Parser::SyntaxError</a></li><li class="superclass">Exception</li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+
+
+
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>Exception raised by the parser during <code><a href="../../TopDown/Parser.html#parse-instance-method">Parser#parse</a></code> and all instantiation of <code><a href="../../TopDown/Parser.html#parse%21%28parselet%2Cerror%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro">Parser.parse!</a></code>.</p>
+<p>Contains <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> and <code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code> information, which are displayed when the error is dump.</p>
+<p>Use <code><a href="../../TopDown/Parser.html#raise_syntax_error%28message%3AString%2Clocation%3ALocation%3Dself.location%2Cbegin_location%3ALocation%3Dlocation%2Csource%3AString%3Dself.source%29-instance-method">Parser#raise_syntax_error</a></code> to raise a <code><a href="../../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> directly at parser location.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2>
+    <a id="defined-in" class="anchor" href="#defined-in">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Defined in:
+  </h2>
+  
+    
+      <a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L7" target="_blank">
+        parser/syntax_error.cr
+      </a>
+    
+    <br/>
+  
+
+
+
+
+
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28message%3AString%2Csource%3AString%2Clocation%3ALocation%2Cbegin_location%3ALocation%3Dlocation%29-class-method" class="signature"><strong>.new</strong>(message : String, source : String, location : Location, begin_location : Location = location)</a>
+        
+      </li>
+    
+  </ul>
+
+
+
+
+
+  <h2>
+    <a id="instance-method-summary" class="anchor" href="#instance-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#begin_location%3ATopDown%3A%3ALocation-instance-method" class="signature"><strong>#begin_location</strong> : TopDown::Location</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#begin_location%3D%28begin_location%3ATopDown%3A%3ALocation%29-instance-method" class="signature"><strong>#begin_location=</strong>(begin_location : TopDown::Location)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#inspect_with_backtrace%28io%29-instance-method" class="signature"><strong>#inspect_with_backtrace</strong>(io)</a>
+        
+          <div class="summary"><p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> with backtrace and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code><a href="../../TopDown/Parser/SyntaxError.html#begin_location%3ATopDown%3A%3ALocation-instance-method">#begin_location</a></code>:<code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#location%3ATopDown%3A%3ALocation-instance-method" class="signature"><strong>#location</strong> : TopDown::Location</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#location%3D%28location%3ATopDown%3A%3ALocation%29-instance-method" class="signature"><strong>#location=</strong>(location : TopDown::Location)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#message%3AString%3F-instance-method" class="signature"><strong>#message</strong> : String?</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#message%3D%28message%29-instance-method" class="signature"><strong>#message=</strong>(message)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#source%3AString-instance-method" class="signature"><strong>#source</strong> : String</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#source%3D%28source%3AString%29-instance-method" class="signature"><strong>#source=</strong>(source : String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#to_s%28io%29-instance-method" class="signature"><strong>#to_s</strong>(io)</a>
+        
+          <div class="summary"><p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code><a href="../../TopDown/Parser/SyntaxError.html#begin_location%3ATopDown%3A%3ALocation-instance-method">#begin_location</a></code>:<code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>.</p></div>
+        
+      </li>
+    
+  </ul>
+
+
+
+
+
+<div class="methods-inherited">
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+</div>
+
+
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(message:String,source:String,location:Location,begin_location:Location=location)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(message : String, source : String, location : <a href="../../TopDown/Location.html">Location</a>, begin_location : <a href="../../TopDown/Location.html">Location</a> = location)
+
+        <a class="method-permalink" href="#new%28message%3AString%2Csource%3AString%2Clocation%3ALocation%2Cbegin_location%3ALocation%3Dlocation%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L10" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+
+
+  <h2>
+    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="begin_location:TopDown::Location-instance-method">
+      <div class="signature">
+        
+        def <strong>begin_location</strong> : <a href="../../TopDown/Location.html">TopDown::Location</a>
+
+        <a class="method-permalink" href="#begin_location%3ATopDown%3A%3ALocation-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="begin_location=(begin_location:TopDown::Location)-instance-method">
+      <div class="signature">
+        
+        def <strong>begin_location=</strong>(begin_location : <a href="../../TopDown/Location.html">TopDown::Location</a>)
+
+        <a class="method-permalink" href="#begin_location%3D%28begin_location%3ATopDown%3A%3ALocation%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="inspect_with_backtrace(io)-instance-method">
+      <div class="signature">
+        
+        def <strong>inspect_with_backtrace</strong>(io)
+
+        <a class="method-permalink" href="#inspect_with_backtrace%28io%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> with backtrace and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code><a href="../../TopDown/Parser/SyntaxError.html#begin_location%3ATopDown%3A%3ALocation-instance-method">#begin_location</a></code>:<code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L22" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="location:TopDown::Location-instance-method">
+      <div class="signature">
+        
+        def <strong>location</strong> : <a href="../../TopDown/Location.html">TopDown::Location</a>
+
+        <a class="method-permalink" href="#location%3ATopDown%3A%3ALocation-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="location=(location:TopDown::Location)-instance-method">
+      <div class="signature">
+        
+        def <strong>location=</strong>(location : <a href="../../TopDown/Location.html">TopDown::Location</a>)
+
+        <a class="method-permalink" href="#location%3D%28location%3ATopDown%3A%3ALocation%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="message:String?-instance-method">
+      <div class="signature">
+        
+        def <strong>message</strong> : String?
+
+        <a class="method-permalink" href="#message%3AString%3F-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="message=(message)-instance-method">
+      <div class="signature">
+        
+        def <strong>message=</strong>(message)
+
+        <a class="method-permalink" href="#message%3D%28message%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="source:String-instance-method">
+      <div class="signature">
+        
+        def <strong>source</strong> : String
+
+        <a class="method-permalink" href="#source%3AString-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="source=(source:String)-instance-method">
+      <div class="signature">
+        
+        def <strong>source=</strong>(source : String)
+
+        <a class="method-permalink" href="#source%3D%28source%3AString%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="to_s(io)-instance-method">
+      <div class="signature">
+        
+        def <strong>to_s</strong>(io)
+
+        <a class="method-permalink" href="#to_s%28io%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code><a href="../../TopDown/Parser/SyntaxError.html#begin_location%3ATopDown%3A%3ALocation-instance-method">#begin_location</a></code>:<code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/syntax_error.cr#L14" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+
+</div>
+
+</body>
+</html>

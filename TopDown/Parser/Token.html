@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Crystal Docs 1.4.1">
+<meta name="crystal_docs.project_version" content="main">
+<meta name="crystal_docs.project_name" content="topdown">
+
+
+
+<link href="../../css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../js/doc.js"></script>
+
+  <meta name="repository-name" content="topdown">
+  <title>TopDown::Parser::Token(TokenType) - topdown main</title>
+  <script type="text/javascript">
+    CrystalDocs.base_path = "../../";
+  </script>
+</head>
+<body>
+
+<svg class="hidden">
+  <symbol id="octicon-link" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+  </symbol>
+</svg>
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="project-summary">
+      <h1 class="project-name">
+        <a href="../../index.html">
+          topdown
+        </a>
+      </h1>
+
+      <span class="project-version">
+        main
+      </span>
+    </div>
+  </div>
+
+  <div class="search-results hidden">
+    <ul class="search-list"></ul>
+  </div>
+
+  <div class="types-list">
+    <ul>
+  
+  <li class="parent open current" data-id="topdown/TopDown" data-name="topdown">
+      <a href="../../TopDown.html">TopDown</a>
+      
+        <ul>
+  
+  <li class=" " data-id="topdown/TopDown/CharReader" data-name="topdown::charreader">
+      <a href="../../TopDown/CharReader.html">CharReader</a>
+      
+    </li>
+  
+  <li class=" " data-id="topdown/TopDown/Location" data-name="topdown::location">
+      <a href="../../TopDown/Location.html">Location</a>
+      
+    </li>
+  
+  <li class="parent open current" data-id="topdown/TopDown/Parser" data-name="topdown::parser">
+      <a href="../../TopDown/Parser.html">Parser</a>
+      
+        <ul>
+  
+  <li class=" " data-id="topdown/TopDown/Parser/Fail" data-name="topdown::parser::fail">
+      <a href="../../TopDown/Parser/Fail.html">Fail</a>
+      
+    </li>
+  
+  <li class=" " data-id="topdown/TopDown/Parser/SyntaxError" data-name="topdown::parser::syntaxerror">
+      <a href="../../TopDown/Parser/SyntaxError.html">SyntaxError</a>
+      
+    </li>
+  
+  <li class=" current" data-id="topdown/TopDown/Parser/Token" data-name="topdown::parser::token(tokentype)">
+      <a href="../../TopDown/Parser/Token.html">Token</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+  </div>
+</div>
+
+
+<div class="main-content">
+<h1 class="type-name">
+
+  <span class="kind">struct</span> TopDown::Parser::Token(TokenType)
+
+</h1>
+
+
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../TopDown/Parser/Token.html">TopDown::Parser::Token(TokenType)</a></li><li class="superclass">Struct</li><li class="superclass">Value</li><li class="superclass">Object</li></ul>
+
+
+
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>A type that can be returned when using <a href="../Parser.html#tokens(&amp;block)-macro"><code>Parser.tokens</code></a>.</p>
+<p>It's composed from a generic <code><a href="../../TopDown/Parser/Token.html#type%3ATokenType-instance-method">#type</a></code> (usually a <code>Symbol</code> or an <code>Enum</code>), and a <code><a href="../../TopDown/Parser/Token.html#value-instance-method">#value</a></code>.</p>
+<pre><code class="language-crystal">tokens <span class="k">do</span>
+  parse(<span class="s">&#39;+&#39;</span>) { <span class="t">Token</span>.<span class="k">new</span>(<span class="n">:&quot;+&quot;</span>) }
+  parse(<span class="s">/\w+/</span>) { <span class="t">Token</span>.<span class="k">new</span>(<span class="n">:name</span>, 0) }
+  parse(<span class="s">&#39;*&#39;</span>) { <span class="t">Token</span>(<span class="t">MyTokenTypeEnum</span>).<span class="k">new</span>(<span class="n">:STAR</span>) }
+<span class="k">end</span></code></pre>
+<p><span class="flag purple">NOTE</span>  Currently only a <code>String</code> <code><a href="../../TopDown/Parser/Token.html#value-instance-method">#value</a></code> is supported, this may change in the future.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2>
+    <a id="defined-in" class="anchor" href="#defined-in">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Defined in:
+  </h2>
+  
+    
+      <a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/tokens.cr#L14" target="_blank">
+        parser/tokens.cr
+      </a>
+    
+    <br/>
+  
+
+
+
+
+
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28type%3ATokenType%2Cvalue%3AString%3D%22%22%29-class-method" class="signature"><strong>.new</strong>(type : TokenType, value : String = <span class="s">&quot;&quot;</span>)</a>
+        
+      </li>
+    
+  </ul>
+
+
+
+
+
+  <h2>
+    <a id="instance-method-summary" class="anchor" href="#instance-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#clone-instance-method" class="signature"><strong>#clone</strong></a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#copy_with%28type_type%3D%40type%2Cvalue_value%3D%40value%29-instance-method" class="signature"><strong>#copy_with</strong>(type _type = @type, value _value = @value)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#inspect%28io%29-instance-method" class="signature"><strong>#inspect</strong>(io)</a>
+        
+          <div class="summary"><p>Same as <code><a href="../../TopDown/Parser/Token.html#to_s%28io%29-instance-method">#to_s</a></code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#is%3F%28type%3ATokenType%29-instance-method" class="signature"><strong>#is?</strong>(type : TokenType)</a>
+        
+          <div class="summary"><p>Returns true if <em>type</em> is equal to this token <code><a href="../../TopDown/Parser/Token.html#type%3ATokenType-instance-method">#type</a></code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#to_s%28io%29-instance-method" class="signature"><strong>#to_s</strong>(io)</a>
+        
+          <div class="summary"><p>Display the token.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#type%3ATokenType-instance-method" class="signature"><strong>#type</strong> : TokenType</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#value-instance-method" class="signature"><strong>#value</strong></a>
+        
+      </li>
+    
+  </ul>
+
+
+
+
+
+<div class="methods-inherited">
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+</div>
+
+
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(type:TokenType,value:String=&quot;&quot;)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(type : TokenType, value : String = <span class="s">&quot;&quot;</span>)
+
+        <a class="method-permalink" href="#new%28type%3ATokenType%2Cvalue%3AString%3D%22%22%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/tokens.cr#L14" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+
+
+  <h2>
+    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="clone-instance-method">
+      <div class="signature">
+        
+        def <strong>clone</strong>
+
+        <a class="method-permalink" href="#clone-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/tokens.cr#L14" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="copy_with(type_type=@type,value_value=@value)-instance-method">
+      <div class="signature">
+        
+        def <strong>copy_with</strong>(type _type = @type, value _value = @value)
+
+        <a class="method-permalink" href="#copy_with%28type_type%3D%40type%2Cvalue_value%3D%40value%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/tokens.cr#L14" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="inspect(io)-instance-method">
+      <div class="signature">
+        
+        def <strong>inspect</strong>(io)
+
+        <a class="method-permalink" href="#inspect%28io%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Same as <code><a href="../../TopDown/Parser/Token.html#to_s%28io%29-instance-method">#to_s</a></code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/tokens.cr#L34" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="is?(type:TokenType)-instance-method">
+      <div class="signature">
+        
+        def <strong>is?</strong>(type : TokenType)
+
+        <a class="method-permalink" href="#is%3F%28type%3ATokenType%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns true if <em>type</em> is equal to this token <code><a href="../../TopDown/Parser/Token.html#type%3ATokenType-instance-method">#type</a></code>.</p>
+<p>A similar method should be implemented on any class used for <a href="../Parser.html#tokens(&amp;block)-macro"><code>Parser.tokens</code></a>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/tokens.cr#L18" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="to_s(io)-instance-method">
+      <div class="signature">
+        
+        def <strong>to_s</strong>(io)
+
+        <a class="method-permalink" href="#to_s%28io%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Display the token.</p>
+<pre><code class="language-crystal"><span class="t">Token</span>.<span class="k">new</span>(<span class="n">:&quot;+&quot;</span>).to_s         <span class="c"># =&gt; &quot;[+]&quot;</span>
+<span class="t">Token</span>.<span class="k">new</span>(<span class="n">:name</span>, <span class="s">&quot;foo&quot;</span>).to_s <span class="c"># =&gt; &quot;[name:foo]&quot;</span></code></pre>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/8c9a4707b33f8501bf30ec56c2350761c64120db/src/parser/tokens.cr#L28" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="type:TokenType-instance-method">
+      <div class="signature">
+        
+        def <strong>type</strong> : TokenType
+
+        <a class="method-permalink" href="#type%3ATokenType-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="value-instance-method">
+      <div class="signature">
+        
+        def <strong>value</strong>
+
+        <a class="method-permalink" href="#value-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
+
+
+
+</div>
+
+</body>
+</html>
