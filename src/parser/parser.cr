@@ -360,6 +360,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% if parselet.is_a? SymbolLiteral %}
       if _precedence_ < {{precedence}}
         {% precedence -= 1 if associativity.id == "right".id %}
+        skip_chars
         _left_ = forward_fail(parse_{{parselet.id}}(_left_, _precedence_: {{precedence}}))
       else
         break Fail.new
