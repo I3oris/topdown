@@ -4,7 +4,7 @@ require "../src/topdown"
 class JSONParserWithToken < TopDown::Parser
   root :object
 
-  alias Value = String | Float64 | Bool | Nil | Hash(String, Value) | Array(Value)
+  alias Value = String | Float64 | Int32 | Bool | Nil | Hash(String, Value) | Array(Value)
 
   # # Tokens ##
 
@@ -20,6 +20,48 @@ class JSONParserWithToken < TopDown::Parser
     parse("null") { Token.new(:null) }
     parse(:tk_string) { |v| Token.new(:string, v) }
     parse(:tk_number) { |v| Token.new(:number, v) }
+  end
+
+  syntax :digit1_9, '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' { }
+  syntax :digit, '0' | :digit1_9 { }
+  syntax :hexdigit, :digit | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' { }
+
+  syntax :int do
+    capture do
+      # Sign:
+      maybe { parse('-') }
+
+      # Entire part:
+      union do
+        parse('0')
+        parse(:digit1_9) do
+          repeat { parse(:digit) }
+        end
+      end
+    end
+  end
+
+  syntax :tk_number do
+    no_skip do # Don't skip spaces inside number
+      capture do
+        int = parse(:int)
+
+        return int unless peek_char == '.'
+
+        # Decimal part:
+        parse!('.')
+        parse!(:digit)
+        repeat { parse :digit }
+
+        # Exponent:
+        maybe do
+          parse('e' | 'E')
+          parse!('-' | '+')
+          parse!(:digit)
+          repeat { parse(:digit) }
+        end
+      end
+    end
   end
 
   syntax :tk_string, '"' do
@@ -53,42 +95,6 @@ class JSONParserWithToken < TopDown::Parser
     end
   end
 
-  syntax :digit1_9, '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' { }
-  syntax :digit, '0' | :digit1_9 { }
-  syntax :hexdigit, :digit | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' { }
-
-  syntax :tk_number do
-    capture do
-      no_skip do
-        # Sign:
-        maybe { parse '-' }
-
-        # Entire part:
-        union do
-          parse '0'
-          parse :digit1_9 do
-            repeat { parse :digit }
-          end
-        end
-
-        # Decimal part:
-        maybe do
-          parse '.'
-          parse! :digit
-          repeat { parse :digit }
-        end
-
-        # Exponent:
-        maybe do
-          parse 'e' | 'E'
-          parse! '-' | '+'
-          parse! :digit
-          repeat { parse :digit }
-        end
-      end
-    end
-  end
-
   # # Syntax ##
 
   syntax :object, [:"{"] do
@@ -114,7 +120,7 @@ class JSONParserWithToken < TopDown::Parser
   syntax :value do
     union do
       parse [:string]
-      parse [:number], &.to_f
+      parse [:number] { |v| v.to_i? || v.to_f }
       parse :object
       parse :array
       parse [:true] { true }

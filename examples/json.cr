@@ -6,20 +6,62 @@ require "../src/topdown"
 class JSONParser < TopDown::Parser
   root :object
 
-  alias Value = String | Float64 | Bool | Nil | Hash(String, Value) | Array(Value)
+  alias Value = String | Float64 | Int32 | Bool | Nil | Hash(String, Value) | Array(Value)
 
   # # Syntax ##
+
+  syntax :digit1_9, '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' { }
+  syntax :digit, '0' | :digit1_9 { }
+  syntax :hexdigit, :digit | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' { }
+
+  syntax :int do
+    capture do
+      # Sign:
+      maybe { parse('-') }
+
+      # Entire part:
+      union do
+        parse('0')
+        parse(:digit1_9) do
+          repeat { parse(:digit) }
+        end
+      end
+    end.to_i
+  end
+
+  syntax :number do
+    no_skip do # Don't skip spaces inside number
+      capture do
+        int = parse(:int)
+
+        return int unless peek_char == '.'
+
+        # Decimal part:
+        parse!('.')
+        parse!(:digit)
+        repeat { parse :digit }
+
+        # Exponent:
+        maybe do
+          parse('e' | 'E')
+          parse!('-' | '+')
+          parse!(:digit)
+          repeat { parse(:digit) }
+        end
+      end
+    end.to_f
+  end
 
   syntax :string, '"' do
     no_skip do # Don't skip spaces inside strings
       partial_capture do |io|
         repeat_union do
-          parse '\\' do
-            io << parse :escape_sequence
+          parse('\\') do
+            io << parse(:escape_sequence)
           end
-          io << parse not('"')
+          io << parse(not('"'))
         end
-        parse! '"'
+        parse!('"')
       end
     end
   end
@@ -27,13 +69,13 @@ class JSONParser < TopDown::Parser
   # Returns escaped character.
   syntax :escape_sequence do
     union do
-      parse '"' | '\\' | '/'
-      parse 'b' { '\b' }
-      parse 'f' { '\f' }
-      parse 'n' { '\n' }
-      parse 'r' { '\r' }
-      parse 't' { '\t' }
-      parse 'u' do
+      parse('"' | '\\' | '/')
+      parse('b') { '\b' }
+      parse('f') { '\f' }
+      parse('n') { '\n' }
+      parse('r') { '\r' }
+      parse('t') { '\t' }
+      parse('u') do
         code = capture do
           4.times { parse! :hexdigit }
         end
@@ -43,80 +85,44 @@ class JSONParser < TopDown::Parser
     end
   end
 
-  syntax :digit1_9, '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' { }
-  syntax :digit, '0' | :digit1_9 { }
-  syntax :hexdigit, :digit | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' { }
-
-  syntax :number do
-    capture do
-      no_skip do
-        # Sign:
-        maybe { parse '-' }
-
-        # Entire part:
-        union do
-          parse '0'
-          parse :digit1_9 do
-            repeat { parse :digit }
-          end
-        end
-
-        # Decimal part:
-        maybe do
-          parse '.'
-          parse! :digit
-          repeat { parse :digit }
-        end
-
-        # Exponent:
-        maybe do
-          parse 'e' | 'E'
-          parse! '-' | '+'
-          parse! :digit
-          repeat { parse :digit }
-        end
-      end
-    end.to_f
-  end
-
   syntax :object, '{' do
     obj = {} of String => Value
 
-    repeat separator: ',' do
-      key, value = parse :key_value
+    repeat(separator: ',') do
+      key, value = parse(:key_value)
       obj[key] = value
     end
-    parse! '}'
+    parse!('}')
     obj
   end
 
   syntax :key_value do
-    key = parse :string
+    key = parse(:string)
     parse! ':'
-    value = parse! :value
+    value = parse!(:value)
 
     {key, value}
   end
 
   syntax :value do
     union do
-      parse :string
-      parse :number
-      parse :object
-      parse :array
-      parse "true" { true }
-      parse "false" { false }
-      parse "null" { nil }
+      parse(:string)
+      parse(:number)
+      parse(:object)
+      parse(:array)
+      parse("true") { true }
+      parse("false") { false }
+      parse("null") { nil }
     end
   end
 
   syntax :array, '[' do
     values = [] of Value
 
-    repeat separator: ',' do
-      values << parse :value
+    repeat(separator: ',') do
+      values << parse(:value)
     end
-    parse! ']'
+    parse!(']')
 
     values
   end
@@ -124,17 +130,17 @@ class JSONParser < TopDown::Parser
   # # Skip ##
 
   skip do
-    parse ' '
-    parse '\n'
-    parse '\t'
-    parse '\r'
+    parse(' ')
+    parse('\n')
+    parse('\t')
+    parse('\r')
     # # Line comments:
-    # parse "//" { repeat { parse not('\n') } }
+    # parse("//") { repeat { parse(not('\n')) } }
 
     # # Block comments:
-    # parse "/*" do
-    #   repeat { parse not("*/") }
-    #   parse "*/"
+    # parse("/*") do
+    #   repeat { parse(not("*/")) }
+    #   parse("*/")
     # end
   end
 end
