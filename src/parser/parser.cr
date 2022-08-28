@@ -261,7 +261,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   #  ```
   #
   # #### failure:
-  # If the given *parselet* fails to parse, it `break` the current sequence. Failure is catch by the surrounding context.
+  # If the given *parselet* fails to parse, it `break` the current sequence with a `Fail`. Failure is catch by the surrounding context.
   # * inside an `union`, tell the union that member have fail. The union tries to parse the next member.
   # * inside a `maybe`, the maybe will return `nil`.
   # * inside a `repeat`, make the repeat to stop.
@@ -627,7 +627,24 @@ abstract class TopDown::Parser < TopDown::CharReader
     %ret
   end
 
-  # TODO: docs
+  # Empty struct representing a parse failure.
+  #
+  # When [`Parser.parse`](#parse(parselet,with_precedence=nil,&block)-macro) is used,
+  # if it fails, it `break` the current sequence with a `Fail`.
+  #
+  # However when the method is surrounded by a block, the `Fail` get returned.
+  # In this case it recommended to use `Parser.forward_fail` to `break` again.
+  #
+  # ```
+  # result = Array.new(3) do
+  #   parse("a")
+  # end
+  #
+  # typeof(result) # => Array(String) | TopDown::Parser::Fail
+  #
+  # result = forward_fail(result)
+  # typeof(result) # => Array(String)
+  # ```
   struct Fail
   end
 
@@ -635,7 +652,20 @@ abstract class TopDown::Parser < TopDown::CharReader
     yield *args
   end
 
-  # TODO: docs
+  # Returns the given *result*, or `break` the current sequence if *result* is a `Fail`.
+  #
+  # This macro is the recommended ways to handle `Fail`.
+  #
+  # ```
+  # result = Array.new(3) do
+  #   parse("a")
+  # end
+  #
+  # typeof(result) # => Array(String) | TopDown::Parser::Fail
+  #
+  # result = forward_fail(result)
+  # typeof(result) # => Array(String)
+  # ```
   macro forward_fail(result)
     %result = {{result}}
     if %result.is_a? Fail
