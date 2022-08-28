@@ -189,28 +189,28 @@ however, after <code>then_arm</code> we expects a ':', so it fails.</p>
   </h2>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/hooks.cr#L1" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/hooks.cr#L1" target="_blank">
         hooks.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L47" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L47" target="_blank">
         parser/parser.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/syntax_error.cr#L1" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L1" target="_blank">
         parser/syntax_error.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/tokens.cr#L1" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/tokens.cr#L1" target="_blank">
         parser/tokens.cr
       </a>
     
@@ -292,7 +292,21 @@ however, after <code>then_arm</code> we expects a ':', so it fails.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#raise_syntax_error%28message%3AString%2Clocation%3ALocation%3Dself.location%2Cbegin_location%3ALocation%3Dlocation%2Csource%3AString%3Dself.source%29-instance-method" class="signature"><strong>#raise_syntax_error</strong>(message : String, location : Location = <span class="k">self</span>.location, begin_location : Location = location, source : String = <span class="k">self</span>.source)</a>
+        <a href="#raise_syntax_error%28message%3AString%2Catlocation%3ALocation%3Dself.location%2Csource%3AString%3Dself.source%29-instance-method" class="signature"><strong>#raise_syntax_error</strong>(message : String, at location : Location = <span class="k">self</span>.location, source : String = <span class="k">self</span>.source)</a>
+        
+          <div class="summary"><p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#raise_syntax_error%28message%3AString%2Catlocation%3ARange%28Location%2CLocation%29%2Csource%3AString%3Dself.source%29-instance-method" class="signature"><strong>#raise_syntax_error</strong>(message : String, at location : Range(Location, Location), source : String = <span class="k">self</span>.source)</a>
+        
+          <div class="summary"><p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#raise_syntax_error%28message%3AString%2Catlocation%3ARange%28Location%2CNil%29%2Csource%3AString%3Dself.source%29-instance-method" class="signature"><strong>#raise_syntax_error</strong>(message : String, at location : Range(Location, Nil), source : String = <span class="k">self</span>.source)</a>
         
           <div class="summary"><p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p></div>
         
@@ -318,6 +332,13 @@ however, after <code>then_arm</code> we expects a ':', so it fails.</p>
     Macro Summary
   </h2>
   <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#begin_location-macro" class="signature"><strong>begin_location</strong></a>
+        
+          <div class="summary"><p>Returns the <code><a href="../TopDown/Location.html">Location</a></code> at the beginning of the <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2C%26block%29-macro">syntax</a></code>.</p></div>
+        
+      </li>
     
       <li class="entry-summary">
         <a href="#capture%28%26%29-macro" class="signature"><strong>capture</strong>(&)</a>
@@ -383,7 +404,7 @@ however, after <code>then_arm</code> we expects a ':', so it fails.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#parse%21%28parselet%2Cerror%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro" class="signature"><strong>parse!</strong>(parselet, error = <span class="n">nil</span>, with_precedence = <span class="n">nil</span>, &block)</a>
+        <a href="#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro" class="signature"><strong>parse!</strong>(parselet, error = <span class="n">nil</span>, at = <span class="n">nil</span>, with_precedence = <span class="n">nil</span>, &block)</a>
         
           <div class="summary"><p>Similar to <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser.parse</code></a>, but raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> if the parsing fail.</p></div>
         
@@ -578,7 +599,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/tokens.cr#L144" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/tokens.cr#L144" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -599,7 +620,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/hooks.cr#L23" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/hooks.cr#L23" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -620,7 +641,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/hooks.cr#L18" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/hooks.cr#L18" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -641,7 +662,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/hooks.cr#L28" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/hooks.cr#L28" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -662,7 +683,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/hooks.cr#L13" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/hooks.cr#L13" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -683,7 +704,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/hooks.cr#L3" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/hooks.cr#L3" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -704,7 +725,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/hooks.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/hooks.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -728,28 +749,73 @@ Raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L53" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L53" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="raise_syntax_error(message:String,location:Location=self.location,begin_location:Location=location,source:String=self.source)-instance-method">
+    <div class="entry-detail" id="raise_syntax_error(message:String,atlocation:Location=self.location,source:String=self.source)-instance-method">
       <div class="signature">
         
-        def <strong>raise_syntax_error</strong>(message : String, location : <a href="../TopDown/Location.html">Location</a> = <span class="k">self</span>.location, begin_location : <a href="../TopDown/Location.html">Location</a> = location, source : String = <span class="k">self</span>.source)
+        def <strong>raise_syntax_error</strong>(message : String, at location : <a href="../TopDown/Location.html">Location</a> = <span class="k">self</span>.location, source : String = <span class="k">self</span>.source)
 
-        <a class="method-permalink" href="#raise_syntax_error%28message%3AString%2Clocation%3ALocation%3Dself.location%2Cbegin_location%3ALocation%3Dlocation%2Csource%3AString%3Dself.source%29-instance-method">#</a>
+        <a class="method-permalink" href="#raise_syntax_error%28message%3AString%2Catlocation%3ALocation%3Dself.location%2Csource%3AString%3Dself.source%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
           <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
+<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/syntax_error.cr#L43" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L45" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="raise_syntax_error(message:String,atlocation:Range(Location,Location),source:String=self.source)-instance-method">
+      <div class="signature">
+        
+        def <strong>raise_syntax_error</strong>(message : String, at location : Range(<a href="../TopDown/Location.html">Location</a>, <a href="../TopDown/Location.html">Location</a>), source : String = <span class="k">self</span>.source)
+
+        <a class="method-permalink" href="#raise_syntax_error%28message%3AString%2Catlocation%3ARange%28Location%2CLocation%29%2Csource%3AString%3Dself.source%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
+<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L50" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="raise_syntax_error(message:String,atlocation:Range(Location,Nil),source:String=self.source)-instance-method">
+      <div class="signature">
+        
+        def <strong>raise_syntax_error</strong>(message : String, at location : Range(<a href="../TopDown/Location.html">Location</a>, Nil), source : String = <span class="k">self</span>.source)
+
+        <a class="method-permalink" href="#raise_syntax_error%28message%3AString%2Catlocation%3ARange%28Location%2CNil%29%2Csource%3AString%3Dself.source%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
+<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L55" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -773,7 +839,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/tokens.cr#L163" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/tokens.cr#L163" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -789,6 +855,28 @@ Can be useful if a EOF token have been defined.</p>
 </a>
     Macro Detail
   </h2>
+  
+    <div class="entry-detail" id="begin_location-macro">
+      <div class="signature">
+        
+        macro <strong>begin_location</strong>
+
+        <a class="method-permalink" href="#begin_location-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns the <code><a href="../TopDown/Location.html">Location</a></code> at the beginning of the <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2C%26block%29-macro">syntax</a></code>.</p>
+<p>The given location is after skipping characters.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L416" target="_blank">View source</a>]
+        
+      </div>
+    </div>
   
     <div class="entry-detail" id="capture(&amp;)-macro">
       <div class="signature">
@@ -815,7 +903,7 @@ end</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L694" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L706" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -838,7 +926,7 @@ Changes inside an <code><a href="../TopDown/Parser.html#infix%28precedence%2Cpar
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L404" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L409" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -868,7 +956,7 @@ result <span class="o">=</span> forward_fail(result)
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L669" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L681" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -889,7 +977,7 @@ result <span class="o">=</span> forward_fail(result)
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L359" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L363" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -925,7 +1013,7 @@ result <span class="o">=</span> forward_fail(result)
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L396" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L401" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -958,7 +1046,7 @@ x <span class="o">+</span> (y || <span class="n">0</span>)</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L512" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L524" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -979,7 +1067,7 @@ x <span class="o">+</span> (y || <span class="n">0</span>)</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L591" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L603" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1000,7 +1088,7 @@ x <span class="o">+</span> (y || <span class="n">0</span>)</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L620" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L632" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1091,17 +1179,17 @@ Allow to handle multi-precedence for ternary-or-more operator.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L277" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L279" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="parse!(parselet,error=nil,with_precedence=nil,&amp;block)-macro">
+    <div class="entry-detail" id="parse!(parselet,error=nil,at=nil,with_precedence=nil,&amp;block)-macro">
       <div class="signature">
         
-        macro <strong>parse!</strong>(parselet, error = <span class="n">nil</span>, with_precedence = <span class="n">nil</span>, &block)
+        macro <strong>parse!</strong>(parselet, error = <span class="n">nil</span>, at = <span class="n">nil</span>, with_precedence = <span class="n">nil</span>, &block)
 
-        <a class="method-permalink" href="#parse%21%28parselet%2Cerror%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro">#</a>
+        <a class="method-permalink" href="#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro">#</a>
       </div>
       
         <div class="doc">
@@ -1118,6 +1206,7 @@ Following percent interpolations are available:
 </li>
 <li>a <code>ProcLiteral</code> taking two arguments: 'got' and 'expected', with types explained above.</li>
 </ul>
+<p><em>at</em>: indicates where the error is raised, it can be a <code><a href="../TopDown/Location.html">Location</a></code>, <code>Range(<a href="../TopDown/Location.html">Location</a>, <a href="../TopDown/Location.html">Location</a>)</code> or <code>Range(<a href="../TopDown/Location.html">Location</a>, Nil)</code>.</p>
 <h4><a id="failure" class="anchor" href="#failure">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -1131,7 +1220,7 @@ This would raises before the surrounding context could try an other solution.</p
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L330" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L334" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1161,7 +1250,7 @@ end</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L717" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L729" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1194,7 +1283,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L543" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L555" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1227,7 +1316,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L571" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L583" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1248,7 +1337,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L582" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L594" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1272,7 +1361,7 @@ see <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L72" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L72" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1293,7 +1382,7 @@ see <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L725" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L737" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1314,7 +1403,7 @@ see <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L603" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L615" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1336,7 +1425,7 @@ see <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L81" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L81" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1382,7 +1471,7 @@ syntax(<span class="n">:tk_string</span>, <span class="s">&#39;&quot;&#39;</span
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/tokens.cr#L80" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/tokens.cr#L80" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1449,7 +1538,7 @@ An union act as follow:</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/35a66b836ae98c15733c9c79850f5ebd8cc67da3/src/parser/parser.cr#L490" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/parser.cr#L502" target="_blank">View source</a>]
         
       </div>
     </div>

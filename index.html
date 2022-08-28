@@ -115,6 +115,94 @@
 <!-- This lead TopDown to be very fast. (benchmark are not yet ready) -->
 <p>TopDown is designed to be extensible. Writing parsing rules is made in code directly, allowing to insert custom behaviour in each step of parsing, storing state for a state-based parser, or make more complex parsing operation.</p>
 <p>Finally, TopDown is lightweight and doesn't require any dependencies.</p>
+<h2><a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Overview</h2>
+<p>Write a simple parser:</p>
+<pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;topdown&quot;</span>
+
+<span class="k">class</span> <span class="t">MyParser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
+  root <span class="n">:expression</span>
+
+  syntax <span class="n">:expression</span> <span class="k">do</span>
+    parse!(<span class="s">/\d+/</span>).to_i
+  <span class="k">end</span>
+<span class="k">end</span>
+
+source <span class="o">=</span> <span class="s">&quot;1&quot;</span>
+puts <span class="t">MyParser</span>.<span class="k">new</span>(source).parse <span class="c"># =&gt; 1</span></code></pre>
+<p>Add basic operators with precedence:</p>
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">MyParser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
+  ...
+
+  syntax <span class="n">:expression</span> <span class="k">do</span>
+    <span class="k">union</span> <span class="k">do</span>
+      parse(<span class="s">/\d+/</span>).to_i
+      infix(<span class="n">30</span>, <span class="n">:pow</span>)
+      infix(<span class="n">20</span>, <span class="n">:mul</span>)
+      infix(<span class="n">20</span>, <span class="n">:div</span>)
+      infix(<span class="n">10</span>, <span class="n">:add</span>)
+      infix(<span class="n">10</span>, <span class="n">:sub</span>)
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  syntax <span class="n">:pow</span>, <span class="s">&quot;**&quot;</span> { left() <span class="o">**</span> parse!(<span class="n">:expression</span>) }
+  syntax <span class="n">:mul</span>, <span class="s">&#39;*&#39;</span> { left() <span class="o">*</span> parse!(<span class="n">:expression</span>) }
+  syntax <span class="n">:div</span>, <span class="s">&#39;/&#39;</span> { left() <span class="o">/</span> parse!(<span class="n">:expression</span>) }
+  syntax <span class="n">:add</span>, <span class="s">&#39;+&#39;</span> { left() <span class="o">+</span> parse!(<span class="n">:expression</span>) }
+  syntax <span class="n">:sub</span>, <span class="s">&#39;-&#39;</span> { left() <span class="o">-</span> parse!(<span class="n">:expression</span>) }
+<span class="k">end</span>
+
+source <span class="o">=</span> <span class="s">&quot;3*6+6*4&quot;</span>
+puts <span class="t">MyParser</span>.<span class="k">new</span>(source).parse <span class="c"># =&gt; 42</span></code></pre>
+<p>Skip whitespaces and comments:</p>
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">MyParser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
+  ...
+
+  skip <span class="k">do</span>
+    parse(<span class="s">&#39; &#39;</span> <span class="o">|</span> <span class="s">&#39;\n&#39;</span> <span class="o">|</span> <span class="s">&#39;\t&#39;</span>)
+    parse(<span class="s">&quot;//&quot;</span>) { repeat { parse(not(<span class="s">&#39;\n&#39;</span>)) } }
+    parse(<span class="s">&quot;/*&quot;</span>) <span class="k">do</span>
+      repeat { parse(not(<span class="s">&quot;*/&quot;</span>)) }
+      parse!(<span class="s">&quot;*/&quot;</span>)
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+source <span class="o">=</span> <span class="s">&quot;3*6  + /* comment */ 6*4 // comment&quot;</span>
+puts <span class="t">MyParser</span>.<span class="k">new</span>(source).parse <span class="c"># =&gt; 42</span></code></pre>
+<p>Add more prefix syntax:</p>
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">MyParser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
+  ...
+
+  syntax <span class="n">:expression</span> <span class="k">do</span>
+    <span class="k">union</span> <span class="k">do</span>
+      parse(<span class="n">:parenthesis</span>)
+      parse(<span class="n">:positif</span>, with_precedence: <span class="n">40</span>)
+      parse(<span class="n">:negatif</span>, with_precedence: <span class="n">40</span>)
+      parse(<span class="s">/\d+/</span>).to_i
+      infix(<span class="n">30</span>, <span class="n">:pow</span>)
+      infix(<span class="n">20</span>, <span class="n">:mul</span>)
+      infix(<span class="n">20</span>, <span class="n">:div</span>)
+      infix(<span class="n">10</span>, <span class="n">:add</span>)
+      infix(<span class="n">10</span>, <span class="n">:sub</span>)
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  syntax <span class="n">:parenthesis</span>, <span class="s">&#39;(&#39;</span> <span class="k">do</span>
+    exp <span class="o">=</span> parse!(<span class="n">:expression</span>)
+    parse!(<span class="s">&#39;)&#39;</span>, error: <span class="s">&quot;Parenthesis &#39;(&#39; is not closed&quot;</span>, at: begin_location())
+    exp
+  <span class="k">end</span>
+
+  syntax <span class="n">:positif</span>, <span class="s">&#39;+&#39;</span> { <span class="o">+</span>parse!(<span class="n">:expression</span>) }
+  syntax <span class="n">:negatif</span>, <span class="s">&#39;-&#39;</span> { <span class="o">-</span>parse!(<span class="n">:expression</span>) }
+<span class="k">end</span>
+
+source <span class="o">=</span> <span class="s">&quot;(-9 - 42 / (2*+5)**2) / -3&quot;</span>
+puts <span class="t">MyParser</span>.<span class="k">new</span>(source).parse <span class="c"># =&gt; 3.14</span></code></pre>
 <h2><a id="installation" class="anchor" href="#installation">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -131,13 +219,28 @@
 <p>Run <code>shards install</code></p>
 </li>
 </ol>
-<h2><a id="usage" class="anchor" href="#usage">
+<h2><a id="documentation" class="anchor" href="#documentation">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
-</a>Usage</h2>
-<pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;topdown&quot;</span></code></pre>
-<p><span class="flag orange">TODO</span>  Write usage instructions here</p>
+</a>Documentation</h2>
+<p>Read the <a href="https://i3oris.github.io/topdown/">API documentation</a>.</p>
+<h2><a id="benchmark" class="anchor" href="#benchmark">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Benchmark</h2>
+<pre><code class="language-crystal"><span class="c"># === Small JSON ===</span>
+<span class="c">#            Crystal JSON 147.76k (  6.77µs) (±17.12%)  2.77kB/op        fastest</span>
+<span class="c">#            TopDown JSON  48.91k ( 20.45µs) (± 5.74%)  5.84kB/op   3.02× slower</span>
+<span class="c"># TopDown JSON with token  28.58k ( 34.98µs) (± 5.65%)  7.96kB/op   5.17× slower</span>
+<span class="c"># === Big JSON ===</span>
+<span class="c">#            Crystal JSON 877.55  (  1.14ms) (±15.84%)   228kB/op        fastest</span>
+<span class="c">#            TopDown JSON 281.64  (  3.55ms) (± 8.67%)  0.97MB/op   3.12× slower</span>
+<span class="c"># TopDown JSON with token 255.37  (  3.92ms) (±26.02%)  1.14MB/op   3.44× slower</span></code></pre>
+<blockquote>
+<p>See the <a href="./benchmark/benchmark.cr">benchmark code</a>.</p>
+</blockquote>
 <h2><a id="roadmap" class="anchor" href="#roadmap">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -146,7 +249,7 @@
 <ul>
 <li>[ ] Write docs (in progress)</li>
 <li>[ ] Write spec (in progress)</li>
-<li>[ ] Write readme (in progress)</li>
+<li>[x] Write readme</li>
 <li>[ ] Write examples (in progress)</li>
 <li>[x] Write benchmarks</li>
 <li>[ ] Improve error handling</li>
@@ -154,12 +257,6 @@
 <li>[x] Improve characters parsing</li>
 <li>[ ] Improve unions</li>
 </ul>
-<h2><a id="development" class="anchor" href="#development">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>Development</h2>
-<p><span class="flag orange">TODO</span>  Write development instructions here</p>
 <h2><a id="contributing" class="anchor" href="#contributing">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
