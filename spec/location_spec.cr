@@ -28,7 +28,7 @@ describe TopDown::Location do
 
   it "show in source l1-l2" do
     output = String.build do |io|
-      l2.show_in_source(io, source, begin_location: l1)
+      l1.show_in_source(io, source, end_location: l2)
     end
 
     output.should eq <<-OUTPUT
@@ -41,7 +41,7 @@ describe TopDown::Location do
 
   it "show in source l1-l3" do
     output = String.build do |io|
-      l3.show_in_source(io, source, begin_location: l1)
+      l1.show_in_source(io, source, end_location: l3)
     end
 
     output.should eq <<-OUTPUT
@@ -55,7 +55,7 @@ describe TopDown::Location do
 
   it "show in source zero-l1" do
     output = String.build do |io|
-      l1.show_in_source(io, source, begin_location: zero)
+      zero.show_in_source(io, source, end_location: l1)
     end
 
     output.should eq <<-OUTPUT

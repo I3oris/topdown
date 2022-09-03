@@ -16,7 +16,7 @@ record TopDown::Location,
   # * *io* : the output io.
   # * *source* : the source string.
   # * *radius* : how many lines above and below to show.
-  # * *begin_location* : if set other than `self`, the function show the range location between `self` and *begin_location*.
+  # * *end_location* : if set other than `self`, the function show the range location between `self` and *end_location*.
   #
   # ```
   # l1 = TopDown::Location.new(5, line_number: 0, line_pos: 5)
@@ -33,22 +33,22 @@ record TopDown::Location,
   # #   1 | puts "Hello 💎"
   # #   2 | puts "Hello ♥"\n
   #
-  # l2.show_in_source(STDOUT, source, begin_location: l1)
+  # l1.show_in_source(STDOUT, source, end_location: l2)
   # #   0 | puts "Hello World"
   # #            ^~~~~~~~~~~~
   # #   1 | puts "Hello 💎"
   # #   2 | puts "Hello ♥"\n
   # ```
-  def show_in_source(io : IO, source : String, radius : Int32 = 2, begin_location : Location = self)
-    diff_location = self - begin_location
+  def show_in_source(io : IO, source : String, radius : Int32 = 2, end_location : Location = self)
+    diff_location = end_location - self
 
     cursor_size = diff_location.pos
     cursor_n = 0
     each_lines_in_radius(source, radius) do |line, i|
       io << line_prelude(i) << line << '\n'
 
-      if begin_location.line_number <= i <= @line_number
-        offset = (i == begin_location.line_number) ? begin_location.line_pos : 0
+      if @line_number <= i <= end_location.line_number
+        offset = (i == @line_number) ? @line_pos : 0
 
         (line_prelude(i).size + offset).times { io << ' ' }
 

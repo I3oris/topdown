@@ -16,12 +16,12 @@ describe TopDown::Parser do
       parser.raise_syntax_error("Syntax Error", at: location)
     end
 
-    TopDown::Spec.expect_raises("Syntax Error", source, TopDown::Location.new(5, line_number: 0, line_pos: 5), begin_location: location) do
+    TopDown::Spec.expect_raises("Syntax Error", source, location, end_location: TopDown::Location.new(5, line_number: 0, line_pos: 5)) do
       parser.raise_syntax_error("Syntax Error", at: location..)
     end
 
     location2 = TopDown::Location.new(3, line_number: 0, line_pos: 3)
-    TopDown::Spec.expect_raises("Syntax Error", source, location2, begin_location: location) do
+    TopDown::Spec.expect_raises("Syntax Error", source, location, end_location: location2) do
       parser.raise_syntax_error("Syntax Error", at: location..location2)
     end
   end

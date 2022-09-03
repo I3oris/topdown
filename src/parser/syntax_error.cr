@@ -5,25 +5,25 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # Use `Parser#raise_syntax_error` to raise a `SyntaxError` directly at parser location.
   class SyntaxError < Exception
-    property message, source, location, begin_location
+    property message, source, location, end_location
 
-    def initialize(@message : String, @source : String, @location : Location, @begin_location : Location = location)
+    def initialize(@message : String, @source : String, @location : Location, @end_location : Location = location)
     end
 
-    # Displays `message` and shows in `source` the range `begin_location`:`location`.
+    # Displays `message` and shows in `source` the range `location`:`end_location`.
     def to_s(io)
       io << message << "\n"
 
-      io << "At [#{@begin_location.line_number}:#{@begin_location.line_pos}]:\n"
-      @location.show_in_source(io, @source, begin_location: @begin_location)
+      io << "At [#{@location.line_number}:#{@location.line_pos}]:\n"
+      @location.show_in_source(io, @source, end_location: @end_location)
     end
 
     # Displays `message` with backtrace and shows in `source` the range `begin_location`:`location`.
     def inspect_with_backtrace(io)
       io << message << " (" << self.class << ")\n"
 
-      io << "At [#{@begin_location.line_number}:#{@begin_location.line_pos}]\n"
-      @location.show_in_source(io, @source, begin_location: @begin_location)
+      io << "At [#{@location.line_number}:#{@location.line_pos}]\n"
+      @location.show_in_source(io, @source, end_location: @end_location)
 
       backtrace?.try &.each do |frame|
         io.print "  from "
@@ -48,12 +48,12 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   # :ditto:
   def raise_syntax_error(message : String, at location : Range(Location, Location), source : String = self.source)
-    raise SyntaxError.new message, source, location.end, location.begin
+    raise SyntaxError.new message, source, location.begin, location.end
   end
 
   # :ditto:
   def raise_syntax_error(message : String, at location : Range(Location, Nil), source : String = self.source)
-    raise SyntaxError.new message, source, self.location, location.begin
+    raise SyntaxError.new message, source, location.begin, self.location
   end
 
   private def error_message(error, got, expected)

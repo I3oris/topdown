@@ -91,7 +91,7 @@ describe TopDown::Parser::Token do
       parser.spec_next_token
     end
     e.location.should eq TopDown::Location.new(4, line_number: 0, line_pos: 4)
-    e.begin_location.should eq TopDown::Location.new(4, line_number: 0, line_pos: 4)
+    e.end_location.should eq TopDown::Location.new(4, line_number: 0, line_pos: 4)
   end
 
   it "raises on bad token with skip" do
@@ -103,7 +103,7 @@ describe TopDown::Parser::Token do
       parser.spec_next_token
     end
     e.location.should eq TopDown::Location.new(12, line_number: 2, line_pos: 3)
-    e.begin_location.should eq TopDown::Location.new(12, line_number: 2, line_pos: 3)
+    e.end_location.should eq TopDown::Location.new(12, line_number: 2, line_pos: 3)
   end
 
   it "gives tokens" do
@@ -154,8 +154,8 @@ describe TopDown::Parser::Token do
     e = expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:name, expected:int") do
       parser.spec_parse_int_with_error!
     end
-    e.location.should eq TopDown::Location.new(10, line_number: 0, line_pos: 10)
-    e.begin_location.should eq TopDown::Location.new(6, line_number: 0, line_pos: 6)
+    e.location.should eq TopDown::Location.new(6, line_number: 0, line_pos: 6)
+    e.end_location.should eq TopDown::Location.new(10, line_number: 0, line_pos: 10)
   end
 
   it "parses not token" do

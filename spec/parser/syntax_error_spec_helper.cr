@@ -7,13 +7,13 @@ module TopDown::Spec
     end
   end
 
-  def self.expect_raises(message, source, location, begin_location = location)
+  def self.expect_raises(message, source, location, end_location = location)
     error = expect_raises(TopDown::Parser::SyntaxError, message) do
       yield
     end
 
     error.location.should eq location
-    error.begin_location.should eq begin_location
+    error.end_location.should eq end_location
     error.source.should eq source
   end
 
