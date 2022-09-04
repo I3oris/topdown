@@ -1,49 +1,207 @@
 require "./syntax_error"
 require "./tokens"
 
-# # Parser:
-# TODO: docs
+# `TopDown::Parser` is the main class to derive for building a parser.
+#
+# ### Basis
+#
+# A minimal parser could be:
+# ```
+# class Parser < TopDown::Parser
+#   root :expression
+#
+#   syntax :expression do
+#   end
+# end
+# ```
+# which will parse anything but EOF.
+#
+# `root` indicate the starting point of parsing, the rest is to do inside `syntax`.
+#
+# Syntax are like functions, in which, any code can be added.
+# Inside it, `parse` & `parse!` can be used to define what to parse.
+#
+# ```
+# syntax :expression do
+#   a = parse('a')
+#   parse(/( )+/)
+#   foo = parse!("foo")
+#
+#   {a, foo}
+# end
+# ```
+#
+# ```
+# "a   foo" # ~> {'a', "foo"}
+# "a   bar" # ~> Unexpected character 'b', expected 'foo'
+# "ab"      # ~> Unexpected character 'b', expected expression
+# ```
 # NOTE:
 # In this documentation, `"foo" # ~> result` is used as a shortcut for
 # `Parser.new("foo").parse # => result`
 #
-# ### Precedence:
-# Example of a `:ternary_if`:
+#
+# In the above, if `parse!("foo")` fail to parse, it raises an error.
+# But `parse('a')` don't raises, instead it use a `break` (`break Fail.new`) to stop the current sequence to be parsed.
+# This failure is caught by the `root :expression`, that why it next raises an exception.
+#
+# This difference is important because is on what is based `TopDown`, using `parse` let a change to the surrounding context to handle the failure, whereas
+# `parse!` permit the raise directly, leading to better errors.
+#
+# For example, using `parse!` above:
 # ```
-# syntax(:expression) do
+# syntax :expression do
+#   a = parse!('a')
+#   parse!(/( )+/)
+#   foo = parse!("foo")
+#
+#   {a, foo}
+# end
+# ```
+#
+# ```
+# "ab" # ~> Unexpected character 'b', expected pattern /( )+/
+# ```
+# Gives a more precise error.
+#
+# ### Repeat, union, maybe
+#
+# `repeat`, `union`, `maybe` allow interesting things to be parsed. They take both a block, in which parse failure can occur.
+#
+# ```
+# syntax :expression do
+#   repeat do
+#     parse('a')
+#     parse!('b')
+#   end
+#   maybe { parse('c') }
+#   parse!('d')
+#
 #   union do
-#     parse(/\d+/, &.to_i)
-#     infix 1, :plus
-#     infix 9, :ternary_if
+#     parse('e')
+#     parse('é')
+#     parse('è')
+#   end
+#   "ok"
+# end
+# ```
+#
+# This is equivalent to parse `/(ab)*c?d[eéè]/`, in a bit more verbose. However, doing so allow to insert code between and retrieve
+# only needed result, storing in array, or to insert some logic.
+#
+# For example:
+# ```
+# syntax :expression do
+#   array = [] of {Char, Char}
+#   repeat do
+#     array << {parse('a'), parse!('b')}
+#   end
+#   have_c = maybe { parse('c') }
+#   parse!('d')
+#
+#   if have_c
+#     e = union do
+#       parse('e')
+#       parse('é')
+#       parse('è')
+#     end
+#   end
+#   {array, e}
+# end
+# ```
+# Here, we store each `ab` in an array and accept the union `'e'|'é'|'è'` only if the optional `'c'` have been parsed.
+# ```
+# "ababd" # ~> {[{'a', 'b'}, {'a', 'b'}], nil}
+# "cde"   # ~> {[], 'e'}
+# "dé"    # ~> Unexpected character 'é', expected 'EOF'
+# "abac"  # # Unexpected character 'c', expected 'b'
+# ```
+#
+# NOTE:
+# When using `repeat`, `union`, and `maybe`, we always use `parse` at first (without exclamation), because they `break` on failure,
+# which is caught by the `repeat`/`maybe`/`union`. They know so they should continue parsing without a failure.
+#
+# ### Infix
+#
+# `infix` can be used inside a union. It permits to parse operators with precedence easily.
+# ```
+# syntax :expression do
+#   union do
+#     parse(/\d+/).to_i
+#     infix(30, :pow)
+#     infix(20, :mul)
+#     infix(20, :div)
+#     infix(10, :add)
+#     infix(10, :sub)
 #   end
 # end
 #
-# infix_syntax(:plus, '+') do |left|
-#   GenericAST.new(left, parse!(:expression))
+# syntax :pow, "**" { left() ** parse!(:expression) }
+# syntax :mul, '*' { left() * parse!(:expression) }
+# syntax :div, '/' { left() / parse!(:expression) }
+# syntax :add, '+' { left() + parse!(:expression) }
+# syntax :sub, '-' { left() - parse!(:expression) }
+# ```
+#
+# Infix are treated specially by the `union`. They are parsed after any other member of the union, the `left()` result is updated each time.
+# They are parsed in function of their precedence (first argument), higher precedence mean grouped first.
+#
+# ```
+# "3*6+6*4" # ~> 42
+# ```
+#
+# ### Precedence:
+#
+# `current_precedence()` is initially zero, it changes when entering in `infix`. This is this value that guide the recursion for parsing operators.
+# Its value can be changed at specific places, so parsing order can be entirely controlled.
+#
+# For example, assuming we want to parse a ternary if `_ ? _ : _` that have a higher precedence that classical operators (e.g. `"1+1?2:3+3"` gets parsed as (`1` + (`1?2:3`)) + `3`.
+#
+# We can do the following:
+# ```
+# syntax(:expression) do
+#   union do
+#     parse(/\d+/).to_i
+#     infix 10, :plus
+#     infix 90, :ternary_if
+#   end
 # end
 #
-# infix_syntax(:ternary_if, '?') do |cond|
+# syntax :plus, '+' do
+#   left() + parse!(:expression)
+# end
+#
+# syntax :ternary_if, '?' do
+#   cond = left()
 #   then_arm = parse!(:expression)
 #   parse!(':')
 #   else_arm = parse!(:expression)
-#   GenericAST.new(cond, then_arm, else_arm)
+#
+#   cond != 0 ? then_arm : else_arm
 # end
 # ```
-# Here the `:ternary_if` have been defined with a higher precedence, so `"1+1?2:3+3"` will be parsed as (`1` + (`1?2:3`)) + `3`.
 #
-# However the above example doesn't parse `"1+1?2+2:3+3"`
-# => raises `"Unexpected character '+', expected ':'"`.
-#
-# This happen because when parsing the `then_arm`, it hit a '+', that have smaller precedence,
-# so the parsing of `:expression` finish, to let the '+' catch it as a left.
-# however, after `then_arm` we expects a ':', so it fails.
-#
-# To solve that without change the precedence of the hole `:ternary_if`, precedence can be set only for the `then_arm`:
 # ```
-# then_arm = parse(:expression, with_precedence: 0)
+# "1+1?2:3+3" # ~> 6
 # ```
 #
-# `with_precedence: 0` means: 'inside the then arm, act as if the `:ternary_if` have a precedence 0'.
+# However the following is not what we except:
+# ```
+# "1+1?2+2:3+3" # => Unexpected character '+', expected ':'
+# ```
+#
+# This happens because the `+` inside the `then_arm` have lower precedence, it wants so
+# let its left with higher precedence finish before parsing itself. So the `then_arm` finish
+# but we except a `:` right after, so it fails (got '+', expected ':').
+#
+# To fix that, we can set the `current_precedence()` for the `then arm` to 0:
+# ```
+# then_arm = parse!(:expression, with_precedence: 0)
+# ```
+# ```
+# "1+1?2+2:3+3" # ~> 8
+# ```
+#
 abstract class TopDown::Parser < TopDown::CharReader
   # Parses the source contained in this parser.
   #
@@ -251,7 +409,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # * an one-value `ArrayLiteral`, to parse a `Token`, returns the value of matched token.
   #  NOTE: the type of token should correspond to the type of tokens defined with `Parser.tokens`.
   # * a `Call`:
-  #   * `|`: to parse an union, see `Parser.union`.
+  #   * `|`: to parse a union, see `Parser.union`.
   #   * `any`, to parse any `Char` except EOF.
   #   * `[any]`, to parse any token except EOF.
   #   * `not(parselet)`, to parse any char, except if *parselet* matches.
@@ -347,7 +505,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # *at*: indicates where the error is raised, it can be a `Location`, `Range(Location, Location)` or `Range(Location, Nil)`.
   #
   # #### failure:
-  # Because it raises, this shouldn't be used as first *parselet* inside an `union`, `maybe`, `repeat` and `syntax`.
+  # Because it raises, this shouldn't be used as first *parselet* inside a `union`, `maybe`, `repeat` and `syntax`.
   # This would raises before the surrounding context could try an other solution.
   #
   # However, this should generally be used everywhere else, to allow more localized errors.
@@ -403,7 +561,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # Each time a `union` member is successfully parsed, `left` value is updated.
   #
-  # As an `union` continue parsing `infix` until possible,
+  # As a `union` continue parsing `infix` until possible,
   # `left` allows to retrieve the subsequent results.
   #
   # ```
@@ -509,10 +667,10 @@ abstract class TopDown::Parser < TopDown::CharReader
   # If all members of the union fail, the union is considered to fail, and will `break` the current sequence
   #
   # #### infix:
-  # `infix` members could be added to an union.
+  # `infix` members could be added to a union.
   #
   # `infix` members are always treated after each normal members, in the order there are defined.
-  # An union act as follow:
+  # A union act as follow:
   # 1) Tries to parse each normal member.
   # 2) When one succeed, store the result. `left` allows to retrieve this result.
   # 3) Tries to parse `infix` members whose precedence is greater than current precedence (initial is zero).

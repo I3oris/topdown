@@ -146,8 +146,8 @@ Read the [API documentation](https://i3oris.github.io/topdown/).
 
 ## Roadmap
 
-- [ ] Write docs (in progress)
-- [ ] Write spec (in progress)
+- [ ] Write docs (almost complete)
+- [ ] Write spec (almost complete)
 - [x] Write readme
 - [ ] Write examples (in progress)
 - [x] Write benchmarks
