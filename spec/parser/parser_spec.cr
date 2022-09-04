@@ -186,7 +186,7 @@ describe TopDown::Parser do
     parser.location.should eq zero
 
     parser.source = "§"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected patern /b+/") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected pattern /b+/") do
       parser.spec_parse_rgx_b!
     end
     parser.location.should eq zero
@@ -208,7 +208,7 @@ describe TopDown::Parser do
     parser.location.should eq zero
 
     parser.source = "§"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected patern /(f)+/") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected pattern /(f)+/") do
       parser.spec_parse_rgx_f_with_block!
     end
     parser.location.should eq zero
@@ -218,14 +218,14 @@ describe TopDown::Parser do
     parser.location.should eq zero
 
     parser.source = "§"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected patern /a+/i") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected pattern /a+/i") do
       parser.spec_parse_rgx_i!
     end
     parser.location.should eq zero
 
     parser.source = "bbb§"
     # TODO improve this error:
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character 'b', expected patern /b+\\nc+/m") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character 'b', expected pattern /b+\\nc+/m") do
       parser.spec_parse_rgx_m!
     end
     parser.location.should eq zero
