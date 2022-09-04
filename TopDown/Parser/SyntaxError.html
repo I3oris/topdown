@@ -56,6 +56,11 @@
       
         <ul>
   
+  <li class=" " data-id="topdown/TopDown/AST" data-name="topdown::ast">
+      <a href="../../TopDown/AST.html">AST</a>
+      
+    </li>
+  
   <li class=" " data-id="topdown/TopDown/CharReader" data-name="topdown::charreader">
       <a href="../../TopDown/CharReader.html">CharReader</a>
       
@@ -151,7 +156,7 @@
   </h2>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L7" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L7" target="_blank">
         parser/syntax_error.cr
       </a>
     
@@ -173,7 +178,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28message%3AString%2Csource%3AString%2Clocation%3ALocation%2Cbegin_location%3ALocation%3Dlocation%29-class-method" class="signature"><strong>.new</strong>(message : String, source : String, location : Location, begin_location : Location = location)</a>
+        <a href="#new%28message%3AString%2Csource%3AString%2Clocation%3ALocation%2Cend_location%3ALocation%3Dlocation%29-class-method" class="signature"><strong>.new</strong>(message : String, source : String, location : Location, end_location : Location = location)</a>
         
       </li>
     
@@ -194,19 +199,19 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#begin_location%3ATopDown%3A%3ALocation-instance-method" class="signature"><strong>#begin_location</strong> : TopDown::Location</a>
+        <a href="#end_location%3ATopDown%3A%3ALocation-instance-method" class="signature"><strong>#end_location</strong> : TopDown::Location</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#begin_location%3D%28begin_location%3ATopDown%3A%3ALocation%29-instance-method" class="signature"><strong>#begin_location=</strong>(begin_location : TopDown::Location)</a>
+        <a href="#end_location%3D%28end_location%3ATopDown%3A%3ALocation%29-instance-method" class="signature"><strong>#end_location=</strong>(end_location : TopDown::Location)</a>
         
       </li>
     
       <li class="entry-summary">
         <a href="#inspect_with_backtrace%28io%29-instance-method" class="signature"><strong>#inspect_with_backtrace</strong>(io)</a>
         
-          <div class="summary"><p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> with backtrace and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code><a href="../../TopDown/Parser/SyntaxError.html#begin_location%3ATopDown%3A%3ALocation-instance-method">#begin_location</a></code>:<code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>.</p></div>
+          <div class="summary"><p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> with backtrace and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code>begin_location</code>:<code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>.</p></div>
         
       </li>
     
@@ -243,7 +248,7 @@
       <li class="entry-summary">
         <a href="#to_s%28io%29-instance-method" class="signature"><strong>#to_s</strong>(io)</a>
         
-          <div class="summary"><p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code><a href="../../TopDown/Parser/SyntaxError.html#begin_location%3ATopDown%3A%3ALocation-instance-method">#begin_location</a></code>:<code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>.</p></div>
+          <div class="summary"><p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>:<code><a href="../../TopDown/Parser/SyntaxError.html#end_location%3ATopDown%3A%3ALocation-instance-method">#end_location</a></code>.</p></div>
         
       </li>
     
@@ -297,18 +302,18 @@
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(message:String,source:String,location:Location,begin_location:Location=location)-class-method">
+    <div class="entry-detail" id="new(message:String,source:String,location:Location,end_location:Location=location)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(message : String, source : String, location : <a href="../../TopDown/Location.html">Location</a>, begin_location : <a href="../../TopDown/Location.html">Location</a> = location)
+        def self.<strong>new</strong>(message : String, source : String, location : <a href="../../TopDown/Location.html">Location</a>, end_location : <a href="../../TopDown/Location.html">Location</a> = location)
 
-        <a class="method-permalink" href="#new%28message%3AString%2Csource%3AString%2Clocation%3ALocation%2Cbegin_location%3ALocation%3Dlocation%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28message%3AString%2Csource%3AString%2Clocation%3ALocation%2Cend_location%3ALocation%3Dlocation%29-class-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L10" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L10" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -327,34 +332,34 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="begin_location:TopDown::Location-instance-method">
+    <div class="entry-detail" id="end_location:TopDown::Location-instance-method">
       <div class="signature">
         
-        def <strong>begin_location</strong> : <a href="../../TopDown/Location.html">TopDown::Location</a>
+        def <strong>end_location</strong> : <a href="../../TopDown/Location.html">TopDown::Location</a>
 
-        <a class="method-permalink" href="#begin_location%3ATopDown%3A%3ALocation-instance-method">#</a>
+        <a class="method-permalink" href="#end_location%3ATopDown%3A%3ALocation-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="begin_location=(begin_location:TopDown::Location)-instance-method">
+    <div class="entry-detail" id="end_location=(end_location:TopDown::Location)-instance-method">
       <div class="signature">
         
-        def <strong>begin_location=</strong>(begin_location : <a href="../../TopDown/Location.html">TopDown::Location</a>)
+        def <strong>end_location=</strong>(end_location : <a href="../../TopDown/Location.html">TopDown::Location</a>)
 
-        <a class="method-permalink" href="#begin_location%3D%28begin_location%3ATopDown%3A%3ALocation%29-instance-method">#</a>
+        <a class="method-permalink" href="#end_location%3D%28end_location%3ATopDown%3A%3ALocation%29-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -369,13 +374,13 @@
       
         <div class="doc">
           
-          <p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> with backtrace and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code><a href="../../TopDown/Parser/SyntaxError.html#begin_location%3ATopDown%3A%3ALocation-instance-method">#begin_location</a></code>:<code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>.</p>
+          <p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> with backtrace and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code>begin_location</code>:<code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L22" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L22" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -391,7 +396,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -407,7 +412,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -423,7 +428,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -439,7 +444,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -455,7 +460,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -471,7 +476,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -486,13 +491,13 @@
       
         <div class="doc">
           
-          <p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code><a href="../../TopDown/Parser/SyntaxError.html#begin_location%3ATopDown%3A%3ALocation-instance-method">#begin_location</a></code>:<code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>.</p>
+          <p>Displays <code><a href="../../TopDown/Parser/SyntaxError.html#message%3AString%3F-instance-method">#message</a></code> and shows in <code><a href="../../TopDown/Parser/SyntaxError.html#source%3AString-instance-method">#source</a></code> the range <code><a href="../../TopDown/Parser/SyntaxError.html#location%3ATopDown%3A%3ALocation-instance-method">#location</a></code>:<code><a href="../../TopDown/Parser/SyntaxError.html#end_location%3ATopDown%3A%3ALocation-instance-method">#end_location</a></code>.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/46a0f3044ec14d6b654387cff0c42c036023091d/src/parser/syntax_error.cr#L14" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/1dbc74f8a92281e822c4e391b7454ffec0c1ad73/src/parser/syntax_error.cr#L14" target="_blank">View source</a>]
         
       </div>
     </div>
