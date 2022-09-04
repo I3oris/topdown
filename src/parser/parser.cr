@@ -126,6 +126,22 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
+  private macro consume_range(range)
+    if peek_char.in? {{range}}
+      next_char
+    else
+      break Fail.new
+    end
+  end
+
+  private macro consume_range!(range, error = nil, at = nil)
+    if peek_char.in? {{range}}
+      next_char
+    else
+      raise_syntax_error error_message({{error}} || ->hook_unexpected_range_char(Char, Range(Char, Char)), got: peek_char, expected: {{range}}), at: ({{at || "self.location".id}})
+    end
+  end
+
   private macro consume_string(string)
     skip_chars
     capture do
@@ -230,6 +246,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # * a `CharLiteral`, to parse exactly one `Char`
   # * a `StringLiteral`, to parse an exact `String`
   # * a `RegexLiteral`, to parse the given pattern, returns the matched `String`. ($~, $0, $1, ... could be used after)
+  # * a `RangeLiteral(Char, Char)`, to parse any `Char` between the range
   # * a `SymbolLiteral`, to parse an entire `syntax`, returns the result of the syntax.
   # * an one-value `ArrayLiteral`, to parse a `Token`, returns the value of matched token.
   #  NOTE: the type of token should correspond to the type of tokens defined with `Parser.tokens`.
@@ -281,6 +298,9 @@ abstract class TopDown::Parser < TopDown::CharReader
 
     {% if parselet.is_a? CharLiteral %}
       %result = consume_char({{parselet}})
+
+    {% elsif parselet.is_a? RangeLiteral %}
+      %result = consume_range({{parselet}})
 
     {% elsif parselet.is_a? StringLiteral %}
       %result = consume_string({{parselet}})
@@ -334,6 +354,9 @@ abstract class TopDown::Parser < TopDown::CharReader
   macro parse!(parselet, error = nil, at = nil, with_precedence = nil, &block)
     {% if parselet.is_a? CharLiteral %}
       %result = consume_char!({{parselet}}, error: {{error}}, at: {{at}})
+
+    {% elsif parselet.is_a? RangeLiteral %}
+      %result = consume_range!({{parselet}}, error: {{error}}, at: {{at}})
 
     {% elsif parselet.is_a? StringLiteral %}
       %result = consume_string!({{parselet}}, error: {{error}}, at: {{at}})

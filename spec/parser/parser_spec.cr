@@ -58,6 +58,52 @@ describe TopDown::Parser do
     parser.spec_parse_ch_any.should be_a TopDown::Parser::Fail
   end
 
+  it "parses char range" do
+    parser = TopDown::Spec.char_range_parser
+    parser.source = "adC[7E"
+    parser.spec_parse_range.should eq 'a'
+    parser.spec_parse_range!.should eq 'd'
+    parser.spec_parse_range_with_error!.should eq 'C'
+    parser.spec_parse_range_with_error_proc!.should eq '['
+    parser.spec_parse_range_with_block.should eq({"Custom return", '7'})
+    parser.spec_parse_range_with_block!.should eq({"Custom return", 'E'})
+  end
+
+  it "fails parsing char range" do
+    parser = TopDown::Spec.char_range_parser
+    parser.source = "d"
+    parser.spec_parse_range.should be_a TopDown::Parser::Fail
+    parser.location.should eq zero
+
+    parser.source = "e"
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character 'e', expected any in 'a-e'") do
+      parser.spec_parse_range!
+    end
+    parser.location.should eq zero
+
+    parser.source = "b"
+    expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:b, expected:A-C") do
+      parser.spec_parse_range_with_error!
+    end
+    parser.location.should eq zero
+
+    parser.source = "("
+    expect_raises(TopDown::Parser::SyntaxError, "Custom Error Proc: got:(, expected:'['..']'") do
+      parser.spec_parse_range_with_error_proc!
+    end
+    parser.location.should eq zero
+
+    parser.source = "§"
+    parser.spec_parse_range_with_block.should be_a TopDown::Parser::Fail
+    parser.location.should eq zero
+
+    parser.source = "@"
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '@', expected any in 'A-Z'") do
+      parser.spec_parse_range_with_block!
+    end
+    parser.location.should eq zero
+  end
+
   it "parses string" do
     parser = TopDown::Spec.string_parser
     parser.source = "abcdefghijklmnopqr*+-"

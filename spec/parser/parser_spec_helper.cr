@@ -24,6 +24,17 @@ module TopDown::Spec
     def_parse_wrapper(:ch_any) { parse(any) }
   end
 
+  class CharRangeParser < ParserBase
+    def_parse_wrapper :range { parse('a'..'c') }
+    def_parse_wrapper :range! { parse!('a'...'e') }
+    def_parse_wrapper :range_with_error! { parse!('A'..'C', error: "Custom Error: got:%{got}, expected:%{expected}") }
+    def_parse_wrapper :range_with_error_proc! do
+      parse!('['..']', error: ->(got : Char, expected : Range(Char, Char)) { "Custom Error Proc: got:#{got}, expected:#{expected}" })
+    end
+    def_parse_wrapper :range_with_block { parse('0'..'9') { |ch| {"Custom return", ch} } }
+    def_parse_wrapper :range_with_block! { parse!('A'..'Z') { |ch| {"Custom return", ch} } }
+  end
+
   class StringParser < ParserBase
     def_parse_wrapper :str_abc { parse("abc") }
     def_parse_wrapper :str_def! { parse!("def") }
@@ -157,6 +168,7 @@ module TopDown::Spec
   end
 
   class_getter char_parser = CharParser.new("")
+  class_getter char_range_parser = CharRangeParser.new("")
   class_getter string_parser = StringParser.new("")
   class_getter regex_parser = RegexParser.new("")
   class_getter syntax_parser = SyntaxParser.new("")

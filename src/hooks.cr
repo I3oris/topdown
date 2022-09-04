@@ -5,6 +5,11 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   # TODO: docs
+  def hook_unexpected_range_char(got : Char, expected : Range(Char, Char))
+    "Unexpected character '#{dump_in_error(got)}', expected any in '#{dump_in_error(expected)}'"
+  end
+
+  # TODO: docs
   def hook_unexpected_token(got : Token?, expected : TokenType) forall Token, TokenType
     "Unexpected token '#{dump_in_error(got)}', expected '#{dump_in_error(expected)}'"
   end

@@ -71,6 +71,8 @@ abstract class TopDown::Parser < TopDown::CharReader
       "EOF"
     when Char
       obj.to_s
+    when Range
+      "#{obj.begin}-#{obj.end}"
     when String
       obj
     when Regex
