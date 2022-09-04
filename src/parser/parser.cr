@@ -348,7 +348,7 @@ abstract class TopDown::Parser < TopDown::CharReader
       %result = consume_token!({{parselet[0]}}, error: {{error}}, at: {{at}})
 
     {% elsif parselet.is_a? Call && parselet.name == "|" %}
-      %result = simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence}})
+      %result = simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence || "_precedence_".id}})
 
     {% else %}
       {% raise "Unsupported ASTNode #{parselet.class_name} : #{parselet}" %}
