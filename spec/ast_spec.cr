@@ -28,7 +28,7 @@ describe TopDown::AST do
     TopDown::Spec.children_should_be(ast, a, b, c, d)
 
     ast = TopDown::Spec::MixedAST.new a: "foo", b: [a, b] of TopDown::AST
-    TopDown::Spec.children_should_be(ast, a, b)
+    TopDown::Spec.children_should_be(ast, a, b, nil)
 
     ast = TopDown::Spec::MixedAST.new a: "foo", b: [a, b] of TopDown::AST, d: c
     TopDown::Spec.children_should_be(ast, a, b, c)
@@ -38,6 +38,9 @@ describe TopDown::AST do
 
     ast = TopDown::Spec::WithBlockAST.new(a: a)
     TopDown::Spec.children_should_be(ast, a)
+
+    ast = TopDown::Spec::EnumerableMixedAST.new a: ["1"], b: ["2", b.as(TopDown::AST), nil], c: {c, "3"}, d: d, e: [a] of TopDown::AST
+    TopDown::Spec.children_should_be(ast, "2", b, nil, c, "3", d, a)
   end
 
   it "creates ast" do
@@ -98,17 +101,17 @@ describe TopDown::AST do
   it "set location while creating ast" do
     ast_parser = TopDown::Spec.ast_parser
     ast_parser.source = <<-SOURCE
-        multi(
-          unary(empty),
-          value(foo, 0, c),
-          enumerable(
-            default_value,
-            mixed(bar, empty, empty),
-            inherit(empty, empty),
-            empty
-          )
+      multi(
+        unary(empty),
+        value(foo, 0, c),
+        enumerable(
+          default_value,
+          mixed(bar, empty, empty),
+          inherit(empty, empty),
+          empty
         )
-        SOURCE
+      )
+      SOURCE
     ast = ast_parser.spec_parse_ast
 
     m = ast.as(TopDown::Spec::MultiAST)
@@ -122,5 +125,38 @@ describe TopDown::AST do
     mx = e.b[0].as(TopDown::Spec::MixedAST)
     mx.location.should eq TopDown::Location.new(80, line_number: 5, line_pos: 4)
     mx.end_location.should eq TopDown::Location.new(104, line_number: 5, line_pos: 28)
+  end
+
+  it "to_s" do
+    ast_parser = TopDown::Spec.ast_parser
+    ast_parser.source = <<-SOURCE
+      multi(
+        unary(empty),
+        value(foo, 0, c),
+        enumerable(
+          default_value,
+          mixed(bar, empty, empty),
+          inherit(empty, empty),
+          empty
+        )
+      )
+      SOURCE
+    ast = ast_parser.spec_parse_ast
+    ast.to_s.should eq <<-TO_S
+      MultiAST
+        UnaryAST
+          EmptyAST
+        ValueAST(a: "foo", b: 0, c: 'c')
+        EnumerableAST
+          DefaultValueAST(a: "a", b: 0, c: 'c')
+          MixedAST(a: "bar", c: 'c')
+            EmptyAST
+            EmptyAST
+            nil
+          InheritAST
+            EmptyAST
+            EmptyAST
+          EmptyAST
+      TO_S
   end
 end

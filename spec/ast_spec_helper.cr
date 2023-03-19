@@ -1,31 +1,31 @@
 require "./spec_helper"
 
 module TopDown::Spec
-  TopDown.def_ast EmptyAST
-  TopDown.def_ast UnaryAST, a : AST
-  TopDown.def_ast MultiAST, a : AST, b : AST, c : AST
-  TopDown.def_ast ValueAST, a : String, b : Int32, c : Char
-  TopDown.def_ast DefaultValueAST, a = "a", b = 0, c = 'c'
-  TopDown.def_ast EnumerableAST, a : Array(AST), b : Tuple(AST, AST), c : Slice(AST)
-  TopDown.def_ast MixedAST, a : String, b : Array(AST), c = 'c', d : AST? = nil
-  TopDown.def_ast InheritAST < UnaryAST, a : AST, b : AST
-  TopDown.def_ast WithBlockAST, a : AST do
+  AST.def_ast EmptyAST
+  AST.def_ast UnaryAST, a : AST
+  AST.def_ast MultiAST, a : AST, b : AST, c : AST
+  AST.def_ast ValueAST, a : String, b : Int32, c : Char
+  AST.def_ast DefaultValueAST, a = "a", b = 0, c = 'c'
+  AST.def_ast EnumerableAST, a : Array(AST), b : Tuple(AST, AST), c : Slice(AST)
+  AST.def_ast MixedAST, a : String, b : Array(AST), c = 'c', d : AST? = nil
+  UnaryAST.def_ast InheritAST, a : AST, b : AST
+  AST.def_ast WithBlockAST, a : AST do
     def foo
     end
   end
-
-  class CustomAST
-  end
-
-  TopDown.def_ast WithCustomAST < CustomAST, a : String, b : Array(CustomAST), c = 'c', d : CustomAST? = nil
+  AST.def_ast EnumerableMixedAST,
+    a : Array(String),
+    b : Array(AST|String|Nil),
+    c : Tuple(AST, String),
+    d : Array(String)|AST,
+    e : Array(AST)|Nil
 
   def children_should_be(ast, *children)
-    ast.children.should eq children.to_a
-    i = 0
+    got_children = [] of typeof(ast.each_child { |c| break c })
     ast.each_child do |child|
-      child.should eq children[i]
-      i += 1
+      got_children << child
     end
+    got_children.should eq children.to_a
   end
 
   class ASTParser < TopDown::Parser
@@ -71,13 +71,13 @@ module TopDown::Spec
     end
 
     syntax :enumerable, "enumerable(" do
-      a = parse!(:ast).as(TopDown::AST)
+      a = parse!(:ast).as(AST)
       parse!(',')
-      b = parse!(:ast).as(TopDown::AST)
+      b = parse!(:ast).as(AST)
       parse!(',')
-      c = parse!(:ast).as(TopDown::AST)
+      c = parse!(:ast).as(AST)
       parse!(',')
-      d = parse!(:ast).as(TopDown::AST)
+      d = parse!(:ast).as(AST)
       parse!(')')
 
       ast(EnumerableAST, [a], {b, c}, Slice.new(1) { d })
@@ -86,9 +86,9 @@ module TopDown::Spec
     syntax :mixed, "mixed(" do
       a = parse!(/\w+/)
       parse!(',')
-      b = parse!(:ast).as(TopDown::AST)
+      b = parse!(:ast).as(AST)
       parse!(',')
-      c = parse!(:ast).as(TopDown::AST)
+      c = parse!(:ast).as(AST)
       parse!(')')
 
       ast(MixedAST, a, [b, c], d: nil)
