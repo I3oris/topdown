@@ -921,6 +921,25 @@ abstract class TopDown::Parser < TopDown::CharReader
     {{ yield }}
   end
 
+  # Allows to match a word only if a non-alphanumeric follows
+  #
+  # ```
+  # parse("foo") { end_word }
+  #
+  # Equivalent to: (but faster)
+  # parse(/foo\b/) { nil }
+  # ```
+  # ```
+  # "foo bar" # ~> "foo"
+  # "foobar"  # ~> Unexpected character 'b', expected 'EOF'
+  # ```
+  #
+  # NOTE: end_word returns `nil`.
+  macro end_word
+    break Fail.new if peek_char.alphanumeric?
+    nil
+  end
+
   # Appends a '\A' to begin of *regex* (forcing the regex to match at start)
   # Equivalent to `/\A#{regex}/` but done at compile time
   private macro regex_match_start(regex)

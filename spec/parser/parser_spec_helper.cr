@@ -44,6 +44,7 @@ module TopDown::Spec
     end
     def_parse_wrapper :str_mno_with_block { parse("mno") { |str| {"Custom return", str} } }
     def_parse_wrapper :str_pqr_with_block! { parse!("pqr") { |str| {"Custom return", str} } }
+    def_parse_wrapper :str_with_end_word { parse("stu") { end_word } }
     def_parse_wrapper :str_empty { parse("") }
     def_parse_wrapper :str_not_abc { parse(not("abc")) }
   end

@@ -106,16 +106,17 @@ describe TopDown::Parser do
 
   it "parses string" do
     parser = TopDown::Spec.string_parser
-    parser.source = "abcdefghijklmnopqr*+-"
+    parser.source = "abcdefghijklmnopqrstu*+-"
     parser.spec_parse_str_abc.should eq "abc"
     parser.spec_parse_str_def!.should eq "def"
-    parser.spec_parse_str_empty.should eq ""
     parser.spec_parse_str_ghi_with_error!.should eq "ghi"
     parser.spec_parse_str_jkl_with_error_proc!.should eq "jkl"
     parser.spec_parse_str_mno_with_block.should eq({"Custom return", "mno"})
     parser.spec_parse_str_pqr_with_block!.should eq({"Custom return", "pqr"})
+    parser.spec_parse_str_with_end_word.should be_nil
+    parser.spec_parse_str_empty.should eq ""
     parser.spec_parse_str_not_abc.should be_nil
-    parser.location.should eq TopDown::Location.new(19, line_number: 0, line_pos: 19)
+    parser.location.should eq TopDown::Location.new(22, line_number: 0, line_pos: 22)
   end
 
   it "fails parsing string" do
@@ -129,10 +130,6 @@ describe TopDown::Parser do
       parser.spec_parse_str_def!
     end
     # parser.location.should eq zero # PENDING
-
-    parser.source = "§"
-    parser.spec_parse_str_empty.should eq ""
-    parser.location.should eq zero
 
     parser.source = "gh§"
     expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:§, expected:ghi") do
@@ -155,6 +152,14 @@ describe TopDown::Parser do
       parser.spec_parse_str_pqr_with_block!
     end
     # parser.location.should eq zero # PENDING
+
+    parser.source = "stuhello"
+    parser.spec_parse_str_with_end_word.should be_a TopDown::Parser::Fail
+    # parser.location.should eq zero # PENDING
+
+    parser.source = "§"
+    parser.spec_parse_str_empty.should eq ""
+    parser.location.should eq zero
 
     parser.source = "abc"
     parser.spec_parse_str_not_abc.should be_a TopDown::Parser::Fail
