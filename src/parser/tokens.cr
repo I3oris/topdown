@@ -1,15 +1,4 @@
 abstract class TopDown::Parser < TopDown::CharReader
-  # A type that can be returned when using [`Parser.tokens`](../Parser.html#tokens(&block)-macro).
-  #
-  # It's composed from a generic `type` (usually a `Symbol` or an `Enum`), and a `value`.
-  # ```
-  # tokens do
-  #   parse('+') { Token.new(:"+") }
-  #   parse(/\w+/) { Token.new(:name, $0) }
-  #   parse('*') { Token(MyTokenTypeEnum).new(:STAR) }
-  # end
-  # ```
-
   record Token(ValueType), name : Symbol, value : ValueType do
     # Display the token.
     #
@@ -27,10 +16,6 @@ abstract class TopDown::Parser < TopDown::CharReader
       to_s(io)
     end
   end
-
-  # macro inherited
-  #   private MACRO_TOKENS_MAP = {} of MacroId => StringLiteral
-  # end
 
   private def next_token?
     {% raise "No tokens definition found, use 'TopDown::Parser.tokens' macro to define tokens" %}
