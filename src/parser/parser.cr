@@ -843,7 +843,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   struct Fail
   end
 
-  private def handle_fail(*args)
+  private def handle_fail(*args, &)
     yield *args
   end
 
