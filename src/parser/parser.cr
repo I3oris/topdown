@@ -908,7 +908,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # "Hello World" # ~> "HelloWorld"
   # ```
   macro partial_capture(&block)
-    {% raise "partial_capture should have one block argument" unless block.args[0] %}
+    {% raise "partial_capture should have one block argument" if !block || block.args.size != 1 %}
     {{block.args[0].id}} = String::Builder.new
     {{ yield }}
     {{block.args[0].id}}.to_s
