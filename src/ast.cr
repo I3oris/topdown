@@ -1,3 +1,5 @@
+require "./char_reader"
+
 module TopDown
   # TODO docs
   abstract class AST
