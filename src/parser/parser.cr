@@ -244,7 +244,9 @@ abstract class TopDown::Parser < TopDown::CharReader
       handle_fail do
         prefixs = Tuple.new({% for p in prefixs %} parse({{p}}), {% end %})
 
-        handle_fail(*prefixs) {{block}}
+        {% if block %}
+          handle_fail(*prefixs) {{block}}
+        {% end %}
       end
     end
   end

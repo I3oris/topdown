@@ -259,7 +259,7 @@ describe TopDown::Parser do
     parser.spec_parse_syn_with_block.should eq({"Custom return", {a: 'a', b: "bb", c: "ccc"}})
     parser.spec_parse_syn_with_block!.should eq({"Custom return", {a: 'a', b: "bb", c: "cc"}})
 
-    parser.spec_parse_syn_empty.should be_nil
+    parser.spec_parse_syn_empty.should eq(Tuple.new)
     parser.spec_parse_syn_with_prefix.should eq({a: 'a', b: "bb", c: "c"})
     parser.spec_parse_syn_blockless.should eq({'a', "bb", "cc", ';'})
   end
@@ -299,7 +299,7 @@ describe TopDown::Parser do
     # parser.location.should eq zero # PENDING
 
     parser.source = "§"
-    parser.spec_parse_syn_empty.should be_nil
+    parser.spec_parse_syn_empty.should eq(Tuple.new)
     parser.location.should eq zero
 
     parser.source = "abb§"

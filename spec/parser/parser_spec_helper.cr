@@ -87,13 +87,13 @@ module TopDown::Spec
       {a: a, b: b, c: c}
     end
 
-    syntax(:empty_syntax) { }
+    syntax(:empty_syntax)
     syntax(:syntax_with_prefix, 'a', "bb", /c+/) do |a, b, c|
       parse!(';')
       {a: a, b: b, c: c}
     end
 
-    syntax(:blockless_syntax, 'a', "bb", /c+/, ';') { |a, b, c, d| {a, b, c, d} } # TODO: make it really block less!
+    syntax(:blockless_syntax, 'a', "bb", /c+/, ';')
   end
 
   class SkipParser < ParserBase
