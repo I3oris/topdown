@@ -15,10 +15,10 @@ module TopDown::Spec
   end
   AST.def_ast EnumerableMixedAST,
     a : Array(String),
-    b : Array(AST|String|Nil),
+    b : Array(AST | String | Nil),
     c : Tuple(AST, String),
-    d : Array(String)|AST,
-    e : Array(AST)|Nil
+    d : Array(String) | AST,
+    e : Array(AST) | Nil
 
   def children_should_be(ast, *children)
     got_children = [] of typeof(ast.each_child { |c| break c })

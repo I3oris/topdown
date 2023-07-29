@@ -6,9 +6,9 @@ module TopDown::Spec
   class BaseTokenParser < TopDown::Parser
     syntax(:int) do
       capture do
-        parse('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9')
+        parse('1'..'9')
         repeat do
-          parse('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9')
+          parse('0'..'9')
         end
       end
     end
@@ -19,11 +19,11 @@ module TopDown::Spec
     end
 
     macro def_parse_wrapper(parselet, def_name, error)
-      def spec_parse_{{def_name.id}}
+      def spec_parse_{{def_name.id}}(_precedence_ = 0)
         handle_fail { parse({{parselet}}) }
       end
 
-      def spec_parse_{{def_name.id}}_with_error!
+      def spec_parse_{{def_name.id}}_with_error!(_precedence_ = 0)
         handle_fail { parse!({{parselet}}, error: {{error}}) }
       end
     end
@@ -31,19 +31,19 @@ module TopDown::Spec
 
   class TokenParser < BaseTokenParser
     tokens do
-      parse('+') { Token.new(:"+") }
-      parse('*') { Token.new(:"*") }
-      parse('=') { Token.new(:"=") }
-      parse(:int) { |v| Token.new(:int, v) }
-      parse(/\w+/) { Token.new(:name, $0) }
+      token("+")
+      token("*")
+      token("=")
+      token("int", :int, &.to_i)
+      token("name", /\w+/) { $0 }
     end
 
-    def_parse_wrapper([:"+"], :plus, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper([:"*"], :star, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper([:"="], :eq, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper([:int], :int, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper([:name], :name, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper(not([:name]), :not_name, "Custom Error: got:%{got}, expected:%{expected}")
+    def_parse_wrapper(["+"], :plus, "Custom Error: got:%{got}, expected:%{expected}")
+    def_parse_wrapper(["*"], :star, "Custom Error: got:%{got}, expected:%{expected}")
+    def_parse_wrapper(["="], :eq, "Custom Error: got:%{got}, expected:%{expected}")
+    def_parse_wrapper(["int"], :int, "Custom Error: got:%{got}, expected:%{expected}")
+    def_parse_wrapper(["name"], :name, "Custom Error: got:%{got}, expected:%{expected}")
+    def_parse_wrapper(not(["name"]), :not_name, "Custom Error: got:%{got}, expected:%{expected}")
     def_parse_wrapper([any], :any, "Custom Error: got:%{got}, expected:%{expected}")
   end
 
@@ -55,59 +55,42 @@ module TopDown::Spec
 
   class TokenParserWithEOF < TokenParser
     tokens do
-      parse('+') { Token.new(:"+") }
-      parse('*') { Token.new(:"*") }
-      parse('=') { Token.new(:"=") }
-      parse(:int) { |v| Token.new(:int, v) }
-      parse(/\w+/) { Token.new(:name, $0) }
-      parse('\0') { Token.new(:EOF) }
+      token("+")
+      token("*")
+      token("=")
+      token("int", :int, &.to_i)
+      token("name", /\w+/) { $0 }
+      token("EOF", '\0')
     end
 
-    def_parse_wrapper([:EOF], :eof, "Custom Error: got:%{got}, expected:%{expected}")
+    def_parse_wrapper(["EOF"], :eof, "Custom Error: got:%{got}, expected:%{expected}")
   end
 
-  enum CustomTokenType
-    PLUS
-    STAR
-    EQ
-    INT
-    NAME
-  end
-
-  struct CustomToken
-    getter value
-
-    def initialize(@type : CustomTokenType, @value : Int32 | String? = nil)
-    end
-
-    def is?(type : CustomTokenType)
-      @type == type
-    end
-  end
-
-  class CustomTokenParser < BaseTokenParser
+  class DocsTokenParser < TokenParser
     tokens do
-      parse('+') { CustomToken.new(:PLUS) }
-      parse('*') { CustomToken.new(:STAR) }
-      parse('=') { CustomToken.new(:EQ) }
-      parse(:int) { |v| CustomToken.new(:INT, v.to_i) }
-      parse(/\w+/) { CustomToken.new(:NAME, $0) }
+      token("+")
+      token("-")
+      token("**")
+      token("*")
+      token("/")
+      token("hey")
+      token("new_line", '\n')
+      token("int", /\d+/, &.to_i)
+      token("string", :tk_string, &.itself)
     end
 
-    skip do
-      parse(' ' | '\t' | '\n')
-    end
+    skip { parse(' ') }
 
-    def_parse_wrapper([:PLUS], :plus, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper([:STAR], :star, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper([:EQ], :eq, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper([:INT], :int, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper([:NAME], :name, "Custom Error: got:%{got}, expected:%{expected}")
-    # def_parse_wrapper([:NAME], :eof, "Custom Error: got:%{got}, expected:%{expected}")
+    syntax(:tk_string, '"') do
+      partial_capture do |io|
+        repeat { io << parse(not('"')) }
+        parse!('"')
+      end
+    end
   end
 
   class_getter token_parser = TokenParser.new("")
   class_getter token_parser_with_skip = TokenParserWithSkip.new("")
   class_getter token_parser_with_eof = TokenParserWithEOF.new("")
-  class_getter custom_token_parser = CustomTokenParser.new("")
+  class_getter docs_token_parser = DocsTokenParser.new("")
 end

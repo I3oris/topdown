@@ -77,8 +77,8 @@ abstract class TopDown::Parser < TopDown::CharReader
       obj
     when Regex
       obj.inspect
-    when .responds_to?(:type)
-      obj.type.to_s
+    when Token
+      obj.name.to_s
     else
       obj.to_s
     end

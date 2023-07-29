@@ -9,8 +9,8 @@ abstract class TopDown::Parser < TopDown::CharReader
     "Unexpected character '#{dump_in_error(got)}', expected any in '#{dump_in_error(expected)}'"
   end
 
-  # Override this method to modify the default error message when `parse([:TOKEN])` fail.
-  def hook_unexpected_token(got : Token?, expected : TokenType) forall Token, TokenType
+  # Override this method to modify the default error message when `parse(["TOKEN"])` fail.
+  def hook_unexpected_token(got : Token?, expected : String) forall Token
     "Unexpected token '#{dump_in_error(got)}', expected '#{dump_in_error(expected)}'"
   end
 

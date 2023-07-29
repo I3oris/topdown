@@ -1,47 +1,31 @@
 require "./tokens_spec_helper"
 
+def new_token(name, value = nil)
+  TopDown::Parser::Token.new(name, value)
+end
+
 describe TopDown::Parser::Token do
-  it "tests is?" do
-    TopDown::Parser::Token.new(:foo).is?(:foo).should be_true
-    TopDown::Parser::Token.new(:foo).is?(:bar).should be_false
-    TopDown::Parser::Token.new(:foo, "bar").is?(:foo).should be_true
-    TopDown::Parser::Token.new(:foo, "bar").is?(:bar).should be_false
-
-    TopDown::Parser::Token.new([1, '2', /3/]).is?([1, '2', /3/]).should be_true
-    TopDown::Parser::Token.new([1, '2', /3/]).is?(['b', 'a', /r/]).should be_false
-    TopDown::Parser::Token.new("foo").is?("foo").should be_true
-    TopDown::Parser::Token.new("foo").is?("bar").should be_false
-
-    TopDown::Parser::Token.new(TopDown::Spec::CustomTokenType::PLUS).is?(TopDown::Spec::CustomTokenType::PLUS).should be_true
-    TopDown::Parser::Token.new(TopDown::Spec::CustomTokenType::PLUS).is?(TopDown::Spec::CustomTokenType::STAR).should be_false
-    TopDown::Parser::Token.new(TopDown::Spec::CustomTokenType::PLUS).is?(:PLUS).should be_true
-    TopDown::Parser::Token.new(TopDown::Spec::CustomTokenType::PLUS).is?(:STAR).should be_false
-
-    TopDown::Spec::CustomToken.new(:PLUS).is?(:PLUS).should be_true
-    TopDown::Spec::CustomToken.new(:PLUS).is?(:STAR).should be_false
-  end
-
   it "to_s" do
-    TopDown::Parser::Token.new(:foo).to_s.should eq "[foo]"
-    TopDown::Parser::Token.new(:"{").to_s.should eq "[{]"
-    TopDown::Parser::Token.new(:"\"").to_s.should eq %q([\"])
-    TopDown::Parser::Token.new("\"").to_s.should eq %q([\"])
-    TopDown::Parser::Token.new(:foo, "").to_s.should eq "[foo]"
-    TopDown::Parser::Token.new(:foo, "bar").to_s.should eq "[foo:bar]"
-    TopDown::Parser::Token.new(:foo, %(puts "Hello\nWorld")).to_s.should eq %q([foo:puts \"Hello\nWorld\"])
-    TopDown::Parser::Token.new(:":").to_s.should eq %q([:])
-    TopDown::Parser::Token.new(:":", ":").to_s.should eq %q([:::])
-    TopDown::Parser::Token.new(TopDown::Spec::CustomTokenType::PLUS).to_s.should eq "[PLUS]"
+    new_token(:foo).to_s.should eq "[foo]"
+    new_token(:"{").to_s.should eq "[{]"
+    new_token(:"\"").to_s.should eq %q([\"])
+    new_token(:foo, "").to_s.should eq "[foo:]"
+    new_token(:foo, "bar").to_s.should eq "[foo:bar]"
+    new_token(:foo, %(puts "Hello\nWorld")).to_s.should eq %q([foo:puts \"Hello\nWorld\"])
+    new_token(:foo, 123).to_s.should eq %q([foo:123])
+    new_token(:foo, [1, 2, 3]).to_s.should eq %q([foo:[1, 2, 3]])
+    new_token(:":").to_s.should eq %q([:])
+    new_token(:":", ":").to_s.should eq %q([:::])
   end
 
   it "parses next token" do
     parser = TopDown::Spec.token_parser
     parser.source = "hey=3*7"
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:name, "hey")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:"=")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:int, "3")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:"*")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:int, "7")
+    parser.spec_next_token.should eq new_token(:name, "hey")
+    parser.spec_next_token.should eq new_token(:"=")
+    parser.spec_next_token.should eq new_token(:int, 3)
+    parser.spec_next_token.should eq new_token(:"*")
+    parser.spec_next_token.should eq new_token(:int, 7)
     parser.spec_next_token.should be_nil
     parser.spec_next_token.should be_nil
   end
@@ -49,11 +33,11 @@ describe TopDown::Parser::Token do
   it "parses next token with skip" do
     parser = TopDown::Spec.token_parser_with_skip
     parser.source = "  hey =3   \t\n* 7"
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:name, "hey")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:"=")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:int, "3")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:"*")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:int, "7")
+    parser.spec_next_token.should eq new_token(:name, "hey")
+    parser.spec_next_token.should eq new_token(:"=")
+    parser.spec_next_token.should eq new_token(:int, 3)
+    parser.spec_next_token.should eq new_token(:"*")
+    parser.spec_next_token.should eq new_token(:int, 7)
     parser.spec_next_token.should be_nil
     parser.spec_next_token.should be_nil
   end
@@ -61,23 +45,27 @@ describe TopDown::Parser::Token do
   it "parses next token with eof" do
     parser = TopDown::Spec.token_parser_with_eof
     parser.source = "hey=3*7"
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:name, "hey")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:"=")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:int, "3")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:"*")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:int, "7")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:EOF)
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:EOF)
+    parser.spec_next_token.should eq new_token(:name, "hey")
+    parser.spec_next_token.should eq new_token(:"=")
+    parser.spec_next_token.should eq new_token(:int, 3)
+    parser.spec_next_token.should eq new_token(:"*")
+    parser.spec_next_token.should eq new_token(:int, 7)
+    parser.spec_next_token.should eq new_token(:EOF)
+    parser.spec_next_token.should eq new_token(:EOF)
   end
 
-  it "parses next token (custom tokens)" do
-    parser = TopDown::Spec.custom_token_parser
-    parser.source = "  hey =3   \t\n* 7"
-    parser.spec_next_token.should eq TopDown::Spec::CustomToken.new(:NAME, "hey")
-    parser.spec_next_token.should eq TopDown::Spec::CustomToken.new(:EQ)
-    parser.spec_next_token.should eq TopDown::Spec::CustomToken.new(:INT, 3)
-    parser.spec_next_token.should eq TopDown::Spec::CustomToken.new(:STAR)
-    parser.spec_next_token.should eq TopDown::Spec::CustomToken.new(:INT, 7)
+  it "parses next token (docs example)" do
+    parser = TopDown::Spec.docs_token_parser
+    parser.source = %(* / + "hello" \n - 123 ** hey)
+    parser.spec_next_token.should eq new_token(:"*")
+    parser.spec_next_token.should eq new_token(:"/")
+    parser.spec_next_token.should eq new_token(:"+")
+    parser.spec_next_token.should eq new_token(:string, "hello")
+    parser.spec_next_token.should eq new_token(:new_line)
+    parser.spec_next_token.should eq new_token(:"-")
+    parser.spec_next_token.should eq new_token(:int, 123)
+    parser.spec_next_token.should eq new_token(:"**")
+    parser.spec_next_token.should eq new_token(:hey)
     parser.spec_next_token.should be_nil
     parser.spec_next_token.should be_nil
   end
@@ -85,8 +73,8 @@ describe TopDown::Parser::Token do
   it "raises on bad token" do
     parser = TopDown::Spec.token_parser
     parser.source = "hey=§"
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:name, "hey")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:"=")
+    parser.spec_next_token.should eq new_token(:name, "hey")
+    parser.spec_next_token.should eq new_token(:"=")
     e = expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§'") do
       parser.spec_next_token
     end
@@ -97,8 +85,8 @@ describe TopDown::Parser::Token do
   it "raises on bad token with skip" do
     parser = TopDown::Spec.token_parser_with_skip
     parser.source = "  hey\t\n=\n   § "
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:name, "hey")
-    parser.spec_next_token.should eq TopDown::Parser::Token.new(:"=")
+    parser.spec_next_token.should eq new_token(:name, "hey")
+    parser.spec_next_token.should eq new_token(:"=")
     e = expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§'") do
       parser.spec_next_token
     end
@@ -110,21 +98,21 @@ describe TopDown::Parser::Token do
     parser = TopDown::Spec.token_parser
     parser.source = "hey=3*7"
     parser.tokens.should eq [
-      TopDown::Parser::Token.new(:name, "hey"),
-      TopDown::Parser::Token.new(:"="),
-      TopDown::Parser::Token.new(:int, "3"),
-      TopDown::Parser::Token.new(:"*"),
-      TopDown::Parser::Token.new(:int, "7"),
+      new_token(:name, "hey"),
+      new_token(:"="),
+      new_token(:int, 3),
+      new_token(:"*"),
+      new_token(:int, 7),
     ]
 
     parser = TopDown::Spec.token_parser_with_skip
     parser.source = "  hey =3   \t\n* 7"
     parser.tokens.should eq [
-      TopDown::Parser::Token.new(:name, "hey"),
-      TopDown::Parser::Token.new(:"="),
-      TopDown::Parser::Token.new(:int, "3"),
-      TopDown::Parser::Token.new(:"*"),
-      TopDown::Parser::Token.new(:int, "7"),
+      new_token(:name, "hey"),
+      new_token(:"="),
+      new_token(:int, 3),
+      new_token(:"*"),
+      new_token(:int, 7),
     ]
   end
 
@@ -132,17 +120,17 @@ describe TopDown::Parser::Token do
     parser = TopDown::Spec.token_parser
     parser.source = "hey=3*7"
     parser.spec_parse_name.should eq "hey"
-    parser.spec_parse_eq.should eq ""
-    parser.spec_parse_int.should eq "3"
-    parser.spec_parse_star.should eq ""
-    parser.spec_parse_int.should eq "7"
+    parser.spec_parse_eq.should be_nil
+    parser.spec_parse_int.should eq 3
+    parser.spec_parse_star.should be_nil
+    parser.spec_parse_int.should eq 7
   end
 
   it "fails on unexpected token" do
     parser = TopDown::Spec.token_parser_with_skip
     parser.source = "hey=  oups"
     parser.spec_parse_name.should eq "hey"
-    parser.spec_parse_eq.should eq ""
+    parser.spec_parse_eq.should be_nil
     parser.spec_parse_int.should be_a TopDown::Parser::Fail
   end
 
@@ -150,7 +138,7 @@ describe TopDown::Parser::Token do
     parser = TopDown::Spec.token_parser_with_skip
     parser.source = "hey=  oups"
     parser.spec_parse_name_with_error!.should eq "hey"
-    parser.spec_parse_eq_with_error!.should eq ""
+    parser.spec_parse_eq_with_error!.should be_nil
     e = expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:name, expected:int") do
       parser.spec_parse_int_with_error!
     end
@@ -161,13 +149,13 @@ describe TopDown::Parser::Token do
   it "parses not token" do
     parser = TopDown::Spec.token_parser
     parser.source = "1+x"
-    parser.spec_parse_not_name.should eq "1"
-    parser.spec_parse_not_name.should eq ""
+    parser.spec_parse_not_name.should eq 1
+    parser.spec_parse_not_name.should be_nil
     parser.spec_parse_not_name.should be_a TopDown::Parser::Fail
 
     parser.source = "1+x"
-    parser.spec_parse_any.should eq "1"
-    parser.spec_parse_any.should eq ""
+    parser.spec_parse_any.should eq 1
+    parser.spec_parse_any.should be_nil
     parser.spec_parse_any.should eq "x"
     parser.spec_parse_any.should be_a TopDown::Parser::Fail
   end

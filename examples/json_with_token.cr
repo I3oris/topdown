@@ -9,17 +9,17 @@ class JSONParserWithToken < TopDown::Parser
   # # Tokens ##
 
   tokens do
-    parse('{') { Token.new(:"{") }
-    parse('}') { Token.new(:"}") }
-    parse(':') { Token.new(:":") }
-    parse('[') { Token.new(:"[") }
-    parse(']') { Token.new(:"]") }
-    parse(',') { Token.new(:",") }
-    parse("true") { Token.new(:true) }
-    parse("false") { Token.new(:false) }
-    parse("null") { Token.new(:null) }
-    parse(:tk_string) { |v| Token.new(:string, v) }
-    parse(:tk_number) { |v| Token.new(:number, v) }
+    token("{")
+    token("}")
+    token(":")
+    token("[")
+    token("]")
+    token(",")
+    token("true") { true }
+    token("false") { false }
+    token("null") { nil }
+    token("string", :tk_string) { |v| v }
+    token("number", :tk_number) { |v| v.to_i? || v.to_f }
   end
 
   syntax :digit1_9, '1'..'9' { }
@@ -97,21 +97,21 @@ class JSONParserWithToken < TopDown::Parser
 
   # # Syntax ##
 
-  syntax :object, [:"{"] do
+  syntax :object, ["{"] do
     obj = {} of String => Value
 
-    repeat separator: [:","] do
+    repeat separator: [","] do
       key, value = parse(:key_value)
       obj[key] = value
     end
 
-    parse! [:"}"]
+    parse! ["}"]
     obj
   end
 
   syntax :key_value do
-    key = parse [:string]
-    parse! [:":"]
+    key = parse ["string"]
+    parse! [":"]
     value = parse! :value
 
     {key, value}
@@ -119,23 +119,23 @@ class JSONParserWithToken < TopDown::Parser
 
   syntax :value do
     union do
-      parse [:string]
-      parse [:number] { |v| v.to_i? || v.to_f }
+      parse ["string"]
+      parse ["number"]
       parse :object
       parse :array
-      parse [:true] { true }
-      parse [:false] { false }
-      parse [:null] { nil }
+      parse ["true"]
+      parse ["false"]
+      parse ["null"]
     end
   end
 
-  syntax :array, [:"["] do
+  syntax :array, ["["] do
     values = [] of Value
 
-    repeat separator: [:","] do
+    repeat separator: [","] do
       values << parse :value
     end
-    parse! [:"]"]
+    parse! ["]"]
 
     values
   end
