@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Crystal Docs 1.4.1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Crystal Docs 1.8.2">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="topdown">
 
@@ -25,6 +26,11 @@
     <path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
   </symbol>
 </svg>
+<input type="checkbox" id="sidebar-btn">
+<label for="sidebar-btn" id="sidebar-btn-label">
+  <svg class="open" xmlns="http://www.w3.org/2000/svg" height="2em" width="2em" viewBox="0 0 512 512"><title>Open Sidebar</title><path fill="currentColor" d="M80 96v64h352V96H80zm0 112v64h352v-64H80zm0 112v64h352v-64H80z"></path></svg>
+  <svg class="close" xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 512 512"><title>Close Sidebar</title><path fill="currentColor" d="m118.6 73.4-45.2 45.2L210.7 256 73.4 393.4l45.2 45.2L256 301.3l137.4 137.3 45.2-45.2L301.3 256l137.3-137.4-45.2-45.2L256 210.7Z"></path></svg>
+</label>
 <div class="sidebar">
   <div class="sidebar-header">
     <div class="search-box">
@@ -86,7 +92,7 @@
       
     </li>
   
-  <li class=" " data-id="topdown/TopDown/Parser/Token" data-name="topdown::parser::token(tokentype)">
+  <li class=" " data-id="topdown/TopDown/Parser/Token" data-name="topdown::parser::token(valuetype)">
       <a href="TopDown/Parser/Token.html">Token</a>
       
     </li>
@@ -126,42 +132,42 @@
   </svg>
 </a>Overview</h2>
 <p>Write a simple parser:</p>
-<pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;topdown&quot;</span>
+<pre><code class="language-crystal">require &quot;topdown&quot;
 
-<span class="k">class</span> <span class="t">MyParser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
-  root <span class="n">:expression</span>
+class MyParser &lt; TopDown::Parser
+  root :expression
 
-  syntax <span class="n">:expression</span> <span class="k">do</span>
-    parse!(<span class="s">/\d+/</span>).to_i
-  <span class="k">end</span>
-<span class="k">end</span>
+  syntax :expression do
+    parse!(/\d+/).to_i
+  end
+end
 
-source <span class="o">=</span> <span class="s">&quot;1&quot;</span>
-puts <span class="t">MyParser</span>.<span class="k">new</span>(source).parse <span class="c"># =&gt; 1</span></code></pre>
+source = &quot;1&quot;
+puts MyParser.new(source).parse # =&gt; 1</code></pre>
 <p>Add basic operators with precedence:</p>
-<pre><code class="language-crystal"><span class="k">class</span> <span class="t">MyParser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
+<pre><code class="language-crystal">class MyParser &lt; TopDown::Parser
   ...
 
-  syntax <span class="n">:expression</span> <span class="k">do</span>
-    <span class="k">union</span> <span class="k">do</span>
-      parse(<span class="s">/\d+/</span>).to_i
-      infix(<span class="n">30</span>, <span class="n">:pow</span>)
-      infix(<span class="n">20</span>, <span class="n">:mul</span>)
-      infix(<span class="n">20</span>, <span class="n">:div</span>)
-      infix(<span class="n">10</span>, <span class="n">:add</span>)
-      infix(<span class="n">10</span>, <span class="n">:sub</span>)
-    <span class="k">end</span>
-  <span class="k">end</span>
+  syntax :expression do
+    union do
+      parse(/\d+/).to_i
+      infix(30, :pow)
+      infix(20, :mul)
+      infix(20, :div)
+      infix(10, :add)
+      infix(10, :sub)
+    end
+  end
 
-  syntax <span class="n">:pow</span>, <span class="s">&quot;**&quot;</span> { left() <span class="o">**</span> parse!(<span class="n">:expression</span>) }
-  syntax <span class="n">:mul</span>, <span class="s">&#39;*&#39;</span> { left() <span class="o">*</span> parse!(<span class="n">:expression</span>) }
-  syntax <span class="n">:div</span>, <span class="s">&#39;/&#39;</span> { left() <span class="o">/</span> parse!(<span class="n">:expression</span>) }
-  syntax <span class="n">:add</span>, <span class="s">&#39;+&#39;</span> { left() <span class="o">+</span> parse!(<span class="n">:expression</span>) }
-  syntax <span class="n">:sub</span>, <span class="s">&#39;-&#39;</span> { left() <span class="o">-</span> parse!(<span class="n">:expression</span>) }
-<span class="k">end</span>
+  syntax :pow, &quot;**&quot; { left() ** parse!(:expression) }
+  syntax :mul, &#39;*&#39; { left() * parse!(:expression) }
+  syntax :div, &#39;/&#39; { left() / parse!(:expression) }
+  syntax :add, &#39;+&#39; { left() + parse!(:expression) }
+  syntax :sub, &#39;-&#39; { left() - parse!(:expression) }
+end
 
-source <span class="o">=</span> <span class="s">&quot;3*6+6*4&quot;</span>
-puts <span class="t">MyParser</span>.<span class="k">new</span>(source).parse <span class="c"># =&gt; 42</span></code></pre>
+source = &quot;3*6+6*4&quot;
+puts MyParser.new(source).parse # =&gt; 42</code></pre>
 <p>Skip whitespaces and comments:</p>
 <pre><code class="language-crystal"><span class="k">class</span> <span class="t">MyParser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
   ...
@@ -177,37 +183,37 @@ puts <span class="t">MyParser</span>.<span class="k">new</span>(source).parse <s
 <span class="k">end</span>
 
 source <span class="o">=</span> <span class="s">&quot;3*6  + /* comment */ 6*4 // comment&quot;</span>
-puts <span class="t">MyParser</span>.<span class="k">new</span>(source).parse <span class="c"># =&gt; 42</span></code></pre>
+puts <span class="t">MyParser</span>.new(source).parse <span class="c"># =&gt; 42</span></code></pre>
 <p>Add more prefix syntax:</p>
-<pre><code class="language-crystal"><span class="k">class</span> <span class="t">MyParser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
+<pre><code class="language-crystal">class MyParser &lt; TopDown::Parser
   ...
 
-  syntax <span class="n">:expression</span> <span class="k">do</span>
-    <span class="k">union</span> <span class="k">do</span>
-      parse(<span class="n">:parenthesis</span>)
-      parse(<span class="n">:positif</span>, with_precedence: <span class="n">40</span>)
-      parse(<span class="n">:negatif</span>, with_precedence: <span class="n">40</span>)
-      parse(<span class="s">/\d+/</span>).to_i
-      infix(<span class="n">30</span>, <span class="n">:pow</span>)
-      infix(<span class="n">20</span>, <span class="n">:mul</span>)
-      infix(<span class="n">20</span>, <span class="n">:div</span>)
-      infix(<span class="n">10</span>, <span class="n">:add</span>)
-      infix(<span class="n">10</span>, <span class="n">:sub</span>)
-    <span class="k">end</span>
-  <span class="k">end</span>
+  syntax :expression do
+    union do
+      parse(:parenthesis)
+      parse(:positif, with_precedence: 40)
+      parse(:negatif, with_precedence: 40)
+      parse(/\d+/).to_i
+      infix(30, :pow)
+      infix(20, :mul)
+      infix(20, :div)
+      infix(10, :add)
+      infix(10, :sub)
+    end
+  end
 
-  syntax <span class="n">:parenthesis</span>, <span class="s">&#39;(&#39;</span> <span class="k">do</span>
-    exp <span class="o">=</span> parse!(<span class="n">:expression</span>)
-    parse!(<span class="s">&#39;)&#39;</span>, error: <span class="s">&quot;Parenthesis &#39;(&#39; is not closed&quot;</span>, at: begin_location())
+  syntax :parenthesis, &#39;(&#39; do
+    exp = parse!(:expression)
+    parse!(&#39;)&#39;, error: &quot;Parenthesis &#39;(&#39; is not closed&quot;, at: begin_location())
     exp
-  <span class="k">end</span>
+  end
 
-  syntax <span class="n">:positif</span>, <span class="s">&#39;+&#39;</span> { <span class="o">+</span>parse!(<span class="n">:expression</span>) }
-  syntax <span class="n">:negatif</span>, <span class="s">&#39;-&#39;</span> { <span class="o">-</span>parse!(<span class="n">:expression</span>) }
-<span class="k">end</span>
+  syntax :positif, &#39;+&#39; { +parse!(:expression) }
+  syntax :negatif, &#39;-&#39; { -parse!(:expression) }
+end
 
-source <span class="o">=</span> <span class="s">&quot;(-9 - 42 / (2*+5)**2) / -3&quot;</span>
-puts <span class="t">MyParser</span>.<span class="k">new</span>(source).parse <span class="c"># =&gt; 3.14</span></code></pre>
+source = &quot;(-9 - 42 / (2*+5)**2) / -3&quot;
+puts MyParser.new(source).parse # =&gt; 3.14</code></pre>
 <h2><a id="installation" class="anchor" href="#installation">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -252,8 +258,8 @@ puts <span class="t">MyParser</span>.<span class="k">new</span>(source).parse <s
   </svg>
 </a>Roadmap</h2>
 <ul>
-<li>[ ] Write docs (in progress)</li>
-<li>[ ] Write spec (in progress)</li>
+<li>[ ] Write docs (almost complete)</li>
+<li>[ ] Write spec (almost complete)</li>
 <li>[x] Write readme</li>
 <li>[ ] Write examples (in progress)</li>
 <li>[x] Write benchmarks</li>
