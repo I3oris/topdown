@@ -75,7 +75,7 @@ describe TopDown::Parser::Token do
     parser.source = "hey=§"
     parser.spec_next_token.should eq new_token(:name, "hey")
     parser.spec_next_token.should eq new_token(:"=")
-    e = expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§'") do
+    e = expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', could not parse any token") do
       parser.spec_next_token
     end
     e.location.should eq TopDown::Location.new(4, line_number: 0, line_pos: 4)
@@ -149,7 +149,7 @@ describe TopDown::Parser::Token do
     parser.source = "hey=  oups"
     parser.spec_parse_name_with_error!.should eq "hey"
     parser.spec_parse_eq_with_error!.should be_nil
-    e = expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:name, expected:int") do
+    e = expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:oups, expected:int") do
       parser.spec_parse_int_with_error!
     end
     e.location.should eq TopDown::Location.new(6, line_number: 0, line_pos: 6)
@@ -168,5 +168,26 @@ describe TopDown::Parser::Token do
     parser.spec_parse_any.should be_nil
     parser.spec_parse_any.should eq "x"
     parser.spec_parse_any.should be_a TopDown::Parser::Fail
+  end
+
+  it "raises on not token" do
+    parser = TopDown::Spec.token_parser
+    parser.source = "1+oups"
+    parser.spec_parse_not_name_with_error!.should eq 1
+    parser.spec_parse_not_name_with_error!.should be_nil
+    e = expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:oups, expected:not name") do
+      parser.spec_parse_not_name_with_error!
+    end
+    e.location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 2)
+    e.end_location.should eq TopDown::Location.new(6, line_number: 0, line_pos: 6)
+
+    parser.source = "1+"
+    parser.spec_parse_any_with_error!.should eq 1
+    parser.spec_parse_any_with_error!.should be_nil
+    e = expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:EOF, expected:not EOF") do
+      parser.spec_parse_any_with_error!
+    end
+    e.location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 2)
+    e.end_location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 3)
   end
 end

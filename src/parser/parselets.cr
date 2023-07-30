@@ -39,89 +39,100 @@ abstract class TopDown::Parser < TopDown::CharReader
   class ParseletLiteral
   end
 
-  private macro consume_char(char)
-    skip_chars
-    if peek_char != {{char}}
+  private macro parselet(parselet, raises? = false, error = nil, at = nil, with_precedence = nil)
+    {% parselet = parselet.expressions[0] if parselet.is_a?(Expressions) && parselet.expressions.size == 1 %}
+
+    {% if parselet.is_a? CharLiteral %}
+      parselet_char({{parselet}}, {{raises?}}, {{error}}, {{at}})
+
+    {% elsif parselet.is_a? RangeLiteral %}
+      parselet_range({{parselet}}, {{raises?}}, {{error}}, {{at}})
+
+    {% elsif parselet.is_a? StringLiteral %}
+      parselet_string({{parselet}}, {{raises?}}, {{error}}, {{at}})
+
+    {% elsif parselet.is_a? RegexLiteral %}
+      parselet_regex({{parselet}}, {{raises?}}, {{error}}, {{at}})
+
+    {% elsif parselet.is_a? SymbolLiteral %}
+      parselet_syntax({{parselet}}, {{raises?}}, {{error}}, {{at}}, {{with_precedence}})
+
+    {% elsif parselet.is_a? Call && parselet.name == "|" %}
+      simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence || "_precedence_".id}}) # || 0 ?
+
+    {% elsif parselet.is_a? Call && parselet.name == "not" %}
+      parselet_not({{parselet.args[0]}}, {{raises?}}, {{error}}, {{at}})
+
+    {% elsif parselet.is_a? Call && parselet.name == "any" %}
+      parselet_any_char({{raises?}}, {{error}}, {{at}})
+
+    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 && parselet[0].is_a? Call && parselet[0].name == "any" %}
+      parselet_any_token({{raises?}}, {{error}}, {{at}})
+
+    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
+      parselet_token({{parselet[0]}}, {{raises?}}, {{error}}, {{at}})
+
+    {% else %}
+      {% raise "Unsupported ASTNode #{parselet.class_name} : #{parselet}" %}
+    {% end %}
+  end
+
+  private macro fail(raises?, error_message, at)
+    {% if raises? %}
+      raise_syntax_error({{error_message}}, at: {{at}})
+    {% else %}
       break Fail.new
-    else
-      next_char
-    end
+    {% end %}
   end
 
-  private macro consume_char!(char, error = nil, at = nil)
-    skip_chars
+  private macro parselet_char(char, raises? = false, error = nil, at = nil)
     if peek_char != {{char}}
-      raise_syntax_error error_message({{error}} || ->hook_unexpected_char(Char, Char), got: peek_char, expected: {{char}}), at: ({{at || "self.location".id}})
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_character(Char, Char), got: peek_char, expected: {{char}}), at: ({{at || "self.location".id}})
     else
       next_char
     end
   end
 
-  private macro consume_not_char(char)
-    skip_chars
+  private macro parselet_not_char(char, raises? = false, error = nil, at = nil)
     if peek_char == {{char}} || peek_char == '\0'
-      break Fail.new
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_any_character_but(Char, Char), got: peek_char, expected: {{char}}), at: ({{at || "self.location".id}})
     else
       next_char
     end
   end
 
-  private macro consume_any_char
+  private macro parselet_any_char(raises? = false, error = nil, at = nil)
     if peek_char == '\0'
-      break Fail.new
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_any_character_but(Char, Char), got: '\0', expected: '\0'), at: ({{at || "self.location".id}})
     else
       next_char
     end
   end
 
-  private macro consume_range(range)
+  private macro parselet_range(range, raises? = false, error = nil, at = nil)
     if peek_char.in? {{range}}
       next_char
     else
-      break Fail.new
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_any_in_range(Char, Range(Char, Char)), got: peek_char, expected: {{range}}), at: ({{at || "self.location".id}})
     end
   end
 
-  private macro consume_range!(range, error = nil, at = nil)
-    if peek_char.in? {{range}}
-      next_char
-    else
-      raise_syntax_error error_message({{error}} || ->hook_unexpected_range_char(Char, Range(Char, Char)), got: peek_char, expected: {{range}}), at: ({{at || "self.location".id}})
-    end
-  end
-
-  private macro consume_string(string)
-    skip_chars
+  private macro parselet_string(string, raises? = false, error = nil, at = nil)
     capture do
-      no_skip do
-        {% for c in string.chars %}
-          consume_char({{c}})
-        {% end %}
-      end
-    end
-  end
-
-  private macro consume_string!(string, error = nil, at = nil)
-    skip_chars
-    %result = handle_fail do
-      capture do
-        no_skip do
-          {% for c in string.chars %}
-            consume_char({{c}})
-          {% end %}
+      {% for c in string.chars %}
+        if peek_char != {{c}}
+          fail {{raises?}}, error_message({{error}} || ->hook_expected_word(Char, String), got: peek_char, expected: {{string}}), at: ({{at || "self.location".id}})
+        else
+          next_char
         end
-      end
+      {% end %}
     end
-    if %result.is_a? Fail
-      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_string(Char, String), got: peek_char, expected: {{string}}), at: ({{at || "self.location".id}})
-    end
-    %result
   end
 
-  private macro consume_not_string(string)
+  private macro parselet_not_string(string)
     %old_location = self.location
     %result = handle_fail do
-      consume_string({{string}})
+      parselet_string({{string}})
     end
     if %result.is_a? Fail
       self.location = %old_location
@@ -133,55 +144,32 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private macro consume_regex(regex)
-    skip_chars
+  private macro parselet_regex(regex, raises? = false, error = nil, at = nil)
     if regex_match_start({{regex}}) =~ String.new(self.source.to_slice[self.location.pos..])
       @char_reader.pos += $0.bytesize
       $0.each_char { |ch| increment_location(ch) }
       $0
     else
-      break Fail.new
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_pattern(Char, Regex), got: peek_char, expected: {{regex}}), at: ({{at || "self.location".id}})
     end
   end
 
-  private macro consume_regex!(regex, error = nil, at = nil)
-    skip_chars
-    if regex_match_start({{regex}}) =~ String.new(self.source.to_slice[self.location.pos..])
-      @char_reader.pos += $0.bytesize
-      $0.each_char { |ch| increment_location(ch) }
-      $0
-    else
-      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_regex(Char, Regex), got: peek_char, expected: {{regex}}), at: ({{at || "self.location".id}})
-    end
-  end
-
-  private macro consume_syntax(syntax_name, with_precedence = nil)
-    skip_chars
+  private macro parselet_syntax(syntax_name, raises? = false, error = nil, at = nil, with_precedence = nil)
     %result = parse_{{syntax_name.id}}(nil, {{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
-      break Fail.new
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}}), at: ({{at || "self.location".id}})
     else
       %result
     end
   end
 
-  private macro consume_syntax!(syntax_name, error = nil, at = nil, with_precedence = nil)
-    skip_chars
-    %result = parse_{{syntax_name.id}}(nil, {{with_precedence || "_precedence_".id}})
-    if %result.is_a? Fail
-      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}}), at: ({{at || "self.location".id}})
-    else
-      %result
-    end
-  end
-
-  private macro consume_not(parselet)
+  private macro parselet_not(parselet, raises? = false, error = nil, at = nil)
     {% if parselet.is_a? CharLiteral %}
-      consume_not_char({{parselet}})
+      parselet_not_char({{parselet}}, {{raises?}}, {{error}}, {{at}})
     {% elsif parselet.is_a? StringLiteral %}
-      consume_not_string({{parselet}})
+      parselet_not_string({{parselet}}) # TODO: raise version
     {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
-      consume_not_token({{parselet[0]}})
+      parselet_not_token({{parselet[0]}}, {{raises?}}, {{error}}, {{at}})
     {% else %}
       {% raise "'not' arguments should be 'CharLiteral', 'StringLiteral' or 'ArrayLiteral' not #{parselet.class_name}: #{parselet}" %}
     {% end %}

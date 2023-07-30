@@ -110,7 +110,7 @@ describe TopDown::Parser do
     parser.spec_parse_union_expanded_with_sequence.should be_a TopDown::Parser::Fail
 
     parser.source = "ab§"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected 'c'") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected character 'c'") do
       parser.spec_parse_union_expanded_with_sequence
     end
     # parser.location.should eq zero # PENDING

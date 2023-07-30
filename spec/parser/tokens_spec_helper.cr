@@ -43,8 +43,8 @@ module TopDown::Spec
     def_parse_wrapper(["="], :eq, "Custom Error: got:%{got}, expected:%{expected}")
     def_parse_wrapper(["int"], :int, "Custom Error: got:%{got}, expected:%{expected}")
     def_parse_wrapper(["name"], :name, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper(not(["name"]), :not_name, "Custom Error: got:%{got}, expected:%{expected}")
-    def_parse_wrapper([any], :any, "Custom Error: got:%{got}, expected:%{expected}")
+    def_parse_wrapper(not(["name"]), :not_name, "Custom Error: got:%{got}, expected:not %{expected}")
+    def_parse_wrapper([any], :any, "Custom Error: got:%{got}, expected:not %{expected}")
   end
 
   class TokenParserWithSkip < TokenParser

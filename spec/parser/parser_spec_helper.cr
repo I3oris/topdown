@@ -21,7 +21,9 @@ module TopDown::Spec
     def_parse_wrapper :ch_e_with_block { parse('e') { |ch| {"Custom return", ch} } }
     def_parse_wrapper :ch_f_with_block! { parse!('f') { |ch| {"Custom return", ch} } }
     def_parse_wrapper(:ch_not_a) { parse(not('a')) }
+    def_parse_wrapper(:ch_not_a!) { parse!(not('a')) }
     def_parse_wrapper(:ch_any) { parse(any) }
+    def_parse_wrapper(:ch_any!) { parse!(any) }
   end
 
   class CharRangeParser < ParserBase
@@ -153,7 +155,7 @@ module TopDown::Spec
     syntax :nested_comment, "#(" do
       repeat_union do
         parse(:nested_comment)
-        consume_not_char(')')
+        parse(not(')'))
       end
       parse(')')
     end

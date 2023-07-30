@@ -57,7 +57,7 @@ abstract class TopDown::Parser < TopDown::CharReader
         end
       end
       if %result.is_a? Fail
-        raise_syntax_error error_message(->hook_could_not_parse_token(Char, Nil), got: peek_char, expected: nil)
+        raise_syntax_error error_message(->hook_could_not_parse_any_token(Char, Nil), got: peek_char, expected: nil)
       end
       %result
     end
@@ -104,20 +104,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     Token.new({{token_name.id.symbolize}}, %result)
   end
 
-  private macro consume_token(token_name)
-    {% type = MACRO_TOKENS_MAP[token_name] %}
-    {% raise "The token [#{token_name}] is not defined. Add 'token(#{token_name})' inside the macro 'Parser.tokens' to define it" unless type %}
-
-    skip_chars
-    %token = next_token?.as?({{type}})
-    if %token && %token.name == {{token_name.id.symbolize}}
-      %token.value
-    else
-      break Fail.new
-    end
-  end
-
-  private macro consume_token!(token_name, error = nil, at = nil)
+  private macro parselet_token(token_name, raises? = false, error = nil, at = nil)
     {% type = MACRO_TOKENS_MAP[token_name] %}
     {% raise "The token [#{token_name}] is not defined. Add 'token(#{token_name})' inside the macro 'Parser.tokens' to define it" unless type %}
 
@@ -127,27 +114,29 @@ abstract class TopDown::Parser < TopDown::CharReader
     if %token && %token.name == {{token_name.id.symbolize}}
       %token.as({{type}}).value
     else
-      raise_syntax_error error_message({{error}} || ->hook_unexpected_token(typeof(%token), String), got: %token, expected: {{token_name}}), at: ({{at}}) || (%begin_location..)
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_token(typeof(%token), String), got: %token, expected: {{token_name}}), at: ({{at}}) || (%begin_location..)
     end
   end
 
-  private macro consume_not_token(token_name)
+  private macro parselet_not_token(token_name, raises? = false, error = nil, at = nil)
     {% type = MACRO_TOKENS_MAP[token_name] %}
     {% raise "The token [#{token_name}] is not defined. Add 'token(#{token_name})' inside the macro 'Parser.tokens' to define it" unless type %}
 
     skip_chars
+    %begin_location = self.location
     %token = next_token?
     if %token.nil? || %token.name == {{token_name.id.symbolize}}
-      break Fail.new
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_any_token_but(typeof(%token), String), got: %token, expected: {{token_name}}), at: ({{at}}) || (%begin_location..)
     else
       %token.value
     end
   end
 
-  private macro consume_any_token
+  private macro parselet_any_token(raises? = false, error = nil, at = nil)
+    skip_chars
     %token = next_token?
     if %token.nil?
-      break Fail.new
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_any_token_but(typeof(%token), String), got: %token, expected: "EOF"), at: ({{at || "self.location".id}})
     else
       %token.value
     end

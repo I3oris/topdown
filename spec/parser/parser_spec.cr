@@ -5,7 +5,7 @@ zero = TopDown::Location.new(0, 0, 0)
 describe TopDown::Parser do
   it "parses char" do
     parser = TopDown::Spec.char_parser
-    parser.source = "abcdef#*"
+    parser.source = "abcdef#&*+"
     parser.spec_parse_ch_a.should eq 'a'
     parser.spec_parse_ch_b!.should eq 'b'
     parser.spec_parse_ch_c_with_error!.should eq 'c'
@@ -13,7 +13,9 @@ describe TopDown::Parser do
     parser.spec_parse_ch_e_with_block.should eq({"Custom return", 'e'})
     parser.spec_parse_ch_f_with_block!.should eq({"Custom return", 'f'})
     parser.spec_parse_ch_not_a.should eq '#'
+    parser.spec_parse_ch_not_a!.should eq '&'
     parser.spec_parse_ch_any.should eq '*'
+    parser.spec_parse_ch_any!.should eq '+'
   end
 
   it "fails parsing char" do
@@ -23,7 +25,7 @@ describe TopDown::Parser do
     parser.location.should eq zero
 
     parser.source = "§"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected 'b'") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected character 'b'") do
       parser.spec_parse_ch_b!
     end
     parser.location.should eq zero
@@ -45,7 +47,7 @@ describe TopDown::Parser do
     parser.location.should eq zero
 
     parser.source = "§"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected 'f'") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected character 'f'") do
       parser.spec_parse_ch_f_with_block!
     end
     parser.location.should eq zero
@@ -53,9 +55,17 @@ describe TopDown::Parser do
     parser.source = "a"
     parser.spec_parse_ch_not_a.should be_a TopDown::Parser::Fail
 
+    parser.source = "a"
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character, expected any character but 'a'") do
+      parser.spec_parse_ch_not_a!
+    end
+
     parser.source = ""
     parser.spec_parse_ch_not_a.should be_a TopDown::Parser::Fail
     parser.spec_parse_ch_any.should be_a TopDown::Parser::Fail
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character, expected any character but 'EOF'") do
+      parser.spec_parse_ch_any!
+    end
   end
 
   it "parses char range" do
@@ -76,7 +86,7 @@ describe TopDown::Parser do
     parser.location.should eq zero
 
     parser.source = "e"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character 'e', expected any in 'a-e'") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character 'e', expected any in range 'a-e'") do
       parser.spec_parse_range!
     end
     parser.location.should eq zero
@@ -98,7 +108,7 @@ describe TopDown::Parser do
     parser.location.should eq zero
 
     parser.source = "@"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '@', expected any in 'A-Z'") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '@', expected any in range 'A-Z'") do
       parser.spec_parse_range_with_block!
     end
     parser.location.should eq zero
@@ -126,7 +136,7 @@ describe TopDown::Parser do
     # parser.location.should eq zero # PENDING
 
     parser.source = "de§"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected 'def'") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected word 'def'") do
       parser.spec_parse_str_def!
     end
     # parser.location.should eq zero # PENDING
@@ -148,7 +158,7 @@ describe TopDown::Parser do
     # parser.location.should eq zero # PENDING
 
     parser.source = "pq§"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected 'pqr'") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected word 'pqr'") do
       parser.spec_parse_str_pqr_with_block!
     end
     # parser.location.should eq zero # PENDING
@@ -276,7 +286,7 @@ describe TopDown::Parser do
     # parser.location.should eq zero # PENDING
 
     parser.source = "abb§"
-    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected syntax") do
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected syntax syntax") do
       parser.spec_parse_syn!
     end
     # parser.location.should eq zero # PENDING

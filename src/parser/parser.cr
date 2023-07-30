@@ -212,10 +212,10 @@ abstract class TopDown::Parser < TopDown::CharReader
   def parse
     result = parse_root
     if result.is_a? Fail
-      raise_syntax_error error_message(->hook_could_not_parse_syntax(Char, Symbol), got: peek_char, expected: :root)
+      raise_syntax_error error_message(->hook_expected_syntax(Char, Symbol), got: peek_char, expected: :root)
     end
 
-    consume_char!('\0')
+    parse!('\0')
     result
   end
 
@@ -283,41 +283,8 @@ abstract class TopDown::Parser < TopDown::CharReader
   # Allow to handle multi-precedence for ternary-or-more operator.
   #
   macro parse(parselet, with_precedence = nil, &block)
-    {% parselet = parselet.expressions[0] if parselet.is_a?(Expressions) && parselet.expressions.size == 1 %}
-
-    {% if parselet.is_a? CharLiteral %}
-      %result = consume_char({{parselet}})
-
-    {% elsif parselet.is_a? RangeLiteral %}
-      %result = consume_range({{parselet}})
-
-    {% elsif parselet.is_a? StringLiteral %}
-      %result = consume_string({{parselet}})
-
-    {% elsif parselet.is_a? RegexLiteral %}
-      %result = consume_regex({{parselet}})
-
-    {% elsif parselet.is_a? SymbolLiteral %}
-      %result = consume_syntax({{parselet}}, with_precedence: {{with_precedence}})
-
-    {% elsif parselet.is_a? Call && parselet.name == "|" %}
-      %result = simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence || "_precedence_".id}}) # || 0 ?
-
-    {% elsif parselet.is_a? Call && parselet.name == "not" %}
-      %result = consume_not({{parselet.args[0]}})
-
-    {% elsif parselet.is_a? Call && parselet.name == "any" %}
-      %result = consume_any_char
-
-    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 && parselet[0].is_a? Call && parselet[0].name == "any" %}
-      %result = consume_any_token
-
-    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
-      %result = consume_token({{parselet[0]}})
-
-    {% else %}
-      {% raise "Unsupported ASTNode #{parselet.class_name} : #{parselet}" %}
-    {% end %}
+    skip_chars
+    %result = parselet({{parselet}}, with_precedence: {{with_precedence}})
 
     {% if block %}
       handle_fail(%result) {{ block }}
@@ -341,30 +308,8 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # However, this should generally be used everywhere else, to allow more localized errors.
   macro parse!(parselet, error = nil, at = nil, with_precedence = nil, &block)
-    {% if parselet.is_a? CharLiteral %}
-      %result = consume_char!({{parselet}}, error: {{error}}, at: {{at}})
-
-    {% elsif parselet.is_a? RangeLiteral %}
-      %result = consume_range!({{parselet}}, error: {{error}}, at: {{at}})
-
-    {% elsif parselet.is_a? StringLiteral %}
-      %result = consume_string!({{parselet}}, error: {{error}}, at: {{at}})
-
-    {% elsif parselet.is_a? RegexLiteral %}
-      %result = consume_regex!({{parselet}}, error: {{error}}, at: {{at}})
-
-    {% elsif parselet.is_a? SymbolLiteral %}
-      %result = consume_syntax!({{parselet}}, error: {{error}}, at: {{at}}, with_precedence: {{with_precedence}})
-
-    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
-      %result = consume_token!({{parselet[0]}}, error: {{error}}, at: {{at}})
-
-    {% elsif parselet.is_a? Call && parselet.name == "|" %}
-      %result = simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence || "_precedence_".id}})
-
-    {% else %}
-      {% raise "Unsupported ASTNode #{parselet.class_name} : #{parselet}" %}
-    {% end %}
+    skip_chars
+    %result = parselet({{parselet}}, true, {{error}}, {{at}}, {{with_precedence}})
 
     {% if block %}
       handle_fail(%result) {{ block }}

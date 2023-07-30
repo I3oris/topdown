@@ -6,7 +6,7 @@ module TopDown::Spec
 end
 
 class IO::FileDescriptor
-  property? quiet = true
+  property? quiet = false
 
   def write(slice : Bytes) : Nil
     super unless quiet?
