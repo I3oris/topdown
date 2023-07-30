@@ -114,6 +114,16 @@ describe TopDown::Parser::Token do
       new_token(:"*"),
       new_token(:int, 7),
     ]
+
+    parser = TopDown::Spec.token_parser_with_eof
+    parser.source = "hey=3*7"
+    parser.tokens(:"EOF").should eq [
+      new_token(:name, "hey"),
+      new_token(:"="),
+      new_token(:int, 3),
+      new_token(:"*"),
+      new_token(:int, 7),
+    ]
   end
 
   it "parses tokens" do

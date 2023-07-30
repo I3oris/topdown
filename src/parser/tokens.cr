@@ -153,14 +153,14 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # Stops when EOF is hit, or raises if a token fail to parse.
   #
-  # The token type *eof* can be given to stop at that type.
+  # The token name *eof* can be given to stop at that name.
   # Can be useful if a EOF token have been defined.
   def each_token(eof = nil, &) : Nil
     begin_location = self.location
 
     skip_chars
     while token = next_token?
-      break if eof && token.is?(eof)
+      break if eof && token.name == eof
 
       yield token
       skip_chars
@@ -172,7 +172,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # Stops when EOF is hit, or raises if a token fail to parse.
   #
-  # The token type *eof* can be given to stop at that type.
+  # The token name *eof* can be given to stop at that name.
   # Can be useful if a EOF token have been defined.
   def tokens(eof = nil)
     tokens = [] of typeof(next_token?.not_nil!) # ameba:disable Lint/NotNil
