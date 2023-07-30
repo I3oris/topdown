@@ -129,19 +129,13 @@ require "./tokens"
 # syntax :expression do
 #   union do
 #     parse(/\d+/).to_i
-#     infix(30, :pow)
-#     infix(20, :mul)
-#     infix(20, :div)
-#     infix(10, :add)
-#     infix(10, :sub)
+#     infix 30 "**" { left() ** parse!(:expression) }
+#     infix 20 '*' { left() * parse!(:expression) }
+#     infix 20 '/' { left() / parse!(:expression) }
+#     infix 10 '+' { left() + parse!(:expression) }
+#     infix 10 '-' { left() - parse!(:expression) }
 #   end
 # end
-#
-# syntax :pow, "**" { left() ** parse!(:expression) }
-# syntax :mul, '*' { left() * parse!(:expression) }
-# syntax :div, '/' { left() / parse!(:expression) }
-# syntax :add, '+' { left() + parse!(:expression) }
-# syntax :sub, '-' { left() - parse!(:expression) }
 # ```
 #
 # Infix are treated specially by the `union`. They are parsed after any other member of the union, the `left()` result is updated each time.
@@ -283,12 +277,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # Allow to handle multi-precedence for ternary-or-more operator.
   #
   macro parse(parselet, with_precedence = nil, &block)
-    skip_chars
-    %result = parselet({{parselet}}, with_precedence: {{with_precedence}})
-
-    {% if block %}
-      handle_fail(%result) {{ block }}
-    {% end %}
+    parselet({{parselet}}, with_precedence: {{with_precedence}}) {{ block }}
   end
 
   # Similar to [`Parser.parse`](#parse(parselet,with_precedence=nil,&block)-macro), but raises `SyntaxError` if the parsing fail.
@@ -308,27 +297,22 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # However, this should generally be used everywhere else, to allow more localized errors.
   macro parse!(parselet, error = nil, at = nil, with_precedence = nil, &block)
-    skip_chars
-    %result = parselet({{parselet}}, true, {{error}}, {{at}}, {{with_precedence}})
+    parselet({{parselet}}, true, {{error}}, {{at}}, {{with_precedence}}) {{ block }}
+  end
 
-    {% if block %}
-      handle_fail(%result) {{ block }}
-    {% end %}
+  # Equivalent to `parse(parselet, with_precedence: precedence)`
+  macro prefix(precedence, parselet, &block)
+    parselet({{parselet}}, with_precedence: {{precedence}}) {{ block }}
   end
 
   # TODO: docs
-  macro infix(precedence, parselet, associativity = "right")
-    {% if parselet.is_a? SymbolLiteral %}
-      if _precedence_ < {{precedence}}
-        {% precedence -= 1 if associativity.id == "right".id %}
-        skip_chars
-        _left_ = forward_fail(parse_{{parselet.id}}(_left_, _precedence_: {{precedence}}))
-      else
-        break Fail.new
-      end
-    {% else %}
-      {% raise "parselet for infix should be 'SymbolLiteral', not '#{parselet.class_name.id}'" %}
-    {% end %}
+  macro infix(precedence, parselet, associativity = "right", &block)
+    if _precedence_ < {{precedence}}
+      {% precedence -= 0.0001 if associativity.id == "right".id %}
+      _left_ = parselet({{parselet}}, with_precedence: {{precedence}}, left: _left_) {{block}}
+    else
+      break Fail.new
+    end
   end
 
   # In the context of an `infix` member, returns the `left` result of the current `union`.

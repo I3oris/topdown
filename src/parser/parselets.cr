@@ -39,41 +39,51 @@ abstract class TopDown::Parser < TopDown::CharReader
   class ParseletLiteral
   end
 
-  private macro parselet(parselet, raises? = false, error = nil, at = nil, with_precedence = nil)
+  private macro parselet(parselet, raises? = false, error = nil, at = nil, with_precedence = nil, left = nil, &block)
     {% parselet = parselet.expressions[0] if parselet.is_a?(Expressions) && parselet.expressions.size == 1 %}
 
-    {% if parselet.is_a? CharLiteral %}
-      parselet_char({{parselet}}, {{raises?}}, {{error}}, {{at}})
+    skip_chars
+    %result =
+      {% if parselet.is_a? CharLiteral %}
+        parselet_char({{parselet}}, {{raises?}}, {{error}}, {{at}})
 
-    {% elsif parselet.is_a? RangeLiteral %}
-      parselet_range({{parselet}}, {{raises?}}, {{error}}, {{at}})
+      {% elsif parselet.is_a? RangeLiteral %}
+        parselet_range({{parselet}}, {{raises?}}, {{error}}, {{at}})
 
-    {% elsif parselet.is_a? StringLiteral %}
-      parselet_string({{parselet}}, {{raises?}}, {{error}}, {{at}})
+      {% elsif parselet.is_a? StringLiteral %}
+        parselet_string({{parselet}}, {{raises?}}, {{error}}, {{at}})
 
-    {% elsif parselet.is_a? RegexLiteral %}
-      parselet_regex({{parselet}}, {{raises?}}, {{error}}, {{at}})
+      {% elsif parselet.is_a? RegexLiteral %}
+        parselet_regex({{parselet}}, {{raises?}}, {{error}}, {{at}})
 
-    {% elsif parselet.is_a? SymbolLiteral %}
-      parselet_syntax({{parselet}}, {{raises?}}, {{error}}, {{at}}, {{with_precedence}})
+      {% elsif parselet.is_a? SymbolLiteral %}
+        parselet_syntax({{parselet}}, {{raises?}}, {{error}}, {{at}}, {{with_precedence}}, {{left}})
 
-    {% elsif parselet.is_a? Call && parselet.name == "|" %}
-      simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence || "_precedence_".id}}) # || 0 ?
+      {% elsif parselet.is_a? Call && parselet.name == "|" %}
+        simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence || "_precedence_".id}}) # || 0 ?
 
-    {% elsif parselet.is_a? Call && parselet.name == "not" %}
-      parselet_not({{parselet.args[0]}}, {{raises?}}, {{error}}, {{at}})
+      {% elsif parselet.is_a? Call && parselet.name == "not" %}
+        parselet_not({{parselet.args[0]}}, {{raises?}}, {{error}}, {{at}})
 
-    {% elsif parselet.is_a? Call && parselet.name == "any" %}
-      parselet_any_char({{raises?}}, {{error}}, {{at}})
+      {% elsif parselet.is_a? Call && parselet.name == "any" %}
+        parselet_any_char({{raises?}}, {{error}}, {{at}})
 
-    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 && parselet[0].is_a? Call && parselet[0].name == "any" %}
-      parselet_any_token({{raises?}}, {{error}}, {{at}})
+      {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 && parselet[0].is_a? Call && parselet[0].name == "any" %}
+        parselet_any_token({{raises?}}, {{error}}, {{at}})
 
-    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
-      parselet_token({{parselet[0]}}, {{raises?}}, {{error}}, {{at}})
+      {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
+        parselet_token({{parselet[0]}}, {{raises?}}, {{error}}, {{at}})
 
-    {% else %}
-      {% raise "Unsupported ASTNode #{parselet.class_name} : #{parselet}" %}
+      {% else %}
+        {% raise "Unsupported ASTNode #{parselet.class_name} : #{parselet}" %}
+      {% end %}
+
+    {% if block %}
+      {% if with_precedence %} handle_fail({{with_precedence}}) do |_precedence_| {% end %}
+
+        handle_fail(%result) {{ block }}
+
+      {% if with_precedence %} end {% end %}
     {% end %}
   end
 
@@ -154,8 +164,8 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private macro parselet_syntax(syntax_name, raises? = false, error = nil, at = nil, with_precedence = nil)
-    %result = parse_{{syntax_name.id}}(nil, {{with_precedence || "_precedence_".id}})
+  private macro parselet_syntax(syntax_name, raises? = false, error = nil, at = nil, with_precedence = nil, left = nil)
+    %result = parse_{{syntax_name.id}}({{left}}, {{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
       fail {{raises?}}, error_message({{error}} || ->hook_expected_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}}), at: ({{at || "self.location".id}})
     else
