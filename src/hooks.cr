@@ -34,6 +34,10 @@ abstract class TopDown::Parser < TopDown::CharReader
     "Unexpected character '#{dump_in_error(got)}', expected syntax #{dump_in_error(expected)}"
   end
 
+  def hook_union_failed(got : Char, expected : Nil)
+    "Unexpected character '#{dump_in_error(got)}'"
+  end
+
   # Override this method to modify the default error message when `parse!(not('a'))` fail.
   def hook_expected_any_character_but(got : Char, expected : Char)
     "Unexpected character, expected any character but '#{dump_in_error(expected)}'"

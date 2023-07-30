@@ -60,7 +60,7 @@ abstract class TopDown::Parser < TopDown::CharReader
         parselet_syntax({{parselet}}, {{raises?}}, {{error}}, {{at}}, {{with_precedence}}, {{left}})
 
       {% elsif parselet.is_a? Call && parselet.name == "|" %}
-        simple_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], with_precedence: {{with_precedence || "_precedence_".id}}) # || 0 ?
+        parselet_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], {{raises?}}, {{error}}, {{at}})
 
       {% elsif parselet.is_a? Call && parselet.name == "not" %}
         parselet_not({{parselet.args[0]}}, {{raises?}}, {{error}}, {{at}})
@@ -183,5 +183,21 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% else %}
       {% raise "'not' arguments should be 'CharLiteral', 'StringLiteral' or 'ArrayLiteral' not #{parselet.class_name}: #{parselet}" %}
     {% end %}
+  end
+
+  private macro parselet_union(members, raises? = false, error = nil, at = nil)
+    forward_fail(handle_fail(self.location) do |old_location|
+        {% for union_member in members %}
+          self.location = old_location
+          %result = handle_fail do
+            {{ union_member }}
+          end
+
+          break %result if !%result.is_a? Fail
+        {% end %}
+
+        self.location = old_location
+        fail {{raises?}}, error_message({{error}} || ->hook_union_failed(Char, Nil), got: peek_char, expected: nil), at: ({{at || "self.location".id}})
+    end)
   end
 end

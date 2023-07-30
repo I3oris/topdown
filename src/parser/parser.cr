@@ -358,26 +358,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     _begin_location_
   end
 
-  private macro simple_union(members, with_precedence)
-    forward_fail(
-      handle_fail(self.location, {{with_precedence}}) do |old_location, _precedence_|
-
-        {% for union_member in members %}
-          self.location = old_location
-          %result = handle_fail do
-            {{ union_member }}
-          end
-
-          break %result if !%result.is_a? Fail
-        {% end %}
-
-        self.location = old_location
-        Fail.new
-      end
-    )
-  end
-
-  private macro _union_(&members)
+  private macro _union_(raises? = false, error = nil, at = nil, &members)
     {% members = members.body.is_a?(Expressions) ? members.body.expressions : [members.body] %}
     {% prefix_members = members.reject do |m|
          m.is_a?(Call) && m.name == "infix"
@@ -387,11 +368,13 @@ abstract class TopDown::Parser < TopDown::CharReader
          m.is_a?(Call) && m.name == "infix"
        end %}
 
-    _left_ = simple_union({{prefix_members}}, with_precedence: 0) # precedence = 0 because prefix are not subject to precedence
+    _left_ = forward_fail(handle_fail(0) do |_precedence_| # precedence = 0 because prefix are not subject to precedence
+      parselet_union({{prefix_members}}, {{raises?}}, {{error}}, {{at}})
+    end)
 
     {% unless infixs_members.empty? %}
       loop do
-        simple_union({{infixs_members}}, with_precedence: _precedence_)
+        parselet_union({{infixs_members}})
       end
     {% end %}
     _left_
@@ -442,6 +425,10 @@ abstract class TopDown::Parser < TopDown::CharReader
   # This is mainly the top-down operator precedence algorithm, also known as precedence climbing.
   macro union(&members)
     _union_ {{members}}
+  end
+
+  macro union!(error = nil, at = nil, &members)
+    _union_(true, {{error}}, {{at}}) {{members}}
   end
 
   # Parses the sequence inside the block, returns `nil` if it fails.
