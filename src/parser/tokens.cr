@@ -26,13 +26,15 @@ abstract class TopDown::Parser < TopDown::CharReader
   # Each line of the *block* correspond a token.
   #
   # ```
-  # tokens do
-  #   token("+")
-  #   token("-")
-  #   token("**")
-  #   token("*")
-  #   token("/")
-  #   token("new_line", '\n')
+  # class Parser < TopDown::Parser
+  #   tokens do
+  #     token("+")
+  #     token("-")
+  #     token("**")
+  #     token("*")
+  #     token("/")
+  #     token("new_line", '\n')
+  #   end
   # end
   # ```
   #
@@ -83,12 +85,14 @@ abstract class TopDown::Parser < TopDown::CharReader
   # Example:
   #
   # ```
-  # tokens do
-  #   token("+")                            # Parses '+', produces Token[+]
-  #   token("hey")                          # Parses "hey", produces Token[hey]
-  #   token("new_line", '\n')               # Parses '\n', produces Token[new_line]
-  #   token("int", /\d+/) { |v| v.to_i }    # Parses /\d+/, produces Token[int:<int_value>]
-  #   token("string", :tk_string, &.itself) # Parses syntax :tk_string, produces Token[string:<string_value>]
+  # class Parser < TopDown::Parser
+  #   tokens do
+  #     token("+")                            # Parses '+', produces Token[+]
+  #     token("hey")                          # Parses "hey", produces Token[hey]
+  #     token("new_line", '\n')               # Parses '\n', produces Token[new_line]
+  #     token("int", /\d+/) { |v| v.to_i }    # Parses /\d+/, produces Token[int:<int_value>]
+  #     token("string", :tk_string, &.itself) # Parses syntax :tk_string, produces Token[string:<string_value>]
+  #   end
   # end
   # ```
   macro token(token_name, parselet = nil, &block)

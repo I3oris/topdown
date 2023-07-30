@@ -1,4 +1,5 @@
 require "./syntax_error"
+require "./parselets"
 require "./tokens"
 
 # `TopDown::Parser` is the main class to derive for building a parser.
@@ -224,9 +225,7 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   # Defines the main syntax to parse.
   #
-  # *parselet*: the syntax name or the parselet to be the root.
-  # Could be `StringLiteral`|`CharLiteral`|`RegexLiteral`|`SymbolLiteral`|`ArrayLiteral`|`Call`,
-  # see [`Parser.parse`](#parse(parselet,with_precedence=nil,&block)-macro)
+  # *parselet* (`ParseletLiteral`): the syntax name or parselet to be the root.
   macro root(parselet)
     private def parse_root
       parse!({{parselet}}, with_precedence: 0)
@@ -235,7 +234,23 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   # Defines a syntax that can be called with `parse(SymbolLiteral)`.
   #
-  # TODO: docs
+  # _syntax_name_ (`SymbolLiteral`): The identifier of the syntax.
+  #
+  # _*prefix_ (`ParseletLiteral`): A list of parselet, to parse at the beginning of the syntax, results are yielded in the given block.
+  #
+  # _block_: The body of the syntax, work like a usual body function.
+  #
+  # ```
+  # class Parser < TopDown::Parser
+  #   syntax :expression do
+  #     a = parse('a')
+  #     parse(/( )+/)
+  #     foo = parse!("foo")
+  #
+  #     {a, foo}
+  #   end
+  # end
+  # ```
   macro syntax(syntax_name, *prefixs, &block)
     @[AlwaysInline]
     private def parse_{{syntax_name.id}}(_left_, _precedence_)
@@ -251,193 +266,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private macro consume_char(char)
-    skip_chars
-    if peek_char != {{char}}
-      break Fail.new
-    else
-      next_char
-    end
-  end
-
-  private macro consume_char!(char, error = nil, at = nil)
-    skip_chars
-    if peek_char != {{char}}
-      raise_syntax_error error_message({{error}} || ->hook_unexpected_char(Char, Char), got: peek_char, expected: {{char}}), at: ({{at || "self.location".id}})
-    else
-      next_char
-    end
-  end
-
-  private macro consume_not_char(char)
-    skip_chars
-    if peek_char == {{char}} || peek_char == '\0'
-      break Fail.new
-    else
-      next_char
-    end
-  end
-
-  private macro consume_any_char
-    if peek_char == '\0'
-      break Fail.new
-    else
-      next_char
-    end
-  end
-
-  private macro consume_range(range)
-    if peek_char.in? {{range}}
-      next_char
-    else
-      break Fail.new
-    end
-  end
-
-  private macro consume_range!(range, error = nil, at = nil)
-    if peek_char.in? {{range}}
-      next_char
-    else
-      raise_syntax_error error_message({{error}} || ->hook_unexpected_range_char(Char, Range(Char, Char)), got: peek_char, expected: {{range}}), at: ({{at || "self.location".id}})
-    end
-  end
-
-  private macro consume_string(string)
-    skip_chars
-    capture do
-      no_skip do
-        {% for c in string.chars %}
-          consume_char({{c}})
-        {% end %}
-      end
-    end
-  end
-
-  private macro consume_string!(string, error = nil, at = nil)
-    skip_chars
-    %result = handle_fail do
-      capture do
-        no_skip do
-          {% for c in string.chars %}
-            consume_char({{c}})
-          {% end %}
-        end
-      end
-    end
-    if %result.is_a? Fail
-      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_string(Char, String), got: peek_char, expected: {{string}}), at: ({{at || "self.location".id}})
-    end
-    %result
-  end
-
-  private macro consume_not_string(string)
-    %old_location = self.location
-    %result = handle_fail do
-      consume_string({{string}})
-    end
-    if %result.is_a? Fail
-      self.location = %old_location
-      break Fail.new if peek_char == '\0'
-      next_char
-      nil
-    else
-      break Fail.new
-    end
-  end
-
-  private macro consume_regex(regex)
-    skip_chars
-    if regex_match_start({{regex}}) =~ String.new(self.source.to_slice[self.location.pos..])
-      @char_reader.pos += $0.bytesize
-      $0.each_char { |ch| increment_location(ch) }
-      $0
-    else
-      break Fail.new
-    end
-  end
-
-  private macro consume_regex!(regex, error = nil, at = nil)
-    skip_chars
-    if regex_match_start({{regex}}) =~ String.new(self.source.to_slice[self.location.pos..])
-      @char_reader.pos += $0.bytesize
-      $0.each_char { |ch| increment_location(ch) }
-      $0
-    else
-      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_regex(Char, Regex), got: peek_char, expected: {{regex}}), at: ({{at || "self.location".id}})
-    end
-  end
-
-  private macro consume_syntax(syntax_name, with_precedence = nil)
-    skip_chars
-    %result = parse_{{syntax_name.id}}(nil, {{with_precedence || "_precedence_".id}})
-    if %result.is_a? Fail
-      break Fail.new
-    else
-      %result
-    end
-  end
-
-  private macro consume_syntax!(syntax_name, error = nil, at = nil, with_precedence = nil)
-    skip_chars
-    %result = parse_{{syntax_name.id}}(nil, {{with_precedence || "_precedence_".id}})
-    if %result.is_a? Fail
-      raise_syntax_error error_message({{error}} || ->hook_could_not_parse_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}}), at: ({{at || "self.location".id}})
-    else
-      %result
-    end
-  end
-
-  private macro consume_not(parselet)
-    {% if parselet.is_a? CharLiteral %}
-      consume_not_char({{parselet}})
-    {% elsif parselet.is_a? StringLiteral %}
-      consume_not_string({{parselet}})
-    {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
-      consume_not_token({{parselet[0]}})
-    {% else %}
-      {% raise "'not' arguments should be 'CharLiteral', 'StringLiteral' or 'ArrayLiteral' not #{parselet.class_name}: #{parselet}" %}
-    {% end %}
-  end
-
-  # Parse the given *parselet*.
-  #
-  # #### parselet:
-  # *parselet* could be one of the following:
-  # * a `CharLiteral`, to parse exactly one `Char`
-  # * a `StringLiteral`, to parse an exact `String`
-  # * a `RegexLiteral`, to parse the given pattern, returns the matched `String`. ($~, $0, $1, ... could be used after)
-  # * a `RangeLiteral(Char, Char)`, to parse any `Char` between the range
-  # * a `SymbolLiteral`, to parse an entire `syntax`, returns the result of the syntax.
-  # * an one-value `ArrayLiteral`, to parse a `Token`, returns the value of matched token.
-  #  NOTE: the type of token should correspond to the type of tokens defined with `Parser.tokens`.
-  # * a `Call`:
-  #   * `|`: to parse a union, see `Parser.union`.
-  #   * `any`, to parse any `Char` except EOF.
-  #   * `[any]`, to parse any token except EOF.
-  #   * `not(parselet)`, to parse any char, except if *parselet* matches.
-  #  ```
-  # parse('💎')   # => '💎'
-  # parse("foo") # => "foo"
-  # parse(/\d+/, &.to_i)
-  # parse(/"(([^"\\]|\\.)*)"/) { $1 }
-  # parse(:expression)
-  # parse([:"+="])           # => "+="
-  # parse([TokenType::PLUS]) # => "+"
-  #
-  # parse("foo" | :value | '💎')
-  # # equivalent to:
-  # union do
-  #   parse("foo")
-  #   parse(:value)
-  #   parse('💎')
-  # end
-  #
-  # parse(any)         # any char except '\0'
-  # parse([any])       # any token except EOF
-  # parse(not('\n'))   # any char except '\n' & EOF
-  # parse(not([:"+"])) # any token except :"+" & EOF
-  # parse(not("foo"))  # any char or fail on "foo".
-  #  ```
+  # Parses the given *parselet* (`ParseletLiteral`), and yield/return the according result.
   #
   # #### failure:
   # If the given *parselet* fails to parse, it `break` the current sequence with a `Fail`. Failure is catch by the surrounding context.
@@ -794,7 +623,32 @@ abstract class TopDown::Parser < TopDown::CharReader
   private def skip_chars
   end
 
-  # TODO: docs
+  # Defines what is ignored during the parsing.
+  #
+  # It is triggered every time prior a parselet is parsed.
+  #
+  # It works similarly to the members of a `Parser.union`, in which each members are consumed while possible.
+  #
+  # ```
+  # class Parser < TopDown::Parser
+  #   skip do
+  #     # Skips spaces:
+  #     parse ' '
+  #     parse '\n'
+  #     parse '\t'
+  #     parse '\r'
+  #
+  #     # Line comments:
+  #     parse "//" { repeat { parse not('\n') } }
+  #
+  #     # Block comments:
+  #     parse "/*" do
+  #       repeat { parse not("*/") }
+  #       parse "*/"
+  #     end
+  #   end
+  # end
+  # ```
   macro skip(&members)
     private def skip_chars
       if @no_skip_nest == 0
@@ -811,7 +665,7 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   @no_skip_nest = 0
 
-  # TODO: docs
+  # Prevents the `skip` rules to be triggered inside the given block.
   macro no_skip(&)
     begin
       @no_skip_nest += 1
@@ -916,7 +770,16 @@ abstract class TopDown::Parser < TopDown::CharReader
     {{block.args[0].id}}.to_s
   end
 
-  # TODO: docs
+  # Does nothing, only allows to group a sequence of parsing (inside a union for example).
+  #
+  # ```
+  # union do
+  #   sequence do
+  #     parse("a")
+  #     parse!("b")
+  #   end
+  #   parse("2")
+  # ```
   macro sequence(&)
     {{ yield }}
   end
