@@ -128,10 +128,12 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro parselet_string(string, raises? = false, error = nil, at = nil)
+    %begin_location = self.location
     capture do
       {% for c in string.chars %}
         if peek_char != {{c}}
-          fail {{raises?}}, error_message({{error}} || ->hook_expected_word(Char, String), got: peek_char, expected: {{string}}), at: ({{at || "self.location".id}})
+          fail {{raises?}}, error_message({{error}} || ->hook_expected_word(Char, String), got: peek_char, expected: {{string}}), at: ({{at || "self.location".id}}) \
+            ensure self.location = %begin_location
         else
           next_char
         end
@@ -140,16 +142,16 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro parselet_not_string(string)
-    %old_location = self.location
+    %begin_location = self.location
     %result = handle_fail do
       parselet_string({{string}})
     end
     if %result.is_a? Fail
-      self.location = %old_location
       break Fail.new if peek_char == '\0'
       next_char
       nil
     else
+      self.location = %begin_location
       break Fail.new
     end
   end
@@ -165,9 +167,11 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro parselet_syntax(syntax_name, raises? = false, error = nil, at = nil, with_precedence = nil, left = nil)
+    %begin_location = self.location
     %result = parse_{{syntax_name.id}}({{left}}, {{with_precedence || "_precedence_".id}})
     if %result.is_a? Fail
-      fail {{raises?}}, error_message({{error}} || ->hook_expected_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}}), at: ({{at || "self.location".id}})
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}}), at: ({{at || "self.location".id}}) \
+        ensure self.location = %begin_location
     else
       %result
     end
@@ -186,18 +190,22 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private macro parselet_union(members, raises? = false, error = nil, at = nil)
-    forward_fail(handle_fail(self.location) do |old_location|
-        {% for union_member in members %}
-          self.location = old_location
+    forward_fail(handle_fail do
+      {% for union_member in members %}
+        {% if union_member.is_a? Call && union_member.name == "parse" && union_member.args.size == 1 && union_member.args[0].is_a? CharLiteral && !union_member.block %}
+          # Optimization when member is `parse('x')`
+          break next_char if peek_char == {{union_member.args[0]}}
+
+        {% else %}
           %result = handle_fail do
             {{ union_member }}
           end
 
           break %result if !%result.is_a? Fail
         {% end %}
+      {% end %}
 
-        self.location = old_location
-        fail {{raises?}}, error_message({{error}} || ->hook_union_failed(Char, Nil), got: peek_char, expected: nil), at: ({{at || "self.location".id}})
+      fail {{raises?}}, error_message({{error}} || ->hook_union_failed(Char, Nil), got: peek_char, expected: nil), at: ({{at || "self.location".id}})
     end)
   end
 end

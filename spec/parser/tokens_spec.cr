@@ -142,6 +142,7 @@ describe TopDown::Parser::Token do
     parser.spec_parse_name.should eq "hey"
     parser.spec_parse_eq.should be_nil
     parser.spec_parse_int.should be_a TopDown::Parser::Fail
+    parser.location.should eq TopDown::Location.new(6, line_number: 0, line_pos: 6)
   end
 
   it "raises on unexpected token" do
@@ -154,6 +155,8 @@ describe TopDown::Parser::Token do
     end
     e.location.should eq TopDown::Location.new(6, line_number: 0, line_pos: 6)
     e.end_location.should eq TopDown::Location.new(10, line_number: 0, line_pos: 10)
+
+    parser.location.should eq TopDown::Location.new(6, line_number: 0, line_pos: 6)
   end
 
   it "parses not token" do
@@ -181,6 +184,8 @@ describe TopDown::Parser::Token do
     e.location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 2)
     e.end_location.should eq TopDown::Location.new(6, line_number: 0, line_pos: 6)
 
+    parser.location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 2)
+
     parser.source = "1+"
     parser.spec_parse_any_with_error!.should eq 1
     parser.spec_parse_any_with_error!.should be_nil
@@ -189,5 +194,7 @@ describe TopDown::Parser::Token do
     end
     e.location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 2)
     e.end_location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 3)
+
+    parser.location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 2)
   end
 end

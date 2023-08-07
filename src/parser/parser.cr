@@ -309,6 +309,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   macro infix(precedence, parselet, associativity = "right", &block)
     if _precedence_ < {{precedence}}
       {% precedence -= 0.0001 if associativity.id == "right".id %}
+      _begin_location_ = self.location
       _left_ = parselet({{parselet}}, with_precedence: {{precedence}}, left: _left_) {{block}}
     else
       break Fail.new
@@ -427,6 +428,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     _union_ {{members}}
   end
 
+  # Similar to `Parser.union`, but raises `SyntaxError` if the parsing fail.
   macro union!(error = nil, at = nil, &members)
     _union_(true, {{error}}, {{at}}) {{members}}
   end
@@ -450,12 +452,12 @@ abstract class TopDown::Parser < TopDown::CharReader
   # "1*;"  # ~> "Unexpected character '*', expected ';'"
   # ```
   macro maybe(&)
-    %old_location = self.location
+    %begin_location = self.location
     %result = handle_fail do
       {{ yield }}
     end
     if %result.is_a? Fail
-      self.location = %old_location
+      self.location = %begin_location
       nil
     else
       %result
@@ -583,13 +585,8 @@ abstract class TopDown::Parser < TopDown::CharReader
 
   # Prevents the `skip` rules to be triggered inside the given block.
   macro no_skip(&)
-    begin
-      @no_skip_nest += 1
-      %ret = ({{ yield }})
-    ensure
-      @no_skip_nest -= 1
-    end
-    %ret
+    @no_skip_nest += 1
+    ({{ yield }}) ensure @no_skip_nest -= 1
   end
 
   # Empty struct representing a parse failure.
@@ -686,7 +683,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     {{block.args[0].id}}.to_s
   end
 
-  # Does nothing, only allows to group a sequence of parsing (inside a union for example).
+  # Allows to group a sequence of parsing (inside a union for example).
   #
   # ```
   # union do
@@ -697,7 +694,16 @@ abstract class TopDown::Parser < TopDown::CharReader
   #   parse("2")
   # ```
   macro sequence(&)
-    {{ yield }}
+    %begin_location = self.location
+    %result = handle_fail do
+      {{ yield }}
+    end
+    if %result.is_a? Fail
+      self.location = %begin_location
+      break Fail.new
+    else
+      %result
+    end
   end
 
   # Allows to match a word only if a non-alphanumeric follows

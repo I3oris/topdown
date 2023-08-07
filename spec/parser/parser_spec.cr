@@ -133,35 +133,35 @@ describe TopDown::Parser do
     parser = TopDown::Spec.string_parser
     parser.source = "ab§"
     parser.spec_parse_str_abc.should be_a TopDown::Parser::Fail
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "de§"
     expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected word 'def'") do
       parser.spec_parse_str_def!
     end
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "gh§"
     expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:§, expected:ghi") do
       parser.spec_parse_str_ghi_with_error!
     end
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "jk§"
     expect_raises(TopDown::Parser::SyntaxError, "Custom Error Proc: got:§, expected:jkl") do
       parser.spec_parse_str_jkl_with_error_proc!
     end
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "mn§"
     parser.spec_parse_str_mno_with_block.should be_a TopDown::Parser::Fail
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "pq§"
     expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected word 'pqr'") do
       parser.spec_parse_str_pqr_with_block!
     end
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "stuhello"
     parser.spec_parse_str_with_end_word.should be_a TopDown::Parser::Fail
@@ -173,7 +173,7 @@ describe TopDown::Parser do
 
     parser.source = "abc"
     parser.spec_parse_str_not_abc.should be_a TopDown::Parser::Fail
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
   end
 
   it "parses regex" do
@@ -283,35 +283,35 @@ describe TopDown::Parser do
     parser = TopDown::Spec.syntax_parser
     parser.source = "abb§"
     parser.spec_parse_syn.should be_a TopDown::Parser::Fail
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "abb§"
     expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected syntax syntax") do
       parser.spec_parse_syn!
     end
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "abb§"
     expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:§, expected:syntax") do
       parser.spec_parse_syn_with_error!
     end
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "abb§"
     expect_raises(TopDown::Parser::SyntaxError, "Custom Error Proc: got:§, expected:syntax") do
       parser.spec_parse_syn_with_error_proc!
     end
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "abb§"
     parser.spec_parse_syn_with_block.should be_a TopDown::Parser::Fail
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "abb§"
     expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§', expected syntax") do
       parser.spec_parse_syn_with_block!
     end
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "§"
     parser.spec_parse_syn_empty.should eq(Tuple.new)
@@ -319,11 +319,11 @@ describe TopDown::Parser do
 
     parser.source = "abb§"
     parser.spec_parse_syn_with_prefix.should be_a TopDown::Parser::Fail
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "abb§"
     parser.spec_parse_syn_blockless.should be_a TopDown::Parser::Fail
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
   end
 
   it "parses with skip" do

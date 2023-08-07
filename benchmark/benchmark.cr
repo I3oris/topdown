@@ -33,6 +33,16 @@ Benchmark.ips do |x|
   x.report("TopDown JSON with token") { JSONParserWithToken.new(json).parse }
 end
 
+# v0.1.0 (07/08/2023):
+# === Small JSON ===
+#            Crystal JSON 326.02k (  3.07µs) (± 4.53%)  2.76kB/op        fastest
+#            TopDown JSON 171.82k (  5.82µs) (± 0.44%)  5.88kB/op   1.90× slower
+# TopDown JSON with token  95.97k ( 10.42µs) (± 0.36%)  9.75kB/op   3.40× slower
+# === Big JSON ===
+#            Crystal JSON   1.38k (722.38µs) (± 0.32%)   228kB/op        fastest
+#            TopDown JSON 770.75  (  1.30ms) (± 0.45%)  0.97MB/op   1.80× slower
+# TopDown JSON with token 530.49  (  1.89ms) (± 0.51%)  1.53MB/op   2.61× slower
+
 # v0.1.0 (13/08/2022):
 # === Small JSON ===
 #            Crystal JSON 147.76k (  6.77µs) (±17.12%)  2.77kB/op        fastest

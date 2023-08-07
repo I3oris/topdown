@@ -15,7 +15,7 @@ module TopDown::Spec
 
     def spec_next_token
       self.skip_chars
-      self.next_token?
+      self.parse_token?
     end
 
     macro def_parse_wrapper(parselet, def_name, error)

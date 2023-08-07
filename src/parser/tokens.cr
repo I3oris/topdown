@@ -17,8 +17,40 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private def next_token?
+  @current_token : Void* = Pointer(Void).null
+  @current_token_end_location = Location.new(0, 0, 0)
+
+  # :inherit:
+  def source=(source : String)
+    super
+    @current_token = Pointer(Void).null
+  end
+
+  # :inherit:
+  def location=(location : Location)
+    @current_token = Pointer(Void).null unless @char_reader.pos == location.pos
+    super
+  end
+
+  private def parse_token?
     {% raise "No tokens definition found, use 'TopDown::Parser.tokens' macro to define tokens" %}
+  end
+
+  private def peek_token?
+    return Box(typeof(parse_token?)).unbox @current_token if @current_token
+
+    begin_location = self.location
+    token = parse_token?
+
+    @current_token_end_location = self.location
+    self.location = begin_location
+    @current_token = Box.box(token)
+
+    token
+  end
+
+  private def consume_token
+    self.location = @current_token_end_location
   end
 
   # This macro allows to define how tokens are parsed.
@@ -46,9 +78,8 @@ abstract class TopDown::Parser < TopDown::CharReader
   #
   # In addition, characters are never skipped while parsing tokens (and all inner syntax calls), see `no_skip`.
   macro tokens(&block)
-    private def next_token?
-      _precedence_ = 0
-      %result = handle_fail do
+    private def parse_token?
+      token = handle_fail do
         no_skip do
           _union_ do
             {{ yield }}
@@ -56,10 +87,10 @@ abstract class TopDown::Parser < TopDown::CharReader
           end
         end
       end
-      if %result.is_a? Fail
+      if token.is_a? Fail
         raise_syntax_error error_message(->hook_could_not_parse_any_token(Char, Nil), got: peek_char, expected: nil)
       end
-      %result
+      token
     end
 
     {% macro_tokens_map = {} of MacroId => StringLiteral %}
@@ -108,13 +139,12 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% type = MACRO_TOKENS_MAP[token_name] %}
     {% raise "The token [#{token_name}] is not defined. Add 'token(#{token_name})' inside the macro 'Parser.tokens' to define it" unless type %}
 
-    skip_chars
-    %begin_location = self.location
-    %token = next_token?
+    %token = peek_token?
     if %token && %token.name == {{token_name.id.symbolize}}
+      consume_token
       %token.as({{type}}).value
     else
-      fail {{raises?}}, error_message({{error}} || ->hook_expected_token(typeof(%token), String), got: %token, expected: {{token_name}}), at: ({{at}}) || (%begin_location..)
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_token(typeof(%token), String), got: %token, expected: {{token_name}}), at: ({{at}}) || (self.location..@current_token_end_location)
     end
   end
 
@@ -122,22 +152,21 @@ abstract class TopDown::Parser < TopDown::CharReader
     {% type = MACRO_TOKENS_MAP[token_name] %}
     {% raise "The token [#{token_name}] is not defined. Add 'token(#{token_name})' inside the macro 'Parser.tokens' to define it" unless type %}
 
-    skip_chars
-    %begin_location = self.location
-    %token = next_token?
+    %token = peek_token?
     if %token.nil? || %token.name == {{token_name.id.symbolize}}
-      fail {{raises?}}, error_message({{error}} || ->hook_expected_any_token_but(typeof(%token), String), got: %token, expected: {{token_name}}), at: ({{at}}) || (%begin_location..)
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_any_token_but(typeof(%token), String), got: %token, expected: {{token_name}}), at: ({{at}}) || (self.location..@current_token_end_location)
     else
+      consume_token
       %token.value
     end
   end
 
   private macro parselet_any_token(raises? = false, error = nil, at = nil)
-    skip_chars
-    %token = next_token?
+    %token = peek_token?
     if %token.nil?
-      fail {{raises?}}, error_message({{error}} || ->hook_expected_any_token_but(typeof(%token), String), got: %token, expected: "EOF"), at: ({{at || "self.location".id}})
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_any_token_but(typeof(%token), String), got: %token, expected: "EOF"), at: ({{at}} || self.location)
     else
+      consume_token
       %token.value
     end
   end
@@ -152,7 +181,7 @@ abstract class TopDown::Parser < TopDown::CharReader
     begin_location = self.location
 
     skip_chars
-    while token = next_token?
+    while token = parse_token?
       break if eof && token.name == eof
 
       yield token
@@ -168,7 +197,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # The token name *eof* can be given to stop at that name.
   # Can be useful if a EOF token have been defined.
   def tokens(eof = nil)
-    tokens = [] of typeof(next_token?.not_nil!) # ameba:disable Lint/NotNil
+    tokens = [] of typeof(parse_token?.not_nil!) # ameba:disable Lint/NotNil
 
     each_token(eof) do |token|
       tokens << token
