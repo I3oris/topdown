@@ -22,6 +22,7 @@ module TopDown::Spec
     def_parse_wrapper :ch_f_with_block! { parse!('f') { |ch| {"Custom return", ch} } }
     def_parse_wrapper(:ch_not_a) { parse(not('a')) }
     def_parse_wrapper(:ch_not_a!) { parse!(not('a')) }
+    def_parse_wrapper(:ch_not_aqz!) { parse!(not('a', 'q', 'z')) }
     def_parse_wrapper(:ch_any) { parse(any) }
     def_parse_wrapper(:ch_any!) { parse!(any) }
   end
@@ -35,6 +36,7 @@ module TopDown::Spec
     end
     def_parse_wrapper :range_with_block { parse('0'..'9') { |ch| {"Custom return", ch} } }
     def_parse_wrapper :range_with_block! { parse!('A'..'Z') { |ch| {"Custom return", ch} } }
+    def_parse_wrapper :range_not! { parse!(not('A'..'E')) }
   end
 
   class StringParser < ParserBase
@@ -46,9 +48,10 @@ module TopDown::Spec
     end
     def_parse_wrapper :str_mno_with_block { parse("mno") { |str| {"Custom return", str} } }
     def_parse_wrapper :str_pqr_with_block! { parse!("pqr") { |str| {"Custom return", str} } }
-    def_parse_wrapper :str_with_end_word { parse("stu") { end_word } }
+    def_parse_wrapper :str_stu_with_end_word { parse("stu") { end_word } }
     def_parse_wrapper :str_empty { parse("") }
     def_parse_wrapper :str_not_abc { parse(not("abc")) }
+    def_parse_wrapper :str_not_foo_bar_baz { parse(not("foo", "bar", "baz", 'x')) }
   end
 
   class RegexParser < ParserBase

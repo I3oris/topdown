@@ -43,6 +43,11 @@ abstract class TopDown::Parser < TopDown::CharReader
     "Unexpected character, expected any character but '#{dump_in_error(expected)}'"
   end
 
+  # Override this method to modify the default error message when `parse!(not('a'..'z'))` fail.
+  def hook_expected_any_character_but_range(got : Char, expected : Range(Char, Char))
+    "Unexpected character, expected any character but range '#{dump_in_error(expected)}'"
+  end
+
   # Override this method to modify the default error message when `parse!(not(["TOKEN"]))` fail.
   def hook_expected_any_token_but(got : Token?, expected : String)
     "Unexpected token, expected any token but '#{dump_in_error(expected)}'"

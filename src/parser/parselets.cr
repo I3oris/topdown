@@ -63,7 +63,7 @@ abstract class TopDown::Parser < TopDown::CharReader
         parselet_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], {{raises?}}, {{error}}, {{at}})
 
       {% elsif parselet.is_a? Call && parselet.name == "not" %}
-        parselet_not({{parselet.args[0]}}, {{raises?}}, {{error}}, {{at}})
+        parselet_and({{parselet.args.map { |parselet| "parselet_not(#{parselet}, #{raises?}, #{error}, #{at})".id }}})
 
       {% elsif parselet.is_a? Call && parselet.name == "any" %}
         parselet_any_char({{raises?}}, {{error}}, {{at}})
@@ -127,6 +127,14 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
+  private macro parselet_not_range(range, raises? = false, error = nil, at = nil)
+    if peek_char.in? {{range}}
+      fail {{raises?}}, error_message({{error}} || ->hook_expected_any_character_but_range(Char, Range(Char, Char)), got: peek_char, expected: {{range}}), at: ({{at || "self.location".id}})
+    else
+      next_char
+    end
+  end
+
   private macro parselet_string(string, raises? = false, error = nil, at = nil)
     %begin_location = self.location
     capture do
@@ -149,7 +157,6 @@ abstract class TopDown::Parser < TopDown::CharReader
     if %result.is_a? Fail
       break Fail.new if peek_char == '\0'
       next_char
-      nil
     else
       self.location = %begin_location
       break Fail.new
@@ -182,6 +189,8 @@ abstract class TopDown::Parser < TopDown::CharReader
       parselet_not_char({{parselet}}, {{raises?}}, {{error}}, {{at}})
     {% elsif parselet.is_a? StringLiteral %}
       parselet_not_string({{parselet}}) # TODO: raise version
+    {% elsif parselet.is_a? RangeLiteral %}
+      parselet_not_range({{parselet}}, {{raises?}}, {{error}}, {{at}})
     {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
       parselet_not_token({{parselet[0]}}, {{raises?}}, {{error}}, {{at}})
     {% else %}
@@ -206,6 +215,18 @@ abstract class TopDown::Parser < TopDown::CharReader
       {% end %}
 
       fail {{raises?}}, error_message({{error}} || ->hook_union_failed(Char, Nil), got: peek_char, expected: nil), at: ({{at || "self.location".id}})
+    end)
+  end
+
+  private macro parselet_and(members)
+    forward_fail(handle_fail do
+      {% for i in 0...members.size %}
+        %begin_location = self.location
+        {{ members[i] }}
+        {% unless i == members.size - 1 %}
+          self.location = %begin_location
+        {% end %}
+      {% end %}
     end)
   end
 end

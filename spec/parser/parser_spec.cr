@@ -5,7 +5,7 @@ zero = TopDown::Location.new(0, 0, 0)
 describe TopDown::Parser do
   it "parses char" do
     parser = TopDown::Spec.char_parser
-    parser.source = "abcdef#&*+"
+    parser.source = "abcdef#&~*+"
     parser.spec_parse_ch_a.should eq 'a'
     parser.spec_parse_ch_b!.should eq 'b'
     parser.spec_parse_ch_c_with_error!.should eq 'c'
@@ -14,6 +14,7 @@ describe TopDown::Parser do
     parser.spec_parse_ch_f_with_block!.should eq({"Custom return", 'f'})
     parser.spec_parse_ch_not_a.should eq '#'
     parser.spec_parse_ch_not_a!.should eq '&'
+    parser.spec_parse_ch_not_aqz!.should eq '~'
     parser.spec_parse_ch_any.should eq '*'
     parser.spec_parse_ch_any!.should eq '+'
   end
@@ -60,6 +61,16 @@ describe TopDown::Parser do
       parser.spec_parse_ch_not_a!
     end
 
+    parser.source = "q"
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character, expected any character but 'q'") do
+      parser.spec_parse_ch_not_aqz!
+    end
+
+    parser.source = "z"
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character, expected any character but 'z'") do
+      parser.spec_parse_ch_not_aqz!
+    end
+
     parser.source = ""
     parser.spec_parse_ch_not_a.should be_a TopDown::Parser::Fail
     parser.spec_parse_ch_any.should be_a TopDown::Parser::Fail
@@ -70,13 +81,14 @@ describe TopDown::Parser do
 
   it "parses char range" do
     parser = TopDown::Spec.char_range_parser
-    parser.source = "adC[7E"
+    parser.source = "adC[7EF"
     parser.spec_parse_range.should eq 'a'
     parser.spec_parse_range!.should eq 'd'
     parser.spec_parse_range_with_error!.should eq 'C'
     parser.spec_parse_range_with_error_proc!.should eq '['
     parser.spec_parse_range_with_block.should eq({"Custom return", '7'})
     parser.spec_parse_range_with_block!.should eq({"Custom return", 'E'})
+    parser.spec_parse_range_not!.should eq 'F'
   end
 
   it "fails parsing char range" do
@@ -112,6 +124,18 @@ describe TopDown::Parser do
       parser.spec_parse_range_with_block!
     end
     parser.location.should eq zero
+
+    parser.source = "A"
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character, expected any character but range 'A-E'") do
+      parser.spec_parse_range_not!
+    end
+    parser.location.should eq zero
+
+    parser.source = "E"
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character, expected any character but range 'A-E'") do
+      parser.spec_parse_range_not!
+    end
+    parser.location.should eq zero
   end
 
   it "parses string" do
@@ -123,10 +147,11 @@ describe TopDown::Parser do
     parser.spec_parse_str_jkl_with_error_proc!.should eq "jkl"
     parser.spec_parse_str_mno_with_block.should eq({"Custom return", "mno"})
     parser.spec_parse_str_pqr_with_block!.should eq({"Custom return", "pqr"})
-    parser.spec_parse_str_with_end_word.should be_nil
+    parser.spec_parse_str_stu_with_end_word.should be_nil
     parser.spec_parse_str_empty.should eq ""
-    parser.spec_parse_str_not_abc.should be_nil
-    parser.location.should eq TopDown::Location.new(22, line_number: 0, line_pos: 22)
+    parser.spec_parse_str_not_abc.should eq '*'
+    parser.spec_parse_str_not_foo_bar_baz.should eq '+'
+    parser.location.should eq TopDown::Location.new(23, line_number: 0, line_pos: 23)
   end
 
   it "fails parsing string" do
@@ -164,7 +189,7 @@ describe TopDown::Parser do
     parser.location.should eq zero
 
     parser.source = "stuhello"
-    parser.spec_parse_str_with_end_word.should be_a TopDown::Parser::Fail
+    parser.spec_parse_str_stu_with_end_word.should be_a TopDown::Parser::Fail
     # parser.location.should eq zero # PENDING
 
     parser.source = "§"
@@ -173,6 +198,22 @@ describe TopDown::Parser do
 
     parser.source = "abc"
     parser.spec_parse_str_not_abc.should be_a TopDown::Parser::Fail
+    parser.location.should eq zero
+
+    parser.source = "foo"
+    parser.spec_parse_str_not_foo_bar_baz.should be_a TopDown::Parser::Fail
+    parser.location.should eq zero
+
+    parser.source = "bar"
+    parser.spec_parse_str_not_foo_bar_baz.should be_a TopDown::Parser::Fail
+    parser.location.should eq zero
+
+    parser.source = "baz"
+    parser.spec_parse_str_not_foo_bar_baz.should be_a TopDown::Parser::Fail
+    parser.location.should eq zero
+
+    parser.source = "x"
+    parser.spec_parse_str_not_foo_bar_baz.should be_a TopDown::Parser::Fail
     parser.location.should eq zero
   end
 
