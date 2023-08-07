@@ -370,7 +370,7 @@ abstract class TopDown::Parser < TopDown::CharReader
        end %}
 
     _left_ = forward_fail(handle_fail(0) do |_precedence_| # precedence = 0 because prefix are not subject to precedence
-      parselet_union({{prefix_members}}, {{raises?}}, {{error}}, {{at}})
+      parselet_union({{prefix_members}} of MacroId, {{raises?}}, {{error}}, {{at}})
     end)
 
     {% unless infixs_members.empty? %}

@@ -24,10 +24,6 @@ describe TopDown::Parser do
     parser.source = "λ"
     parser.spec_parse_union_f_with_block!.should eq({"Custom return", "λ"})
 
-    # PENDING
-    # parser.source = ""
-    # parser.spec_parse_union_empty.should be_nil
-
     parser.source = "a"
     parser.spec_parse_union_expanded.should eq('a')
     parser.source = "A"
@@ -63,48 +59,43 @@ describe TopDown::Parser do
 
     parser.source = "§"
     parser.spec_parse_union_a.should be_a TopDown::Parser::Fail
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
-    # PENDING
-    # parser.source = "§"
-    # expect_raises(TopDown::Parser::SyntaxError, "TODO") do
-    #   parser.spec_parse_union_b!
-    # end
-    # parser.location.should eq zero # PENDING
+    parser.source = "§"
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§'") do
+      parser.spec_parse_union_b!
+    end
+    parser.location.should eq zero
 
-    # PENDING
-    # parser.source = "§"
-    # expect_raises(TopDown::Parser::SyntaxError, "TODO") do
-    #   parser.spec_parse_union_c_with_error!
-    # end
-    # parser.location.should eq zero # PENDING
+    parser.source = "§"
+    expect_raises(TopDown::Parser::SyntaxError, "Custom Error: got:§, expected:EOF") do
+      parser.spec_parse_union_c_with_error!
+    end
+    parser.location.should eq zero
 
-    # PENDING
-    # parser.source = "§"
-    # expect_raises(TopDown::Parser::SyntaxError, "TODO") do
-    #   parser.spec_parse_union_d_with_error_proc!
-    # end
-    # parser.location.should eq zero # PENDING
+    parser.source = "§"
+    expect_raises(TopDown::Parser::SyntaxError, "Custom Error Proc: got:§") do
+      parser.spec_parse_union_d_with_error_proc!
+    end
+    parser.location.should eq zero
 
     parser.source = "§"
     parser.spec_parse_union_e_with_block.should be_a TopDown::Parser::Fail
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
-    # PENDING
-    # parser.source = "§"
-    # expect_raises(TopDown::Parser::SyntaxError, "TODO") do
-    #   parser.spec_parse_union_f_with_block!
-    # end
-    # parser.location.should eq zero # PENDING
+    parser.source = "§"
+    expect_raises(TopDown::Parser::SyntaxError, "Unexpected character '§'") do
+      parser.spec_parse_union_f_with_block!
+    end
+    parser.location.should eq zero
 
-    # PENDING
-    # parser.source = "§"
-    # parser.spec_parse_union_empty.should be_nil
-    # parser.location.should eq zero # PENDING
+    parser.source = "§"
+    parser.spec_parse_union_empty.should be_a TopDown::Parser::Fail
+    parser.location.should eq zero
 
     parser.source = "§"
     parser.spec_parse_union_expanded.should be_a TopDown::Parser::Fail
-    # parser.location.should eq zero # PENDING
+    parser.location.should eq zero
 
     parser.source = "§"
     parser.spec_parse_union_expanded_with_sequence.should be_a TopDown::Parser::Fail

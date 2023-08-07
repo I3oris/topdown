@@ -6,13 +6,13 @@ module TopDown::Spec
     def_parse_wrapper :union_b! { parse!('b' | "B" | /β/) }
     def_parse_wrapper :union_c_with_error! { parse!('c' | "C" | /γ/, error: "Custom Error: got:%{got}, expected:%{expected}") }
     def_parse_wrapper :union_d_with_error_proc! do
-      parse!('d' | "D" | /Δ/, error: ->(got : Char, expected : Nil) { "Custom Error Proc: got:#{got}, expected:#{expected}" })
+      parse!('d' | "D" | /Δ/, error: ->(got : Char, _expected : Nil) { "Custom Error Proc: got:#{got}" })
     end
     def_parse_wrapper :union_e_with_block { parse('e' | "E" | /ε/) { |v| {"Custom return", v} } }
     def_parse_wrapper :union_f_with_block! { parse!('f' | "F" | /λ/) { |v| {"Custom return", v} } }
 
     # TODO:
-    # def_parse_wrapper :union_empty { union {} }
+    def_parse_wrapper :union_empty { union { } }
 
     def_parse_wrapper :union_expanded do
       union do
@@ -33,7 +33,7 @@ module TopDown::Spec
 
     # TODO:
     # def_parse_wrapper :union_expanded_with_error! do
-    #   union!(error: "TODO") do
+    #   union!(error: "Custom Error: got:%{got}, expected 'a', 'A' or 'α'") do
     #     parse('a')
     #     parse("A")
     #     parse(/α/)
@@ -42,7 +42,7 @@ module TopDown::Spec
 
     # TODO:
     # def_parse_wrapper :union_expanded_with_error_proc! do
-    #   union!(error: ->{"TODO"}) do
+    #   union!(error: ->(got : Char, _expected : Nil) { "Custom Error: got:#{got}, expected 'a', 'A' or 'α'" } ) do
     #     parse('a')
     #     parse("A")
     #     parse(/α/)
