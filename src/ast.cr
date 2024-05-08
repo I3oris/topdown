@@ -73,9 +73,9 @@ module TopDown
     # TODO docs
     macro def_ast(class_name, *properties)
       class {{class_name}} < {{@type}}
-        getter {{*properties}}
+        getter {{properties.splat}}
 
-        def initialize({{*properties.map { |p| "@#{p.id}".id }}})
+        def initialize({{properties.map { |p| "@#{p.id}".id }.splat}})
         end
 
         {{ yield }}
