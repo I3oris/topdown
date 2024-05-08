@@ -60,7 +60,7 @@ abstract class TopDown::Parser < TopDown::CharReader
         parselet_syntax({{parselet}}, {{raises?}}, {{error}}, {{at}}, {{with_precedence}}, {{left}})
 
       {% elsif parselet.is_a? Call && parselet.name == "|" %}
-        parselet_union([parse({{parselet.receiver}}), parse({{parselet.args[0]}})], {{raises?}}, {{error}}, {{at}})
+        parselet_union([parselet({{parselet.receiver}}), parselet({{parselet.args[0]}})], {{raises?}}, {{error}}, {{at}})
 
       {% elsif parselet.is_a? Call && parselet.name == "not" %}
         parselet_and({{parselet.args.map { |parselet| "parselet_not(#{parselet}, #{raises?}, #{error}, #{at})".id }}})

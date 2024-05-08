@@ -22,9 +22,9 @@ class JSONParserWithToken < TopDown::Parser
     token("number", :tk_number) { |v| v.to_i? || v.to_f }
   end
 
-  syntax :digit1_9, '1'..'9' { }
-  syntax :digit, '0'..'9' { }
-  syntax :hexdigit, :digit | ('a'..'f') | ('A'..'F') { }
+  syntax :digit1_9, '1'..'9'
+  syntax :digit, '0'..'9'
+  syntax :hexdigit, :digit | ('a'..'f') | ('A'..'F')
 
   syntax :int do
     capture do

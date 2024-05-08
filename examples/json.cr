@@ -10,9 +10,9 @@ class JSONParser < TopDown::Parser
 
   # # Syntax ##
 
-  syntax :digit1_9, '1'..'9' { }
-  syntax :digit, '0'..'9' { }
-  syntax :hexdigit, :digit | ('a'..'f') | ('A'..'F') { }
+  syntax :digit1_9, '1'..'9'
+  syntax :digit, '0'..'9'
+  syntax :hexdigit, :digit | ('a'..'f') | ('A'..'F')
 
   syntax :int do
     capture do
