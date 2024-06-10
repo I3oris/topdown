@@ -97,22 +97,16 @@ class JSONParserWithToken < TopDown::Parser
 
   # # Syntax ##
 
-  syntax :object, ["{"] do
-    obj = {} of String => Value
-
-    repeat separator: [","] do
-      key, value = parse(:key_value)
-      obj[key] = value
+  syntax :object, ["{"], end!: ["}"] do
+    repeat_to_h(Hash(String, Value), separator: [","]) do
+      parse(:key_value)
     end
-
-    parse! ["}"]
-    obj
   end
 
   syntax :key_value do
     key = parse ["string"]
     parse! [":"]
-    value = parse! :value
+    value = parse!(:value)
 
     {key, value}
   end
@@ -129,15 +123,10 @@ class JSONParserWithToken < TopDown::Parser
     end
   end
 
-  syntax :array, ["["] do
-    values = [] of Value
-
-    repeat separator: [","] do
-      values << parse :value
+  syntax :array, ["["], end!: ["]"] do
+    repeat_to_a Array(Value), separator: [","] do
+      parse(:value)
     end
-    parse! ["]"]
-
-    values
   end
 
   # # Skip ##

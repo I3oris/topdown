@@ -17,13 +17,13 @@ class JSONParser < TopDown::Parser
   syntax :int do
     capture do
       # Sign:
-      maybe { parse('-') }
+      maybe('-')
 
       # Entire part:
       union do
         parse('0')
         parse(:digit1_9) do
-          repeat { parse(:digit) }
+          repeat(:digit)
         end
       end
     end.to_i
@@ -38,15 +38,13 @@ class JSONParser < TopDown::Parser
 
         # Decimal part:
         parse!('.')
-        parse!(:digit)
-        repeat { parse :digit }
+        repeat_n(1.., :digit)
 
         # Exponent:
         maybe do
           parse('e' | 'E')
           parse!('-' | '+')
-          parse!(:digit)
-          repeat { parse(:digit) }
+          repeat_n(1.., :digit)
         end
       end
     end.to_f
@@ -77,7 +75,7 @@ class JSONParser < TopDown::Parser
       parse('t') { '\t' }
       parse('u') do
         code = capture do
-          4.times { parse! :hexdigit }
+          repeat_n(4, :hexdigit)
         end
         code.to_i(16).chr
       end
@@ -85,15 +83,10 @@ class JSONParser < TopDown::Parser
     end
   end
 
-  syntax :object, '{' do
-    obj = {} of String => Value
-
-    repeat(separator: ',') do
-      key, value = parse(:key_value)
-      obj[key] = value
+  syntax :object, '{', end!: '}' do
+    repeat_to_h(Hash(String, Value), separator: ',') do
+      parse(:key_value)
     end
-    parse!('}')
-    obj
   end
 
   syntax :key_value do
@@ -116,15 +109,10 @@ class JSONParser < TopDown::Parser
     end
   end
 
-  syntax :array, '[' do
-    values = [] of Value
-
-    repeat(separator: ',') do
-      values << parse(:value)
+  syntax :array, '[', end!: ']' do
+    repeat_to_a(Array(Value), separator: ',') do
+      parse(:value)
     end
-    parse!(']')
-
-    values
   end
 
   # # Skip ##
@@ -135,11 +123,11 @@ class JSONParser < TopDown::Parser
     parse('\t')
     parse('\r')
     # # Line comments:
-    # parse("//") { repeat { parse(not('\n')) } }
+    # parse("//") { repeat(not('\n')) }
 
     # # Block comments:
     # parse("/*") do
-    #   repeat { parse(not("*/")) }
+    #   repeat(not("*/"))
     #   parse("*/")
     # end
   end
