@@ -39,6 +39,10 @@ class TopDown::CharReader
     char
   end
 
+  def previous_assci_char? : Char?
+    self.source.to_slice[@char_reader.pos - 2]?.try &.chr
+  end
+
   # Iterates over each *source* character.
   #
   # `location` is incremented between each character.
