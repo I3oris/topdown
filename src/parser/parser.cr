@@ -456,9 +456,12 @@ abstract class TopDown::Parser < TopDown::CharReader
   # "1+*;" # ~> "Unexpected character '*', expected '1'"
   # "1*;"  # ~> "Unexpected character '*', expected ';'"
   # ```
-  macro maybe(&)
+  macro maybe(parselet = nil, &)
     %begin_location = self.location
     %result = handle_fail do
+      {% if parselet %}
+        parse({{parselet}})
+      {% end %}
       {{ yield }}
     end
     if %result.is_a? Fail
@@ -487,10 +490,45 @@ abstract class TopDown::Parser < TopDown::CharReader
   # "1+1+1+*;"   # ~> "Unexpected character '*', expected '1'"
   # "1*;"        # ~> "Unexpected character '*', expected ';'"
   # ```
-  macro repeat(&)
+  macro repeat(parselet = nil, &)
     %old_location = self.location
     loop do
+
       %old_location = self.location
+      {% if parselet %}
+        parse({{parselet}})
+      {% end %}
+      {{ yield }}
+    end
+    self.location = %old_location
+    nil
+  end
+
+  macro repeat_n(count, parselet = nil, &block)
+    {% if count.is_a? RangeLiteral && (count.begin.nil? || count.begin.is_a? NumberLiteral) && (count.end.nil? || count.end.is_a? NumberLiteral) %}
+      {{max = count.end || Int32::MAX - 1}}
+      repeat_min_max({{count.begin || 0}}, {{max}}, {{parselet}}) {{block}}
+    {% elsif count.is_a? NumberLiteral %}
+      repeat_min_max({{count}}, {{count}}, {{parselet}}) {{block}}
+    {% else %}
+      {% raise "'count' should be 'RangeLiteral', or 'NumberLiteral' not #{count.class_name}: #{count}" %}
+    {% end %}
+  end
+
+  private macro repeat_min_max(min, max, parselet = nil, &)
+    forward_fail({{min}}.times do
+      {% if parselet %}
+        parse({{parselet}})
+      {% end %}
+      {{ yield }}
+    end)
+
+    %old_location = self.location
+    {{max + 1 - min}}.times do
+      %old_location = self.location
+      {% if parselet %}
+        parse({{parselet}})
+      {% end %}
       {{ yield }}
     end
     self.location = %old_location
@@ -515,14 +553,57 @@ abstract class TopDown::Parser < TopDown::CharReader
   # "(1,1,)"      # ~> "Unexpected character ',', expected ')'"
   # "(11)"        # ~> "Unexpected character '1', expected ')'"
   # ```
-  macro repeat(separator, &)
+  macro repeat(parselet = nil, *, separator, &)
     maybe do
+      {% if parselet %}
+        parse({{parselet}})
+      {% end %}
       {{ yield }}
       repeat do
         parse({{separator}})
+        {% if parselet %}
+          parse!({{parselet}})
+        {% end %}
         {{ yield }}
       end
     end
+  end
+
+  # TODO: docs
+  macro repeat_to_h(type, *, separator = nil, &)
+    hash = {{type}}.new
+    repeat({{{separator: separator}.double_splat if separator}}) do
+      key, value = {{yield}}
+      hash[key] = value
+    end
+    hash
+  end
+
+  # TODO: docs
+  macro repeat_to_a(type, *, separator = nil, &)
+    array = {{type}}.new
+    repeat({{{separator: separator}.double_splat if separator}}) do
+      array << {{yield}}
+    end
+    array
+  end
+
+  # TODO: docs
+  macro repeat_to_s(*, separator = nil, &block)
+    skip_chars
+    capture do
+      repeat({{{separator: separator}.double_splat if separator}}) {{block}}
+    end
+  end
+
+  # TODO: docs
+  macro repeat_count(*, separator = nil)
+    count = 0
+    repeat({{{separator: separator}.double_splat if separator}}) do
+      {{yield}}
+      count += 1
+    end
+    count
   end
 
   # Equivalent to `repeat { union { ... } }`

@@ -114,7 +114,7 @@ module TopDown::Spec
       end
     end
 
-    def_parse_wrapper :rep_with_sep { capture { repeat(',') { parse(/\w+/) } } }
+    def_parse_wrapper :rep_with_sep { capture { repeat(separator: ',') { parse(/\w+/) } } }
   end
 
   class_getter union_parser = UnionParser.new("")
