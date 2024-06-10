@@ -245,7 +245,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   #   end
   # end
   # ```
-  macro syntax(syntax_name, *prefixs, &block)
+  macro syntax(syntax_name, *prefixs, end! = nil, &block)
     @[AlwaysInline]
     private def parse_{{syntax_name.id}}(_left_, _precedence_)
       _begin_location_ = self.location
@@ -255,6 +255,11 @@ abstract class TopDown::Parser < TopDown::CharReader
 
         {% if block %}
           handle_fail(*prefixs) {{block}}
+        {% elsif prefixs.size == 1 %}
+          prefixs.first
+        {% end %}
+        {% if end! %}
+          .tap { parse!({{end!}}) }
         {% end %}
       end
     end
