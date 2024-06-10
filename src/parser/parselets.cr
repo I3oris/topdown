@@ -68,6 +68,9 @@ abstract class TopDown::Parser < TopDown::CharReader
       {% elsif parselet.is_a? Call && parselet.name == "any" %}
         parselet_any_char({{raises?}}, {{error}}, {{at}})
 
+      {% elsif parselet.is_a? Call && parselet.name == "word" && parselet.args.size == 1 && parselet.args[0].is_a? StringLiteral %}
+        parselet_word({{parselet.args[0]}}, {{raises?}}, {{error}}, {{at}})
+
       {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 && parselet[0].is_a? Call && parselet[0].name == "any" %}
         parselet_any_token({{raises?}}, {{error}}, {{at}})
 
@@ -228,5 +231,15 @@ abstract class TopDown::Parser < TopDown::CharReader
         {% end %}
       {% end %}
     end)
+  end
+
+  private macro parselet_word(string, raises? = false, error = nil, at = nil)
+    %begin_location = self.location
+    %result = parselet_string({{string}}, {{raises?}}, {{error}}, {{at}})
+    if peek_char.alphanumeric?
+      self.location = %begin_location
+      break Fail.new
+    end
+    %result
   end
 end
