@@ -71,11 +71,11 @@ abstract class TopDown::Parser < TopDown::CharReader
       {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 && parselet[0].is_a? Call && parselet[0].name == "any" %}
         parselet_any_token({{raises?}}, {{error}}, {{at}})
 
-      {% elsif parselet.is_a? ArrayLiteral && parselet.size == 1 %}
-        parselet_token({{parselet[0]}}, {{raises?}}, {{error}}, {{at}})
+      {% elsif parselet.is_a? ArrayLiteral && parselet.size >= 1 %}
+        parselet_token({{parselet[0]}}, {{parselet[1]}}, {{raises?}}, {{error}}, {{at}})
 
       {% else %}
-        {% raise "Unsupported ASTNode #{parselet.class_name} : #{parselet}" %}
+        {% raise "Unsupported parselet ASTNode #{parselet.class_name} : #{parselet}" %}
       {% end %}
 
     {% if block %}

@@ -53,6 +53,14 @@ abstract class TopDown::Parser < TopDown::CharReader
     self.location = @current_token_end_location
   end
 
+  private def create_token(token_name : Symbol, value : Token)
+    value
+  end
+
+  private def create_token(token_name : Symbol, value)
+    Token.new(token_name, value)
+  end
+
   # This macro allows to define how tokens are parsed.
   #
   # Each line of the *block* correspond a token.
@@ -95,7 +103,7 @@ abstract class TopDown::Parser < TopDown::CharReader
 
     {% macro_tokens_map = {} of MacroId => StringLiteral %}
     {% for node in block.body.expressions %}
-      {% if (call = node) && call.is_a? Call && call.name == "token"
+      {% if (call = node) && call.is_a? Call && call.name.starts_with? "token"
            macro_tokens_map[call.args[0]] = "typeof(#{call})".id
          else
            raise "Only the macro call 'token(token_name, parselet = nil, &block)' is accepted inside the macro 'Parser.tokens'"
@@ -132,15 +140,15 @@ abstract class TopDown::Parser < TopDown::CharReader
     %result = parse({{parselet}}) {{block}}
     break Fail.new if %result.is_a? Fail
 
-    Token.new({{token_name.id.symbolize}}, %result)
+    create_token({{token_name.id.symbolize}}, %result)
   end
 
-  private macro parselet_token(token_name, raises? = false, error = nil, at = nil)
+  private macro parselet_token(token_name, token_value = nil, raises? = false, error = nil, at = nil)
     {% type = MACRO_TOKENS_MAP[token_name] %}
     {% raise "The token [#{token_name}] is not defined. Add 'token(#{token_name})' inside the macro 'Parser.tokens' to define it" unless type %}
 
     %token = peek_token?
-    if %token && %token.name == {{token_name.id.symbolize}}
+    if %token && %token.name == {{token_name.id.symbolize}} && ({{token_value.nil?}} || %token.value == {{token_value}})
       consume_token
       %token.as({{type}}).value
     else
