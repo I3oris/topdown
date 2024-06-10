@@ -321,6 +321,21 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
+  # TODO: docs
+  # parse parselet
+  # if succeed, don't move the cursor and return parselet result
+  # else, don't move the cursor and break a failure
+  macro peek(parselet, with_precedence = nil, &block)
+    %location = self.location
+    handle_fail do
+      parselet({{parselet}}, with_precedence: {{with_precedence}}) {{ block }}
+    ensure
+      self.location = %location
+    end.tap do |result|
+      break result if result.is_a? Fail
+    end
+  end
+
   # In the context of an `infix` member, returns the `left` result of the current `union`.
   #
   # Returns `nil` in a context other than inside an `infix`.
