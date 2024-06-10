@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.8.2">
+<meta name="generator" content="Crystal Docs 1.11.2">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="topdown">
 
@@ -23,7 +23,7 @@
 
 <svg class="hidden">
   <symbol id="octicon-link" viewBox="0 0 16 16">
-    <path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+    <path fill="currentColor" fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
   </symbol>
 </svg>
 <input type="checkbox" id="sidebar-btn">
@@ -87,6 +87,11 @@
       
     </li>
   
+  <li class=" " data-id="topdown/TopDown/Parser/ParseletLiteral" data-name="topdown::parser::parseletliteral">
+      <a href="../TopDown/Parser/ParseletLiteral.html">ParseletLiteral</a>
+      
+    </li>
+  
   <li class=" " data-id="topdown/TopDown/Parser/SyntaxError" data-name="topdown::parser::syntaxerror">
       <a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a>
       
@@ -116,7 +121,7 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">abstract class</span> TopDown::Parser
+  <span class="kind">abstract class</span> TopDown::<wbr>Parser
 
 </h1>
 
@@ -149,7 +154,7 @@
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
 <p>which will parse anything but EOF.</p>
-<p><code><a href="../TopDown/Parser.html#root%28parselet%29-macro">root</a></code> indicate the starting point of parsing, the rest is to do inside <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2C%26block%29-macro">syntax</a></code>.</p>
+<p><code><a href="../TopDown/Parser.html#root%28parselet%29-macro">root</a></code> indicate the starting point of parsing, the rest is to do inside <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2Cend%21%3Dnil%2C%26block%29-macro">syntax</a></code>.</p>
 <p>Syntax are like functions, in which, any code can be added.
 Inside it, <code><a href="../TopDown/Parser.html#parse-instance-method">#parse</a></code> &amp; <code><a href="../TopDown/Parser.html#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro">parse!</a></code> can be used to define what to parse.</p>
 <pre><code class="language-crystal">syntax <span class="n">:expression</span> <span class="k">do</span>
@@ -185,7 +190,7 @@ This failure is caught by the <code>root :expression</code>, that why it next ra
     <use href="#octicon-link"/>
   </svg>
 </a>Repeat, union, maybe</h3>
-<p><code><a href="../TopDown/Parser.html#repeat%28%26%29-macro">repeat</a></code>, <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>, <code><a href="../TopDown/Parser.html#maybe%28%26%29-macro">maybe</a></code> allow interesting things to be parsed. They take both a block, in which parse failure can occur.</p>
+<p><code><a href="../TopDown/Parser.html#repeat%28parselet%3Dnil%2C%26%29-macro">repeat</a></code>, <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>, <code><a href="../TopDown/Parser.html#maybe%28parselet%3Dnil%2C%26%29-macro">maybe</a></code> allow interesting things to be parsed. They take both a block, in which parse failure can occur.</p>
 <pre><code class="language-crystal">syntax <span class="n">:expression</span> <span class="k">do</span>
   repeat <span class="k">do</span>
     parse(<span class="s">&#39;a&#39;</span>)
@@ -227,30 +232,24 @@ only needed result, storing in array, or to insert some logic.</p>
 <span class="s">&quot;dé&quot;</span>    <span class="c"># ~&gt; Unexpected character &#39;é&#39;, expected &#39;EOF&#39;</span>
 <span class="s">&quot;abac&quot;</span>  <span class="c"># # Unexpected character &#39;c&#39;, expected &#39;b&#39;</span></code></pre>
 <p><span class="flag purple">NOTE</span> 
-When using <code><a href="../TopDown/Parser.html#repeat%28%26%29-macro">repeat</a></code>, <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>, and <code><a href="../TopDown/Parser.html#maybe%28%26%29-macro">maybe</a></code>, we always use <code><a href="../TopDown/Parser.html#parse-instance-method">#parse</a></code> at first (without exclamation), because they <code>break</code> on failure,
-which is caught by the <code><a href="../TopDown/Parser.html#repeat%28%26%29-macro">repeat</a></code>/<code><a href="../TopDown/Parser.html#maybe%28%26%29-macro">maybe</a></code>/<code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>. They know so they should continue parsing without a failure.</p>
+When using <code><a href="../TopDown/Parser.html#repeat%28parselet%3Dnil%2C%26%29-macro">repeat</a></code>, <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>, and <code><a href="../TopDown/Parser.html#maybe%28parselet%3Dnil%2C%26%29-macro">maybe</a></code>, we always use <code><a href="../TopDown/Parser.html#parse-instance-method">#parse</a></code> at first (without exclamation), because they <code>break</code> on failure,
+which is caught by the <code><a href="../TopDown/Parser.html#repeat%28parselet%3Dnil%2C%26%29-macro">repeat</a></code>/<code><a href="../TopDown/Parser.html#maybe%28parselet%3Dnil%2C%26%29-macro">maybe</a></code>/<code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>. They know so they should continue parsing without a failure.</p>
 <h3><a id="infix" class="anchor" href="#infix">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>Infix</h3>
-<p><code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code> can be used inside a union. It permits to parse operators with precedence easily.</p>
+<p><code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code> can be used inside a union. It permits to parse operators with precedence easily.</p>
 <pre><code class="language-crystal">syntax :expression do
   union do
     parse(/\d+/).to_i
-    infix(30, :pow)
-    infix(20, :mul)
-    infix(20, :div)
-    infix(10, :add)
-    infix(10, :sub)
+    infix 30 &quot;**&quot; { left() ** parse!(:expression) }
+    infix 20 &#39;*&#39; { left() * parse!(:expression) }
+    infix 20 &#39;/&#39; { left() / parse!(:expression) }
+    infix 10 &#39;+&#39; { left() + parse!(:expression) }
+    infix 10 &#39;-&#39; { left() - parse!(:expression) }
   end
-end
-
-syntax :pow, &quot;**&quot; { left() ** parse!(:expression) }
-syntax :mul, &#39;*&#39; { left() * parse!(:expression) }
-syntax :div, &#39;/&#39; { left() / parse!(:expression) }
-syntax :add, &#39;+&#39; { left() + parse!(:expression) }
-syntax :sub, &#39;-&#39; { left() - parse!(:expression) }</code></pre>
+end</code></pre>
 <p>Infix are treated specially by the <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>. They are parsed after any other member of the union, the <code><a href="../TopDown/Parser.html#left-macro">left()</a></code> result is updated each time.
 They are parsed in function of their precedence (first argument), higher precedence mean grouped first.</p>
 <pre><code class="language-crystal"><span class="s">&quot;3*6+6*4&quot;</span> <span class="c"># ~&gt; 42</span></code></pre>
@@ -259,7 +258,7 @@ They are parsed in function of their precedence (first argument), higher precede
     <use href="#octicon-link"/>
   </svg>
 </a>Precedence:</h3>
-<p><code><a href="../TopDown/Parser.html#current_precedence-macro">current_precedence()</a></code> is initially zero, it changes when entering in <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code>. This is this value that guide the recursion for parsing operators.
+<p><code><a href="../TopDown/Parser.html#current_precedence-macro">current_precedence()</a></code> is initially zero, it changes when entering in <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code>. This is this value that guide the recursion for parsing operators.
 Its value can be changed at specific places, so parsing order can be entirely controlled.</p>
 <p>For example, assuming we want to parse a ternary if <code>_ ? _ : _</code> that have a higher precedence that classical operators (e.g. <code>&quot;1+1?2:3+3&quot;</code> gets parsed as (<code>1</code> + (<code>1?2:3</code>)) + <code>3</code>.</p>
 <p>We can do the following:</p>
@@ -316,35 +315,42 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
   </h2>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L96" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L96" target="_blank">
         ast.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/hooks.cr#L1" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L1" target="_blank">
         hooks.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L205" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parselets.cr#L1" target="_blank">
+        parser/parselets.cr
+      </a>
+    
+    <br/>
+  
+    
+      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L200" target="_blank">
         parser/parser.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/syntax_error.cr#L1" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/syntax_error.cr#L1" target="_blank">
         parser/syntax_error.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/tokens.cr#L1" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L1" target="_blank">
         parser/tokens.cr
       </a>
     
@@ -356,6 +362,242 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
 
 
 
+
+
+
+  <h2>
+    <a id="macro-summary" class="anchor" href="#macro-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Macro Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#ast%28ast_class%2C%2Aargs%2Cat%3Dnil%2C%2A%2Aoptions%29-macro" class="signature"><strong>ast</strong>(ast_class, *args, at = <span class="n">nil</span>, **options)</a>
+        
+          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#begin_location-macro" class="signature"><strong>begin_location</strong></a>
+        
+          <div class="summary"><p>Returns the <code><a href="../TopDown/Location.html">Location</a></code> at the beginning of the <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2Cend%21%3Dnil%2C%26block%29-macro">syntax</a></code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#capture%28%26%29-macro" class="signature"><strong>capture</strong>(&)</a>
+        
+          <div class="summary"><p>Captures all characters parsed inside the <em>block</em>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#current_precedence-macro" class="signature"><strong>current_precedence</strong></a>
+        
+          <div class="summary"><p>Returns the current precedence.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#end_word-macro" class="signature"><strong>end_word</strong></a>
+        
+          <div class="summary"><p>Allows to match a word only if a non-alphanumeric follows</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#forward_fail%28result%29-macro" class="signature"><strong>forward_fail</strong>(result)</a>
+        
+          <div class="summary"><p>Returns the given <em>result</em>, or <code>break</code> the current sequence if <em>result</em> is a <code><a href="../TopDown/Parser/Fail.html">Fail</a></code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro" class="signature"><strong>infix</strong>(precedence, parselet, associativity = <span class="s">&quot;right&quot;</span>, &block)</a>
+        
+          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#left-macro" class="signature"><strong>left</strong></a>
+        
+          <div class="summary"><p>In the context of an <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code> member, returns the <code><a href="../TopDown/Parser.html#left-macro">left</a></code> result of the current <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#maybe%28parselet%3Dnil%2C%26%29-macro" class="signature"><strong>maybe</strong>(parselet = <span class="n">nil</span>, &)</a>
+        
+          <div class="summary"><p>Parses the sequence inside the block, returns <code>nil</code> if it fails.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#maybe_union%28%26block%29-macro" class="signature"><strong>maybe_union</strong>(&block)</a>
+        
+          <div class="summary"><p>Equivalent to `maybe { union { ...</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#no_skip%28%26%29-macro" class="signature"><strong>no_skip</strong>(&)</a>
+        
+          <div class="summary"><p>Prevents the <code><a href="../TopDown/Parser.html#skip%28%26members%29-macro">skip</a></code> rules to be triggered inside the given block.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#parse%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro" class="signature"><strong>parse</strong>(parselet, with_precedence = <span class="n">nil</span>, &block)</a>
+        
+          <div class="summary"><p>Parses the given <em>parselet</em> (<code><a href="../TopDown/Parser/ParseletLiteral.html">ParseletLiteral</a></code>), and yield/return the according result.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro" class="signature"><strong>parse!</strong>(parselet, error = <span class="n">nil</span>, at = <span class="n">nil</span>, with_precedence = <span class="n">nil</span>, &block)</a>
+        
+          <div class="summary"><p>Similar to <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser.parse</code></a>, but raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> if the parsing fail.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#partial_capture%28%26block%29-macro" class="signature"><strong>partial_capture</strong>(&block)</a>
+        
+          <div class="summary"><p>Captures chosen characters parsed inside the <em>block</em>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#peek%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro" class="signature"><strong>peek</strong>(parselet, with_precedence = <span class="n">nil</span>, &block)</a>
+        
+          <div class="summary"><p><span class="flag orange">TODO</span>  docs parse parselet if succeed, don't move the cursor and return parselet result else, don't move the cursor and break a failure</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#prefix%28precedence%2Cparselet%2C%26block%29-macro" class="signature"><strong>prefix</strong>(precedence, parselet, &block)</a>
+        
+          <div class="summary"><p>Equivalent to <code><a href="../TopDown/Parser.html#parse%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro">parse(parselet, with_precedence: precedence)</a></code></p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#repeat%28parselet%3Dnil%2C%26%29-macro" class="signature"><strong>repeat</strong>(parselet = <span class="n">nil</span>, &)</a>
+        
+          <div class="summary"><p>Repeatedly parses the sequence inside the block until it fails.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#repeat%28parselet%3Dnil%2C%2A%2Cseparator%2C%26%29-macro" class="signature"><strong>repeat</strong>(parselet = <span class="n">nil</span>, *, separator, &)</a>
+        
+          <div class="summary"><p>Repeatedly parses the sequence inside the block until it fails, with a <em>separator</em> parselet between each iteration.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#repeat_count%28%2A%2Cseparator%3Dnil%29-macro" class="signature"><strong>repeat_count</strong>(*, separator = <span class="n">nil</span>)</a>
+        
+          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#repeat_n%28count%2Cparselet%3Dnil%2C%26block%29-macro" class="signature"><strong>repeat_n</strong>(count, parselet = <span class="n">nil</span>, &block)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#repeat_to_a%28type%2C%2A%2Cseparator%3Dnil%2C%26%29-macro" class="signature"><strong>repeat_to_a</strong>(type, *, separator = <span class="n">nil</span>, &)</a>
+        
+          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#repeat_to_h%28type%2C%2A%2Cseparator%3Dnil%2C%26%29-macro" class="signature"><strong>repeat_to_h</strong>(type, *, separator = <span class="n">nil</span>, &)</a>
+        
+          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#repeat_to_s%28%2A%2Cseparator%3Dnil%2C%26block%29-macro" class="signature"><strong>repeat_to_s</strong>(*, separator = <span class="n">nil</span>, &block)</a>
+        
+          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#repeat_union%28%26block%29-macro" class="signature"><strong>repeat_union</strong>(&block)</a>
+        
+          <div class="summary"><p>Equivalent to `repeat { union { ...</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#root%28parselet%29-macro" class="signature"><strong>root</strong>(parselet)</a>
+        
+          <div class="summary"><p>Defines the main syntax to parse.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#sequence%28%26%29-macro" class="signature"><strong>sequence</strong>(&)</a>
+        
+          <div class="summary"><p>Allows to group a sequence of parsing (inside a union for example).</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#skip%28%26members%29-macro" class="signature"><strong>skip</strong>(&members)</a>
+        
+          <div class="summary"><p>Defines what is ignored during the parsing.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#syntax%28syntax_name%2C%2Aprefixs%2Cend%21%3Dnil%2C%26block%29-macro" class="signature"><strong>syntax</strong>(syntax_name, *prefixs, end! = <span class="n">nil</span>, &block)</a>
+        
+          <div class="summary"><p>Defines a syntax that can be called with <code>parse(SymbolLiteral)</code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#token%28token_name%2Cparselet%3Dnil%2C%26block%29-macro" class="signature"><strong>token</strong>(token_name, parselet = <span class="n">nil</span>, &block)</a>
+        
+          <div class="summary"><p>Defines a token to parse.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#tokens%28%26block%29-macro" class="signature"><strong>tokens</strong>(&block)</a>
+        
+          <div class="summary"><p>This macro allows to define how tokens are parsed.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#union%28%26members%29-macro" class="signature"><strong>union</strong>(&members)</a>
+        
+          <div class="summary"><p>Tries to parse each member of the union, returns the result of the first that succeed.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#union%21%28error%3Dnil%2Cat%3Dnil%2C%26members%29-macro" class="signature"><strong>union!</strong>(error = <span class="n">nil</span>, at = <span class="n">nil</span>, &members)</a>
+        
+          <div class="summary"><p>Similar to <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">Parser.union</a></code>, but raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> if the parsing fail.</p></div>
+        
+      </li>
+    
+  </ul>
 
 
 
@@ -377,51 +619,84 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
       </li>
     
       <li class="entry-summary">
-        <a href="#hook_could_not_parse_regex%28got%3AChar%2Cexpected%3ARegex%29-instance-method" class="signature"><strong>#hook_could_not_parse_regex</strong>(got : Char, expected : Regex)</a>
-        
-          <div class="summary"><p>Override this method to modify the default error message when <code>parse(/regex/)</code> fail.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#hook_could_not_parse_string%28got%3AChar%2Cexpected%3AString%29-instance-method" class="signature"><strong>#hook_could_not_parse_string</strong>(got : Char, expected : String)</a>
-        
-          <div class="summary"><p>Override this method to modify the default error message when <code>parse(&quot;string&quot;)</code> fail.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#hook_could_not_parse_syntax%28got%3AChar%2Cexpected%3ASymbol%29-instance-method" class="signature"><strong>#hook_could_not_parse_syntax</strong>(got : Char, expected : Symbol)</a>
-        
-          <div class="summary"><p>Override this method to modify the default error message when <code>parse(:syntax)</code> fail.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#hook_could_not_parse_token%28got%3AChar%2Cexpected%3ANil%29-instance-method" class="signature"><strong>#hook_could_not_parse_token</strong>(got : Char, expected : Nil)</a>
+        <a href="#hook_could_not_parse_any_token%28got%3AChar%2Cexpected%3ANil%29-instance-method" class="signature"><strong>#hook_could_not_parse_any_token</strong>(got : Char, expected : Nil)</a>
         
           <div class="summary"><p>Override this method to modify the default error message when any token can be parsed.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#hook_unexpected_char%28got%3AChar%2Cexpected%3AChar%29-instance-method" class="signature"><strong>#hook_unexpected_char</strong>(got : Char, expected : Char)</a>
+        <a href="#hook_expected_any_character_but%28got%3AChar%2Cexpected%3AChar%29-instance-method" class="signature"><strong>#hook_expected_any_character_but</strong>(got : Char, expected : Char)</a>
         
-          <div class="summary"><p>Override this method to modify the default error message when <code>parse('a')</code> fail.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#hook_unexpected_range_char%28got%3AChar%2Cexpected%3ARange%28Char%2CChar%29%29-instance-method" class="signature"><strong>#hook_unexpected_range_char</strong>(got : Char, expected : Range(Char, Char))</a>
-        
-          <div class="summary"><p>Override this method to modify the default error message when <code>parse('a'..'z')</code> fail.</p></div>
+          <div class="summary"><p>Override this method to modify the default error message when <code>parse!(not('a'))</code> fail.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#hook_unexpected_token%28got%3AToken%7CNil%2Cexpected%3AString%29forallToken-instance-method" class="signature"><strong>#hook_unexpected_token</strong>(got : Token | Nil, expected : String) forall Token</a>
+        <a href="#hook_expected_any_character_but_range%28got%3AChar%2Cexpected%3ARange%28Char%2CChar%29%29-instance-method" class="signature"><strong>#hook_expected_any_character_but_range</strong>(got : Char, expected : Range(Char, Char))</a>
         
-          <div class="summary"><p>Override this method to modify the default error message when <code>parse([&quot;TOKEN&quot;])</code> fail.</p></div>
+          <div class="summary"><p>Override this method to modify the default error message when <code>parse!(not('a'..'z'))</code> fail.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#hook_expected_any_in_range%28got%3AChar%2Cexpected%3ARange%28Char%2CChar%29%29-instance-method" class="signature"><strong>#hook_expected_any_in_range</strong>(got : Char, expected : Range(Char, Char))</a>
+        
+          <div class="summary"><p>Override this method to modify the default error message when <code>parse!('a'..'z')</code> fail.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#hook_expected_any_token_but%28got%3AToken%7CNil%2Cexpected%3AString%29-instance-method" class="signature"><strong>#hook_expected_any_token_but</strong>(got : Token | Nil, expected : String)</a>
+        
+          <div class="summary"><p>Override this method to modify the default error message when <code>parse!(not([&quot;TOKEN&quot;]))</code> fail.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#hook_expected_character%28got%3AChar%2Cexpected%3AChar%29-instance-method" class="signature"><strong>#hook_expected_character</strong>(got : Char, expected : Char)</a>
+        
+          <div class="summary"><p>Override this method to modify the default error message when <code>parse!('a')</code> fail.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#hook_expected_pattern%28got%3AChar%2Cexpected%3ARegex%29-instance-method" class="signature"><strong>#hook_expected_pattern</strong>(got : Char, expected : Regex)</a>
+        
+          <div class="summary"><p>Override this method to modify the default error message when <code>parse!(/regex/)</code> fail.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#hook_expected_syntax%28got%3AChar%2Cexpected%3ASymbol%29-instance-method" class="signature"><strong>#hook_expected_syntax</strong>(got : Char, expected : Symbol)</a>
+        
+          <div class="summary"><p>Override this method to modify the default error message when <code>parse!(:syntax)</code> fail.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#hook_expected_token%28got%3AToken%7CNil%2Cexpected%3AString%29-instance-method" class="signature"><strong>#hook_expected_token</strong>(got : Token | Nil, expected : String)</a>
+        
+          <div class="summary"><p>Override this method to modify the default error message when <code>parse!([&quot;TOKEN&quot;])</code> fail.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#hook_expected_word%28got%3AChar%2Cexpected%3AString%29-instance-method" class="signature"><strong>#hook_expected_word</strong>(got : Char, expected : String)</a>
+        
+          <div class="summary"><p>Override this method to modify the default error message when <code>parse!(&quot;string&quot;)</code> fail.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#hook_union_failed%28got%3AChar%2Cexpected%3ANil%29-instance-method" class="signature"><strong>#hook_union_failed</strong>(got : Char, expected : Nil)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#location%3D%28location%3ALocation%29-instance-method" class="signature"><strong>#location=</strong>(location : Location)</a>
+        
+          <div class="summary"><p>Move the cursor to the new <em>location</em>.</p></div>
         
       </li>
     
@@ -454,184 +729,16 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
       </li>
     
       <li class="entry-summary">
+        <a href="#source%3D%28source%3AString%29-instance-method" class="signature"><strong>#source=</strong>(source : String)</a>
+        
+          <div class="summary"><p>Modifies the <em>source</em> and reset the cursor <code>location</code> to zero.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#tokens%28eof%3Dnil%29-instance-method" class="signature"><strong>#tokens</strong>(eof = <span class="n">nil</span>)</a>
         
           <div class="summary"><p>Returns the array of parsed tokens.</p></div>
-        
-      </li>
-    
-  </ul>
-
-
-
-  <h2>
-    <a id="macro-summary" class="anchor" href="#macro-summary">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Macro Summary
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#ast%28ast_class%2C%2Aargs%2Cat%3Dnil%2C%2A%2Aoptions%29-macro" class="signature"><strong>ast</strong>(ast_class, *args, at = <span class="n">nil</span>, **options)</a>
-        
-          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#begin_location-macro" class="signature"><strong>begin_location</strong></a>
-        
-          <div class="summary"><p>Returns the <code><a href="../TopDown/Location.html">Location</a></code> at the beginning of the <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2C%26block%29-macro">syntax</a></code>.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#capture%28%26%29-macro" class="signature"><strong>capture</strong>(&)</a>
-        
-          <div class="summary"><p>Captures all characters parsed inside the <em>block</em>.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#current_precedence-macro" class="signature"><strong>current_precedence</strong></a>
-        
-          <div class="summary"><p>Returns the current precedence.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#forward_fail%28result%29-macro" class="signature"><strong>forward_fail</strong>(result)</a>
-        
-          <div class="summary"><p>Returns the given <em>result</em>, or <code>break</code> the current sequence if <em>result</em> is a <code><a href="../TopDown/Parser/Fail.html">Fail</a></code>.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro" class="signature"><strong>infix</strong>(precedence, parselet, associativity = <span class="s">&quot;right&quot;</span>)</a>
-        
-          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#left-macro" class="signature"><strong>left</strong></a>
-        
-          <div class="summary"><p>In the context of an <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code> member, returns the <code><a href="../TopDown/Parser.html#left-macro">left</a></code> result of the current <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#maybe%28%26%29-macro" class="signature"><strong>maybe</strong>(&)</a>
-        
-          <div class="summary"><p>Parses the sequence inside the block, returns <code>nil</code> if it fails.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#maybe_union%28%26block%29-macro" class="signature"><strong>maybe_union</strong>(&block)</a>
-        
-          <div class="summary"><p>Equivalent to `maybe { union { ...</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#no_skip%28%26%29-macro" class="signature"><strong>no_skip</strong>(&)</a>
-        
-          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#parse%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro" class="signature"><strong>parse</strong>(parselet, with_precedence = <span class="n">nil</span>, &block)</a>
-        
-          <div class="summary"><p>Parse the given <em>parselet</em>.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro" class="signature"><strong>parse!</strong>(parselet, error = <span class="n">nil</span>, at = <span class="n">nil</span>, with_precedence = <span class="n">nil</span>, &block)</a>
-        
-          <div class="summary"><p>Similar to <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser.parse</code></a>, but raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> if the parsing fail.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#partial_capture%28%26block%29-macro" class="signature"><strong>partial_capture</strong>(&block)</a>
-        
-          <div class="summary"><p>Captures chosen characters parsed inside the <em>block</em>.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#repeat%28%26%29-macro" class="signature"><strong>repeat</strong>(&)</a>
-        
-          <div class="summary"><p>Repeatedly parses the sequence inside the block until it fails.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#repeat%28separator%2C%26%29-macro" class="signature"><strong>repeat</strong>(separator, &)</a>
-        
-          <div class="summary"><p>Repeatedly parses the sequence inside the block until it fails, with a <em>separator</em> parselet between each iteration.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#repeat_union%28%26block%29-macro" class="signature"><strong>repeat_union</strong>(&block)</a>
-        
-          <div class="summary"><p>Equivalent to `repeat { union { ...</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#root%28parselet%29-macro" class="signature"><strong>root</strong>(parselet)</a>
-        
-          <div class="summary"><p>Defines the main syntax to parse.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#sequence%28%26%29-macro" class="signature"><strong>sequence</strong>(&)</a>
-        
-          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#skip%28%26members%29-macro" class="signature"><strong>skip</strong>(&members)</a>
-        
-          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#syntax%28syntax_name%2C%2Aprefixs%2C%26block%29-macro" class="signature"><strong>syntax</strong>(syntax_name, *prefixs, &block)</a>
-        
-          <div class="summary"><p>Defines a syntax that can be called with <code>parse(SymbolLiteral)</code>.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#token%28token_name%2Cparselet%3Dnil%2C%26block%29-macro" class="signature"><strong>token</strong>(token_name, parselet = <span class="n">nil</span>, &block)</a>
-        
-          <div class="summary"><p>Defines a token to parse.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#tokens%28%26block%29-macro" class="signature"><strong>tokens</strong>(&block)</a>
-        
-          <div class="summary"><p>This macro allows to define how tokens are parsed.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#union%28%26members%29-macro" class="signature"><strong>union</strong>(&members)</a>
-        
-          <div class="summary"><p>Tries to parse each member of the union, returns the result of the first that succeed.</p></div>
         
       </li>
     
@@ -671,6 +778,11 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
     peek_char</a>, 
     
   
+    <a href="../TopDown/CharReader.html#previous_assci_char%3F%3AChar%7CNil-instance-method" class="tooltip">
+      <span>previous_assci_char? : Char | Nil</span>
+    previous_assci_char?</a>, 
+    
+  
     <a href="../TopDown/CharReader.html#source%3AString-instance-method" class="tooltip">
       <span>source : String</span>
     source</a>, 
@@ -698,17 +810,26 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
     
 
 
-  
-    
-
-
-    
-
-
     
 
 
   
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
     
 
 
@@ -723,303 +844,6 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
 
 
 
-
-
-
-  <h2>
-    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Instance Method Detail
-  </h2>
-  
-    <div class="entry-detail" id="each_token(eof=nil,&amp;):Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>each_token</strong>(eof = <span class="n">nil</span>, &) : Nil
-
-        <a class="method-permalink" href="#each_token%28eof%3Dnil%2C%26%29%3ANil-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Yields successively parsed tokens.</p>
-<p>Stops when EOF is hit, or raises if a token fail to parse.</p>
-<p>The token type <em>eof</em> can be given to stop at that type.
-Can be useful if a EOF token have been defined.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/tokens.cr#L158" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="hook_could_not_parse_regex(got:Char,expected:Regex)-instance-method">
-      <div class="signature">
-        
-        def <strong>hook_could_not_parse_regex</strong>(got : Char, expected : Regex)
-
-        <a class="method-permalink" href="#hook_could_not_parse_regex%28got%3AChar%2Cexpected%3ARegex%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Override this method to modify the default error message when <code>parse(/regex/)</code> fail.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/hooks.cr#L28" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="hook_could_not_parse_string(got:Char,expected:String)-instance-method">
-      <div class="signature">
-        
-        def <strong>hook_could_not_parse_string</strong>(got : Char, expected : String)
-
-        <a class="method-permalink" href="#hook_could_not_parse_string%28got%3AChar%2Cexpected%3AString%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Override this method to modify the default error message when <code>parse(&quot;string&quot;)</code> fail.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/hooks.cr#L23" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="hook_could_not_parse_syntax(got:Char,expected:Symbol)-instance-method">
-      <div class="signature">
-        
-        def <strong>hook_could_not_parse_syntax</strong>(got : Char, expected : Symbol)
-
-        <a class="method-permalink" href="#hook_could_not_parse_syntax%28got%3AChar%2Cexpected%3ASymbol%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Override this method to modify the default error message when <code>parse(:syntax)</code> fail.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/hooks.cr#L33" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="hook_could_not_parse_token(got:Char,expected:Nil)-instance-method">
-      <div class="signature">
-        
-        def <strong>hook_could_not_parse_token</strong>(got : Char, expected : Nil)
-
-        <a class="method-permalink" href="#hook_could_not_parse_token%28got%3AChar%2Cexpected%3ANil%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Override this method to modify the default error message when any token can be parsed.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/hooks.cr#L18" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="hook_unexpected_char(got:Char,expected:Char)-instance-method">
-      <div class="signature">
-        
-        def <strong>hook_unexpected_char</strong>(got : Char, expected : Char)
-
-        <a class="method-permalink" href="#hook_unexpected_char%28got%3AChar%2Cexpected%3AChar%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Override this method to modify the default error message when <code>parse('a')</code> fail.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/hooks.cr#L3" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="hook_unexpected_range_char(got:Char,expected:Range(Char,Char))-instance-method">
-      <div class="signature">
-        
-        def <strong>hook_unexpected_range_char</strong>(got : Char, expected : Range(Char, Char))
-
-        <a class="method-permalink" href="#hook_unexpected_range_char%28got%3AChar%2Cexpected%3ARange%28Char%2CChar%29%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Override this method to modify the default error message when <code>parse('a'..'z')</code> fail.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/hooks.cr#L8" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="hook_unexpected_token(got:Token|Nil,expected:String)forallToken-instance-method">
-      <div class="signature">
-        
-        def <strong>hook_unexpected_token</strong>(got : <a href="../TopDown/Parser/Token.html">Token</a> | Nil, expected : String) forall Token
-
-        <a class="method-permalink" href="#hook_unexpected_token%28got%3AToken%7CNil%2Cexpected%3AString%29forallToken-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Override this method to modify the default error message when <code>parse([&quot;TOKEN&quot;])</code> fail.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/hooks.cr#L13" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="parse-instance-method">
-      <div class="signature">
-        
-        def <strong>parse</strong>
-
-        <a class="method-permalink" href="#parse-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Parses the source contained in this parser.</p>
-<p>Returns the result of the root syntax.
-Expects <code>eof</code> after parsing root syntax.
-Raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> if fail to parse.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L211" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="raise_syntax_error(message:String,atlocation:Location=self.location,source:String=self.source)-instance-method">
-      <div class="signature">
-        
-        def <strong>raise_syntax_error</strong>(message : String, at location : <a href="../TopDown/Location.html">Location</a> = <span class="k">self</span>.location, source : String = <span class="k">self</span>.source)
-
-        <a class="method-permalink" href="#raise_syntax_error%28message%3AString%2Catlocation%3ALocation%3Dself.location%2Csource%3AString%3Dself.source%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
-<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/syntax_error.cr#L45" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="raise_syntax_error(message:String,atlocation:Range(Location,Location),source:String=self.source)-instance-method">
-      <div class="signature">
-        
-        def <strong>raise_syntax_error</strong>(message : String, at location : Range(<a href="../TopDown/Location.html">Location</a>, <a href="../TopDown/Location.html">Location</a>), source : String = <span class="k">self</span>.source)
-
-        <a class="method-permalink" href="#raise_syntax_error%28message%3AString%2Catlocation%3ARange%28Location%2CLocation%29%2Csource%3AString%3Dself.source%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
-<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/syntax_error.cr#L50" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="raise_syntax_error(message:String,atlocation:Range(Location,Nil),source:String=self.source)-instance-method">
-      <div class="signature">
-        
-        def <strong>raise_syntax_error</strong>(message : String, at location : Range(<a href="../TopDown/Location.html">Location</a>, Nil), source : String = <span class="k">self</span>.source)
-
-        <a class="method-permalink" href="#raise_syntax_error%28message%3AString%2Catlocation%3ARange%28Location%2CNil%29%2Csource%3AString%3Dself.source%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
-<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/syntax_error.cr#L55" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="tokens(eof=nil)-instance-method">
-      <div class="signature">
-        
-        def <strong>tokens</strong>(eof = <span class="n">nil</span>)
-
-        <a class="method-permalink" href="#tokens%28eof%3Dnil%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Returns the array of parsed tokens.</p>
-<p>Stops when EOF is hit, or raises if a token fail to parse.</p>
-<p>The token type <em>eof</em> can be given to stop at that type.
-Can be useful if a EOF token have been defined.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/tokens.cr#L177" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
 
 
 
@@ -1048,7 +872,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L98" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L98" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1063,14 +887,14 @@ Can be useful if a EOF token have been defined.</p>
       
         <div class="doc">
           
-          <p>Returns the <code><a href="../TopDown/Location.html">Location</a></code> at the beginning of the <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2C%26block%29-macro">syntax</a></code>.</p>
+          <p>Returns the <code><a href="../TopDown/Location.html">Location</a></code> at the beginning of the <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2Cend%21%3Dnil%2C%26block%29-macro">syntax</a></code>.</p>
 <p>The given location is after skipping characters.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L597" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L378" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1100,7 +924,7 @@ end</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L887" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L757" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1117,13 +941,41 @@ end</code></pre>
           
           <p>Returns the current precedence.</p>
 <p>Initially zero.
-Changes inside an <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code> or when <code>with_precedence</code> is used.</p>
+Changes inside an <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code> or when <code>with_precedence</code> is used.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L590" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L371" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="end_word-macro">
+      <div class="signature">
+        
+        macro <strong>end_word</strong>
+
+        <a class="method-permalink" href="#end_word-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Allows to match a word only if a non-alphanumeric follows</p>
+<pre><code class="language-crystal">parse(&quot;foo&quot;) { end_word }
+
+Equivalent to: (but faster)
+parse(/foo\b/) { nil }</code></pre>
+<pre><code class="language-crystal"><span class="s">&quot;foo bar&quot;</span> <span class="c"># ~&gt; &quot;foo&quot;</span>
+<span class="s">&quot;foobar&quot;</span>  <span class="c"># ~&gt; Unexpected character &#39;b&#39;, expected &#39;EOF&#39;</span></code></pre>
+<p><span class="flag purple">NOTE</span>  end_word returns <code>nil</code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L824" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1153,17 +1005,17 @@ result <span class="o">=</span> forward_fail(result)
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L862" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L732" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="infix(precedence,parselet,associativity=&quot;right&quot;)-macro">
+    <div class="entry-detail" id="infix(precedence,parselet,associativity=&quot;right&quot;,&amp;block)-macro">
       <div class="signature">
         
-        macro <strong>infix</strong>(precedence, parselet, associativity = <span class="s">&quot;right&quot;</span>)
+        macro <strong>infix</strong>(precedence, parselet, associativity = <span class="s">&quot;right&quot;</span>, &block)
 
-        <a class="method-permalink" href="#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">#</a>
+        <a class="method-permalink" href="#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">#</a>
       </div>
       
         <div class="doc">
@@ -1174,7 +1026,7 @@ result <span class="o">=</span> forward_fail(result)
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L544" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L314" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1189,10 +1041,10 @@ result <span class="o">=</span> forward_fail(result)
       
         <div class="doc">
           
-          <p>In the context of an <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code> member, returns the <code><a href="../TopDown/Parser.html#left-macro">left</a></code> result of the current <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>.</p>
-<p>Returns <code>nil</code> in a context other than inside an <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code>.</p>
+          <p>In the context of an <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code> member, returns the <code><a href="../TopDown/Parser.html#left-macro">left</a></code> result of the current <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>.</p>
+<p>Returns <code>nil</code> in a context other than inside an <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code>.</p>
 <p>Each time a <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code> member is successfully parsed, <code><a href="../TopDown/Parser.html#left-macro">left</a></code> value is updated.</p>
-<p>As a <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code> continue parsing <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code> until possible,
+<p>As a <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code> continue parsing <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code> until possible,
 <code><a href="../TopDown/Parser.html#left-macro">left</a></code> allows to retrieve the subsequent results.</p>
 <pre><code class="language-crystal">syntax(<span class="n">:exp</span>) <span class="k">do</span>
   <span class="k">union</span> <span class="k">do</span>
@@ -1210,17 +1062,17 @@ result <span class="o">=</span> forward_fail(result)
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L582" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L363" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="maybe(&amp;)-macro">
+    <div class="entry-detail" id="maybe(parselet=nil,&amp;)-macro">
       <div class="signature">
         
-        macro <strong>maybe</strong>(&)
+        macro <strong>maybe</strong>(parselet = <span class="n">nil</span>, &)
 
-        <a class="method-permalink" href="#maybe%28%26%29-macro">#</a>
+        <a class="method-permalink" href="#maybe%28parselet%3Dnil%2C%26%29-macro">#</a>
       </div>
       
         <div class="doc">
@@ -1243,7 +1095,7 @@ x <span class="o">+</span> (y <span class="o">||</span> <span class="n">0</span>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L705" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L474" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1264,7 +1116,7 @@ x <span class="o">+</span> (y <span class="o">||</span> <span class="n">0</span>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L784" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L634" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1279,13 +1131,13 @@ x <span class="o">+</span> (y <span class="o">||</span> <span class="n">0</span>
       
         <div class="doc">
           
-          <p><span class="flag orange">TODO</span>  docs</p>
+          <p>Prevents the <code><a href="../TopDown/Parser.html#skip%28%26members%29-macro">skip</a></code> rules to be triggered inside the given block.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L813" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L688" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1300,53 +1152,7 @@ x <span class="o">+</span> (y <span class="o">||</span> <span class="n">0</span>
       
         <div class="doc">
           
-          <p>Parse the given <em>parselet</em>.</p>
-<h4><a id="parselet" class="anchor" href="#parselet">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>parselet:</h4>
-<p><em>parselet</em> could be one of the following:</p>
-<ul>
-<li>a <code>CharLiteral</code>, to parse exactly one <code>Char</code></li>
-<li>a <code>StringLiteral</code>, to parse an exact <code>String</code></li>
-<li>a <code>RegexLiteral</code>, to parse the given pattern, returns the matched <code>String</code>. ($~, $0, $1, ... could be used after)</li>
-<li>a <code>RangeLiteral(Char, Char)</code>, to parse any <code>Char</code> between the range</li>
-<li>a <code>SymbolLiteral</code>, to parse an entire <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2C%26block%29-macro">syntax</a></code>, returns the result of the syntax.</li>
-<li>an one-value <code>ArrayLiteral</code>, to parse a <code><a href="../TopDown/Parser/Token.html">Token</a></code>, returns the value of matched token.</li>
-</ul>
-<p><span class="flag purple">NOTE</span>  the type of token should correspond to the type of tokens defined with <code><a href="../TopDown/Parser.html#tokens%28eof%3Dnil%29-instance-method">Parser.tokens</a></code>.</p>
-<ul>
-<li>a <code>Call</code>:
-<ul>
-<li><code>|</code>: to parse a union, see <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">Parser.union</a></code>.</li>
-<li><code>any</code>, to parse any <code>Char</code> except EOF.</li>
-<li><code>[any]</code>, to parse any token except EOF.</li>
-<li><code>not(parselet)</code>, to parse any char, except if <em>parselet</em> matches.</li>
-</ul>
-</li>
-</ul>
-<pre><code class="language-crystal">parse(&#39;💎&#39;)   # =&gt; &#39;💎&#39;
-parse(&quot;foo&quot;) # =&gt; &quot;foo&quot;
-parse(/\d+/, &amp;.to_i)
-parse(/&quot;(([^&quot;\\]|\\.)*)&quot;/) { $1 }
-parse(:expression)
-parse([:&quot;+=&quot;])           # =&gt; &quot;+=&quot;
-parse([TokenType::PLUS]) # =&gt; &quot;+&quot;
-
-parse(&quot;foo&quot; | :value | &#39;💎&#39;)
-# equivalent to:
-union do
- parse(&quot;foo&quot;)
- parse(:value)
- parse(&#39;💎&#39;)
-end
-
-parse(any)         # any char except &#39;\0&#39;
-parse([any])       # any token except EOF
-parse(not(&#39;\n&#39;))   # any char except &#39;\n&#39; &amp; EOF
-parse(not([:&quot;+&quot;])) # any token except :&quot;+&quot; &amp; EOF
-parse(not(&quot;foo&quot;))  # any char or fail on &quot;foo&quot;.</code></pre>
+          <p>Parses the given <em>parselet</em> (<code><a href="../TopDown/Parser/ParseletLiteral.html">ParseletLiteral</a></code>), and yield/return the according result.</p>
 <h4><a id="failure" class="anchor" href="#failure">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -1355,9 +1161,9 @@ parse(not(&quot;foo&quot;))  # any char or fail on &quot;foo&quot;.</code></pre>
 <p>If the given <em>parselet</em> fails to parse, it <code>break</code> the current sequence with a <code><a href="../TopDown/Parser/Fail.html">Fail</a></code>. Failure is catch by the surrounding context.</p>
 <ul>
 <li>inside an <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>, tell the union that member have fail. The union tries to parse the next member.</li>
-<li>inside a <code><a href="../TopDown/Parser.html#maybe%28%26%29-macro">maybe</a></code>, the maybe will return <code>nil</code>.</li>
-<li>inside a <code><a href="../TopDown/Parser.html#repeat%28%26%29-macro">repeat</a></code>, make the repeat to stop.</li>
-<li>inside a <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2C%26block%29-macro">syntax</a></code>, the syntax is considered to fail, it will in turn <code>break</code> or raises.</li>
+<li>inside a <code><a href="../TopDown/Parser.html#maybe%28parselet%3Dnil%2C%26%29-macro">maybe</a></code>, the maybe will return <code>nil</code>.</li>
+<li>inside a <code><a href="../TopDown/Parser.html#repeat%28parselet%3Dnil%2C%26%29-macro">repeat</a></code>, make the repeat to stop.</li>
+<li>inside a <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2Cend%21%3Dnil%2C%26block%29-macro">syntax</a></code>, the syntax is considered to fail, it will in turn <code>break</code> or raises.</li>
 </ul>
 <h4><a id="block" class="anchor" href="#block">
   <svg class="octicon-link" aria-hidden="true">
@@ -1377,7 +1183,7 @@ Allow to handle multi-precedence for ternary-or-more operator.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L454" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L284" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1410,7 +1216,7 @@ Following percent interpolations are available:
     <use href="#octicon-link"/>
   </svg>
 </a>failure:</h4>
-<p>Because it raises, this shouldn't be used as first <em>parselet</em> inside a <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>, <code><a href="../TopDown/Parser.html#maybe%28%26%29-macro">maybe</a></code>, <code><a href="../TopDown/Parser.html#repeat%28%26%29-macro">repeat</a></code> and <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2C%26block%29-macro">syntax</a></code>.
+<p>Because it raises, this shouldn't be used as first <em>parselet</em> inside a <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">union</a></code>, <code><a href="../TopDown/Parser.html#maybe%28parselet%3Dnil%2C%26%29-macro">maybe</a></code>, <code><a href="../TopDown/Parser.html#repeat%28parselet%3Dnil%2C%26%29-macro">repeat</a></code> and <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2Cend%21%3Dnil%2C%26block%29-macro">syntax</a></code>.
 This would raises before the surrounding context could try an other solution.</p>
 <p>However, this should generally be used everywhere else, to allow more localized errors.</p>
         </div>
@@ -1418,7 +1224,7 @@ This would raises before the surrounding context could try an other solution.</p
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L512" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L304" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1448,17 +1254,62 @@ end</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L910" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L780" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="repeat(&amp;)-macro">
+    <div class="entry-detail" id="peek(parselet,with_precedence=nil,&amp;block)-macro">
       <div class="signature">
         
-        macro <strong>repeat</strong>(&)
+        macro <strong>peek</strong>(parselet, with_precedence = <span class="n">nil</span>, &block)
 
-        <a class="method-permalink" href="#repeat%28%26%29-macro">#</a>
+        <a class="method-permalink" href="#peek%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs
+parse parselet
+if succeed, don't move the cursor and return parselet result
+else, don't move the cursor and break a failure</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L328" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="prefix(precedence,parselet,&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>prefix</strong>(precedence, parselet, &block)
+
+        <a class="method-permalink" href="#prefix%28precedence%2Cparselet%2C%26block%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Equivalent to <code><a href="../TopDown/Parser.html#parse%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro">parse(parselet, with_precedence: precedence)</a></code></p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L309" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="repeat(parselet=nil,&amp;)-macro">
+      <div class="signature">
+        
+        macro <strong>repeat</strong>(parselet = <span class="n">nil</span>, &)
+
+        <a class="method-permalink" href="#repeat%28parselet%3Dnil%2C%26%29-macro">#</a>
       </div>
       
         <div class="doc">
@@ -1481,17 +1332,17 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L736" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L508" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="repeat(separator,&amp;)-macro">
+    <div class="entry-detail" id="repeat(parselet=nil,*,separator,&amp;)-macro">
       <div class="signature">
         
-        macro <strong>repeat</strong>(separator, &)
+        macro <strong>repeat</strong>(parselet = <span class="n">nil</span>, *, separator, &)
 
-        <a class="method-permalink" href="#repeat%28separator%2C%26%29-macro">#</a>
+        <a class="method-permalink" href="#repeat%28parselet%3Dnil%2C%2A%2Cseparator%2C%26%29-macro">#</a>
       </div>
       
         <div class="doc">
@@ -1514,7 +1365,107 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L764" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L571" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="repeat_count(*,separator=nil)-macro">
+      <div class="signature">
+        
+        macro <strong>repeat_count</strong>(*, separator = <span class="n">nil</span>)
+
+        <a class="method-permalink" href="#repeat_count%28%2A%2Cseparator%3Dnil%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L615" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="repeat_n(count,parselet=nil,&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>repeat_n</strong>(count, parselet = <span class="n">nil</span>, &block)
+
+        <a class="method-permalink" href="#repeat_n%28count%2Cparselet%3Dnil%2C%26block%29-macro">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L522" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="repeat_to_a(type,*,separator=nil,&amp;)-macro">
+      <div class="signature">
+        
+        macro <strong>repeat_to_a</strong>(type, *, separator = <span class="n">nil</span>, &)
+
+        <a class="method-permalink" href="#repeat_to_a%28type%2C%2A%2Cseparator%3Dnil%2C%26%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L598" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="repeat_to_h(type,*,separator=nil,&amp;)-macro">
+      <div class="signature">
+        
+        macro <strong>repeat_to_h</strong>(type, *, separator = <span class="n">nil</span>, &)
+
+        <a class="method-permalink" href="#repeat_to_h%28type%2C%2A%2Cseparator%3Dnil%2C%26%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L588" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="repeat_to_s(*,separator=nil,&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>repeat_to_s</strong>(*, separator = <span class="n">nil</span>, &block)
+
+        <a class="method-permalink" href="#repeat_to_s%28%2A%2Cseparator%3Dnil%2C%26block%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L607" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1535,7 +1486,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L775" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L625" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1551,15 +1502,13 @@ x</code></pre>
         <div class="doc">
           
           <p>Defines the main syntax to parse.</p>
-<p><em>parselet</em>: the syntax name or the parselet to be the root.
-Could be <code>StringLiteral</code>|<code>CharLiteral</code>|<code>RegexLiteral</code>|<code>SymbolLiteral</code>|<code>ArrayLiteral</code>|<code>Call</code>,
-see <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser.parse</code></a></p>
+<p><em>parselet</em> (<code><a href="../TopDown/Parser/ParseletLiteral.html">ParseletLiteral</a></code>): the syntax name or parselet to be the root.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L230" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L223" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1574,13 +1523,19 @@ see <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser
       
         <div class="doc">
           
-          <p><span class="flag orange">TODO</span>  docs</p>
+          <p>Allows to group a sequence of parsing (inside a union for example).</p>
+<pre><code class="language-crystal"><span class="k">union</span> <span class="k">do</span>
+  sequence <span class="k">do</span>
+    parse(<span class="s">&quot;a&quot;</span>)
+    parse!(<span class="s">&quot;b&quot;</span>)
+  <span class="k">end</span>
+  parse(<span class="s">&quot;2&quot;</span>)</code></pre>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L918" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L797" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1595,35 +1550,66 @@ see <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser
       
         <div class="doc">
           
-          <p><span class="flag orange">TODO</span>  docs</p>
+          <p>Defines what is ignored during the parsing.</p>
+<p>It is triggered every time prior a parselet is parsed.</p>
+<p>It works similarly to the members of a <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">Parser.union</a></code>, in which each members are consumed while possible.</p>
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">Parser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
+  skip <span class="k">do</span>
+    <span class="c"># Skips spaces:</span>
+    parse <span class="s">&#39; &#39;</span>
+    parse <span class="s">&#39;\n&#39;</span>
+    parse <span class="s">&#39;\t&#39;</span>
+    parse <span class="s">&#39;\r&#39;</span>
+
+    <span class="c"># Line comments:</span>
+    parse <span class="s">&quot;//&quot;</span> { repeat { parse not(<span class="s">&#39;\n&#39;</span>) } }
+
+    <span class="c"># Block comments:</span>
+    parse <span class="s">&quot;/*&quot;</span> <span class="k">do</span>
+      repeat { parse not(<span class="s">&quot;*/&quot;</span>) }
+      parse <span class="s">&quot;*/&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L796" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L671" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="syntax(syntax_name,*prefixs,&amp;block)-macro">
+    <div class="entry-detail" id="syntax(syntax_name,*prefixs,end!=nil,&amp;block)-macro">
       <div class="signature">
         
-        macro <strong>syntax</strong>(syntax_name, *prefixs, &block)
+        macro <strong>syntax</strong>(syntax_name, *prefixs, end! = <span class="n">nil</span>, &block)
 
-        <a class="method-permalink" href="#syntax%28syntax_name%2C%2Aprefixs%2C%26block%29-macro">#</a>
+        <a class="method-permalink" href="#syntax%28syntax_name%2C%2Aprefixs%2Cend%21%3Dnil%2C%26block%29-macro">#</a>
       </div>
       
         <div class="doc">
           
           <p>Defines a syntax that can be called with <code>parse(SymbolLiteral)</code>.</p>
-<p><span class="flag orange">TODO</span>  docs</p>
+<p><em>syntax_name</em> (<code>SymbolLiteral</code>): The identifier of the syntax.</p>
+<p><em>*prefix</em> (<code><a href="../TopDown/Parser/ParseletLiteral.html">ParseletLiteral</a></code>): A list of parselet, to parse at the beginning of the syntax, results are yielded in the given block.</p>
+<p><em>block</em>: The body of the syntax, work like a usual body function.</p>
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">Parser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
+  syntax <span class="n">:expression</span> <span class="k">do</span>
+    a <span class="o">=</span> parse(<span class="s">&#39;a&#39;</span>)
+    parse(<span class="o">/</span>( )<span class="o">+</span><span class="o">/</span>)
+    foo <span class="o">=</span> parse!(<span class="s">&quot;foo&quot;</span>)
+
+    {a, foo}
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L239" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L248" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1646,19 +1632,21 @@ The <em>block</em> indicate the value of the resulting <code><a href="../TopDown
 <li>If no <em>block</em> provided, token <em>value</em> is nil. (use <code>&amp;.itself</code> to actually keep the parsed string)</li>
 </ul>
 <p>Example:</p>
-<pre><code class="language-crystal">tokens <span class="k">do</span>
-  token(<span class="s">&quot;+&quot;</span>)                            <span class="c"># Parses &#39;+&#39;, produces Token[+]</span>
-  token(<span class="s">&quot;hey&quot;</span>)                          <span class="c"># Parses &quot;hey&quot;, produces Token[hey]</span>
-  token(<span class="s">&quot;new_line&quot;</span>, <span class="s">&#39;\n&#39;</span>)               <span class="c"># Parses &#39;\n&#39;, produces Token[new_line]</span>
-  token(<span class="s">&quot;int&quot;</span>, <span class="s">/\d+/</span>) { <span class="o">|</span>v<span class="o">|</span> v.to_i }    <span class="c"># Parses /\d+/, produces Token[int:&lt;int_value&gt;]</span>
-  token(<span class="s">&quot;string&quot;</span>, <span class="n">:tk_string</span>, <span class="o">&amp;</span>.itself) <span class="c"># Parses syntax :tk_string, produces Token[string:&lt;string_value&gt;]</span>
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">Parser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
+  tokens <span class="k">do</span>
+    token(<span class="s">&quot;+&quot;</span>)                            <span class="c"># Parses &#39;+&#39;, produces Token[+]</span>
+    token(<span class="s">&quot;hey&quot;</span>)                          <span class="c"># Parses &quot;hey&quot;, produces Token[hey]</span>
+    token(<span class="s">&quot;new_line&quot;</span>, <span class="s">&#39;\n&#39;</span>)               <span class="c"># Parses &#39;\n&#39;, produces Token[new_line]</span>
+    token(<span class="s">&quot;int&quot;</span>, <span class="s">/\d+/</span>) { <span class="o">|</span>v<span class="o">|</span> v.to_i }    <span class="c"># Parses /\d+/, produces Token[int:&lt;int_value&gt;]</span>
+    token(<span class="s">&quot;string&quot;</span>, <span class="n">:tk_string</span>, <span class="o">&amp;</span>.itself) <span class="c"># Parses syntax :tk_string, produces Token[string:&lt;string_value&gt;]</span>
+  <span class="k">end</span>
 <span class="k">end</span></code></pre>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/tokens.cr#L94" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L137" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1675,13 +1663,15 @@ The <em>block</em> indicate the value of the resulting <code><a href="../TopDown
           
           <p>This macro allows to define how tokens are parsed.</p>
 <p>Each line of the <em>block</em> correspond a token.</p>
-<pre><code class="language-crystal">tokens <span class="k">do</span>
-  token(<span class="s">&quot;+&quot;</span>)
-  token(<span class="s">&quot;-&quot;</span>)
-  token(<span class="s">&quot;**&quot;</span>)
-  token(<span class="s">&quot;*&quot;</span>)
-  token(<span class="s">&quot;/&quot;</span>)
-  token(<span class="s">&quot;new_line&quot;</span>, <span class="s">&#39;\n&#39;</span>)
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">Parser</span> <span class="o">&lt;</span> <span class="t">TopDown</span><span class="t">::</span><span class="t">Parser</span>
+  tokens <span class="k">do</span>
+    token(<span class="s">&quot;+&quot;</span>)
+    token(<span class="s">&quot;-&quot;</span>)
+    token(<span class="s">&quot;**&quot;</span>)
+    token(<span class="s">&quot;*&quot;</span>)
+    token(<span class="s">&quot;/&quot;</span>)
+    token(<span class="s">&quot;new_line&quot;</span>, <span class="s">&#39;\n&#39;</span>)
+  <span class="k">end</span>
 <span class="k">end</span></code></pre>
 <p>Use <code><a href="../TopDown/Parser.html#token%28token_name%2Cparselet%3Dnil%2C%26block%29-macro">Parser.token</a></code> to define how a token is parsed</p>
 <p>The order of token matter, because there are parsed in this order.
@@ -1692,7 +1682,7 @@ Hence, if <code>*</code> is moved before <code>**</code>, the result will be two
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/tokens.cr#L46" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L88" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1741,14 +1731,14 @@ Hence, if <code>*</code> is moved before <code>**</code>, the result will be two
     <use href="#octicon-link"/>
   </svg>
 </a>infix:</h4>
-<p><code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code> members could be added to a union.</p>
-<p><code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code> members are always treated after each normal members, in the order there are defined.
+<p><code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code> members could be added to a union.</p>
+<p><code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code> members are always treated after each normal members, in the order there are defined.
 A union act as follow:</p>
 <ol>
 <li>Tries to parse each normal member.</li>
 <li>When one succeed, store the result. <code><a href="../TopDown/Parser.html#left-macro">left</a></code> allows to retrieve this result.</li>
-<li>Tries to parse <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code> members whose precedence is greater than current precedence (initial is zero).</li>
-<li>Inner of <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code> is executed, it potentially triggers parsing of this union recursively, but current precedence is sets to the <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%29-macro">infix</a></code> precedence.</li>
+<li>Tries to parse <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code> members whose precedence is greater than current precedence (initial is zero).</li>
+<li>Inner of <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code> is executed, it potentially triggers parsing of this union recursively, but current precedence is sets to the <code><a href="../TopDown/Parser.html#infix%28precedence%2Cparselet%2Cassociativity%3D%22right%22%2C%26block%29-macro">infix</a></code> precedence.</li>
 <li>When one fully succeed, store the result. <code><a href="../TopDown/Parser.html#left-macro">left</a></code> is updated.</li>
 <li>Repeats step 3-5) until there no more infix.</li>
 <li>Returns last result.</li>
@@ -1759,7 +1749,450 @@ A union act as follow:</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/parser/parser.cr#L683" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L447" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="union!(error=nil,at=nil,&amp;members)-macro">
+      <div class="signature">
+        
+        macro <strong>union!</strong>(error = <span class="n">nil</span>, at = <span class="n">nil</span>, &members)
+
+        <a class="method-permalink" href="#union%21%28error%3Dnil%2Cat%3Dnil%2C%26members%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Similar to <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">Parser.union</a></code>, but raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> if the parsing fail.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L452" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+  <h2>
+    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="each_token(eof=nil,&amp;):Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>each_token</strong>(eof = <span class="n">nil</span>, &) : Nil
+
+        <a class="method-permalink" href="#each_token%28eof%3Dnil%2C%26%29%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Yields successively parsed tokens.</p>
+<p>Stops when EOF is hit, or raises if a token fail to parse.</p>
+<p>The token name <em>eof</em> can be given to stop at that name.
+Can be useful if a EOF token have been defined.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L188" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_could_not_parse_any_token(got:Char,expected:Nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_could_not_parse_any_token</strong>(got : Char, expected : Nil)
+
+        <a class="method-permalink" href="#hook_could_not_parse_any_token%28got%3AChar%2Cexpected%3ANil%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override this method to modify the default error message when any token can be parsed.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L18" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_expected_any_character_but(got:Char,expected:Char)-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_expected_any_character_but</strong>(got : Char, expected : Char)
+
+        <a class="method-permalink" href="#hook_expected_any_character_but%28got%3AChar%2Cexpected%3AChar%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override this method to modify the default error message when <code>parse!(not('a'))</code> fail.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L42" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_expected_any_character_but_range(got:Char,expected:Range(Char,Char))-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_expected_any_character_but_range</strong>(got : Char, expected : Range(Char, Char))
+
+        <a class="method-permalink" href="#hook_expected_any_character_but_range%28got%3AChar%2Cexpected%3ARange%28Char%2CChar%29%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override this method to modify the default error message when <code>parse!(not('a'..'z'))</code> fail.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L47" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_expected_any_in_range(got:Char,expected:Range(Char,Char))-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_expected_any_in_range</strong>(got : Char, expected : Range(Char, Char))
+
+        <a class="method-permalink" href="#hook_expected_any_in_range%28got%3AChar%2Cexpected%3ARange%28Char%2CChar%29%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override this method to modify the default error message when <code>parse!('a'..'z')</code> fail.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L8" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_expected_any_token_but(got:Token|Nil,expected:String)-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_expected_any_token_but</strong>(got : <a href="../TopDown/Parser/Token.html">Token</a> | Nil, expected : String)
+
+        <a class="method-permalink" href="#hook_expected_any_token_but%28got%3AToken%7CNil%2Cexpected%3AString%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override this method to modify the default error message when <code>parse!(not([&quot;TOKEN&quot;]))</code> fail.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L52" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_expected_character(got:Char,expected:Char)-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_expected_character</strong>(got : Char, expected : Char)
+
+        <a class="method-permalink" href="#hook_expected_character%28got%3AChar%2Cexpected%3AChar%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override this method to modify the default error message when <code>parse!('a')</code> fail.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L3" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_expected_pattern(got:Char,expected:Regex)-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_expected_pattern</strong>(got : Char, expected : Regex)
+
+        <a class="method-permalink" href="#hook_expected_pattern%28got%3AChar%2Cexpected%3ARegex%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override this method to modify the default error message when <code>parse!(/regex/)</code> fail.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L28" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_expected_syntax(got:Char,expected:Symbol)-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_expected_syntax</strong>(got : Char, expected : Symbol)
+
+        <a class="method-permalink" href="#hook_expected_syntax%28got%3AChar%2Cexpected%3ASymbol%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override this method to modify the default error message when <code>parse!(:syntax)</code> fail.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L33" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_expected_token(got:Token|Nil,expected:String)-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_expected_token</strong>(got : <a href="../TopDown/Parser/Token.html">Token</a> | Nil, expected : String)
+
+        <a class="method-permalink" href="#hook_expected_token%28got%3AToken%7CNil%2Cexpected%3AString%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override this method to modify the default error message when <code>parse!([&quot;TOKEN&quot;])</code> fail.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L13" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_expected_word(got:Char,expected:String)-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_expected_word</strong>(got : Char, expected : String)
+
+        <a class="method-permalink" href="#hook_expected_word%28got%3AChar%2Cexpected%3AString%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Override this method to modify the default error message when <code>parse!(&quot;string&quot;)</code> fail.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L23" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hook_union_failed(got:Char,expected:Nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>hook_union_failed</strong>(got : Char, expected : Nil)
+
+        <a class="method-permalink" href="#hook_union_failed%28got%3AChar%2Cexpected%3ANil%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L37" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="location=(location:Location)-instance-method">
+      <div class="signature">
+        
+        def <strong>location=</strong>(location : <a href="../TopDown/Location.html">Location</a>)
+
+        <a class="method-permalink" href="#location%3D%28location%3ALocation%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Move the cursor to the new <em>location</em>.</p>
+<p>The <em>location</em> should be well formed, otherwise error display won't be right.
+It is recommended to always use a location got by <code>self.location</code>.</p>
+<p>This methods is used to backtrack the parser.
+However, prefer using <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">Parser.union</a></code>, <code><a href="../TopDown/Parser.html#maybe%28parselet%3Dnil%2C%26%29-macro">Parser.maybe</a></code>, and <code><a href="../TopDown/Parser.html#repeat%28parselet%3Dnil%2C%26%29-macro">Parser.repeat</a></code> over manual backtracks.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L30" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="parse-instance-method">
+      <div class="signature">
+        
+        def <strong>parse</strong>
+
+        <a class="method-permalink" href="#parse-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Parses the source contained in this parser.</p>
+<p>Returns the result of the root syntax.
+Expects <code>eof</code> after parsing root syntax.
+Raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> if fail to parse.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L206" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="raise_syntax_error(message:String,atlocation:Location=self.location,source:String=self.source)-instance-method">
+      <div class="signature">
+        
+        def <strong>raise_syntax_error</strong>(message : String, at location : <a href="../TopDown/Location.html">Location</a> = <span class="k">self</span>.location, source : String = <span class="k">self</span>.source)
+
+        <a class="method-permalink" href="#raise_syntax_error%28message%3AString%2Catlocation%3ALocation%3Dself.location%2Csource%3AString%3Dself.source%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
+<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/syntax_error.cr#L45" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="raise_syntax_error(message:String,atlocation:Range(Location,Location),source:String=self.source)-instance-method">
+      <div class="signature">
+        
+        def <strong>raise_syntax_error</strong>(message : String, at location : Range(<a href="../TopDown/Location.html">Location</a>, <a href="../TopDown/Location.html">Location</a>), source : String = <span class="k">self</span>.source)
+
+        <a class="method-permalink" href="#raise_syntax_error%28message%3AString%2Catlocation%3ARange%28Location%2CLocation%29%2Csource%3AString%3Dself.source%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
+<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/syntax_error.cr#L50" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="raise_syntax_error(message:String,atlocation:Range(Location,Nil),source:String=self.source)-instance-method">
+      <div class="signature">
+        
+        def <strong>raise_syntax_error</strong>(message : String, at location : Range(<a href="../TopDown/Location.html">Location</a>, Nil), source : String = <span class="k">self</span>.source)
+
+        <a class="method-permalink" href="#raise_syntax_error%28message%3AString%2Catlocation%3ARange%28Location%2CNil%29%2Csource%3AString%3Dself.source%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
+<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/syntax_error.cr#L55" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="source=(source:String)-instance-method">
+      <div class="signature">
+        
+        def <strong>source=</strong>(source : String)
+
+        <a class="method-permalink" href="#source%3D%28source%3AString%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Modifies the <em>source</em> and reset the cursor <code>location</code> to zero.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L24" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="tokens(eof=nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>tokens</strong>(eof = <span class="n">nil</span>)
+
+        <a class="method-permalink" href="#tokens%28eof%3Dnil%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns the array of parsed tokens.</p>
+<p>Stops when EOF is hit, or raises if a token fail to parse.</p>
+<p>The token name <em>eof</em> can be given to stop at that name.
+Can be useful if a EOF token have been defined.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L207" target="_blank">View source</a>]
         
       </div>
     </div>

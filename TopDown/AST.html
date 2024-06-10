@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.8.2">
+<meta name="generator" content="Crystal Docs 1.11.2">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="topdown">
 
@@ -23,7 +23,7 @@
 
 <svg class="hidden">
   <symbol id="octicon-link" viewBox="0 0 16 16">
-    <path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+    <path fill="currentColor" fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
   </symbol>
 </svg>
 <input type="checkbox" id="sidebar-btn">
@@ -87,6 +87,11 @@
       
     </li>
   
+  <li class=" " data-id="topdown/TopDown/Parser/ParseletLiteral" data-name="topdown::parser::parseletliteral">
+      <a href="../TopDown/Parser/ParseletLiteral.html">ParseletLiteral</a>
+      
+    </li>
+  
   <li class=" " data-id="topdown/TopDown/Parser/SyntaxError" data-name="topdown::parser::syntaxerror">
       <a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a>
       
@@ -116,7 +121,7 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">abstract class</span> TopDown::AST
+  <span class="kind">abstract class</span> TopDown::<wbr>AST
 
 </h1>
 
@@ -160,7 +165,7 @@
   </h2>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L5" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L5" target="_blank">
         ast.cr
       </a>
     
@@ -172,6 +177,27 @@
 
 
 
+
+
+
+  <h2>
+    <a id="macro-summary" class="anchor" href="#macro-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Macro Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#def_ast%28class_name%2C%2Aproperties%29-macro" class="signature"><strong>def_ast</strong>(class_name, *properties)</a>
+        
+          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
+        
+      </li>
+    
+  </ul>
 
 
 
@@ -238,27 +264,6 @@
 
 
 
-  <h2>
-    <a id="macro-summary" class="anchor" href="#macro-summary">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Macro Summary
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#def_ast%28class_name%2C%2Aproperties%29-macro" class="signature"><strong>def_ast</strong>(class_name, *properties)</a>
-        
-          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
-        
-      </li>
-    
-  </ul>
-
-
-
 <div class="methods-inherited">
   
     
@@ -270,7 +275,13 @@
     
 
 
+    
+
+
   
+    
+
+
     
 
 
@@ -285,166 +296,6 @@
 
 
 
-
-
-
-  <h2>
-    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Instance Method Detail
-  </h2>
-  
-    <div class="entry-detail" id="at(location:Location,end_location:Location=location)-instance-method">
-      <div class="signature">
-        
-        def <strong>at</strong>(location : <a href="../TopDown/Location.html">Location</a>, end_location : <a href="../TopDown/Location.html">Location</a> = location)
-
-        <a class="method-permalink" href="#at%28location%3ALocation%2Cend_location%3ALocation%3Dlocation%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p><span class="flag orange">TODO</span>  docs</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L12" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="at(location:Range(Location,Location))-instance-method">
-      <div class="signature">
-        
-        def <strong>at</strong>(location : Range(<a href="../TopDown/Location.html">Location</a>, <a href="../TopDown/Location.html">Location</a>))
-
-        <a class="method-permalink" href="#at%28location%3ARange%28Location%2CLocation%29%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p><span class="flag orange">TODO</span>  docs</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L17" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="each_child(&amp;)-instance-method">
-      <div class="signature">
-        
-        def <strong>each_child</strong>(&)
-
-        <a class="method-permalink" href="#each_child%28%26%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p><span class="flag orange">TODO</span>  docs
-Override this method to indicate the children of this AST node</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L24" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="end_location:TopDown::Location-instance-method">
-      <div class="signature">
-        
-        def <strong>end_location</strong> : <a href="../TopDown/Location.html">TopDown::Location</a>
-
-        <a class="method-permalink" href="#end_location%3ATopDown%3A%3ALocation-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p><span class="flag orange">TODO</span>  docs</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L9" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="location:TopDown::Location-instance-method">
-      <div class="signature">
-        
-        def <strong>location</strong> : <a href="../TopDown/Location.html">TopDown::Location</a>
-
-        <a class="method-permalink" href="#location%3ATopDown%3A%3ALocation-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p><span class="flag orange">TODO</span>  docs</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L7" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="to_s(io,indent=0)-instance-method">
-      <div class="signature">
-        
-        def <strong>to_s</strong>(io, indent = <span class="n">0</span>)
-
-        <a class="method-permalink" href="#to_s%28io%2Cindent%3D0%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p><span class="flag orange">TODO</span>  docs</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L37" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="to_s_without_children(io)-instance-method">
-      <div class="signature">
-        
-        def <strong>to_s_without_children</strong>(io)
-
-        <a class="method-permalink" href="#to_s_without_children%28io%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p><span class="flag orange">TODO</span>  docs</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L52" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
 
 
 
@@ -473,7 +324,167 @@ Override this method to indicate the children of this AST node</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/a8580e6d0bccd0c5630fd85908b0d3006305e562/src/ast.cr#L74" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L74" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+  <h2>
+    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="at(location:Location,end_location:Location=location)-instance-method">
+      <div class="signature">
+        
+        def <strong>at</strong>(location : <a href="../TopDown/Location.html">Location</a>, end_location : <a href="../TopDown/Location.html">Location</a> = location)
+
+        <a class="method-permalink" href="#at%28location%3ALocation%2Cend_location%3ALocation%3Dlocation%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L12" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="at(location:Range(Location,Location))-instance-method">
+      <div class="signature">
+        
+        def <strong>at</strong>(location : Range(<a href="../TopDown/Location.html">Location</a>, <a href="../TopDown/Location.html">Location</a>))
+
+        <a class="method-permalink" href="#at%28location%3ARange%28Location%2CLocation%29%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L17" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="each_child(&amp;)-instance-method">
+      <div class="signature">
+        
+        def <strong>each_child</strong>(&)
+
+        <a class="method-permalink" href="#each_child%28%26%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs
+Override this method to indicate the children of this AST node</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L24" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="end_location:TopDown::Location-instance-method">
+      <div class="signature">
+        
+        def <strong>end_location</strong> : <a href="../TopDown/Location.html">TopDown::Location</a>
+
+        <a class="method-permalink" href="#end_location%3ATopDown%3A%3ALocation-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L9" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="location:TopDown::Location-instance-method">
+      <div class="signature">
+        
+        def <strong>location</strong> : <a href="../TopDown/Location.html">TopDown::Location</a>
+
+        <a class="method-permalink" href="#location%3ATopDown%3A%3ALocation-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L7" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="to_s(io,indent=0)-instance-method">
+      <div class="signature">
+        
+        def <strong>to_s</strong>(io, indent = <span class="n">0</span>)
+
+        <a class="method-permalink" href="#to_s%28io%2Cindent%3D0%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L37" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="to_s_without_children(io)-instance-method">
+      <div class="signature">
+        
+        def <strong>to_s_without_children</strong>(io)
+
+        <a class="method-permalink" href="#to_s_without_children%28io%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L52" target="_blank">View source</a>]
         
       </div>
     </div>
