@@ -43,6 +43,10 @@ class TopDown::CharReader
     self.source.to_slice[@char_reader.pos - 2]?.try &.chr
   end
 
+  def next_assci_char? : Char?
+    self.source.to_slice[@char_reader.pos]?.try &.chr
+  end
+
   # Iterates over each *source* character.
   #
   # `location` is incremented between each character.
@@ -59,7 +63,7 @@ class TopDown::CharReader
   # Modifies the *source* and reset the cursor `location` to zero.
   def source=(source : String)
     @char_reader = Char::Reader.new(source)
-    self.location = Location.new(0, 0, 0)
+    self.location = Location.new(0, 0, 0, 0)
   end
 
   private def increment_location(char)
@@ -82,7 +86,7 @@ class TopDown::CharReader
   # exp
   # ```
   def location : Location
-    Location.new(@char_reader.pos, @line_number, @line_pos)
+    Location.new(@char_reader.pos, @line_number, @line_pos, 0)
   end
 
   # Move the cursor to the new *location*.

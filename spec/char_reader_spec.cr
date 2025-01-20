@@ -64,7 +64,7 @@ describe TopDown::CharReader do
 
     char_reader.source = "Hey"
     char_reader.source.should eq "Hey"
-    char_reader.location.should eq TopDown::Location.new(0, 0, 0)
+    char_reader.location.should eq TopDown::Location.new(0, 0, 0, 0)
   end
 
   it "get location" do
@@ -74,16 +74,16 @@ describe TopDown::CharReader do
       puts "Hello ♥"
       SOURCE
 
-    char_reader.location.should eq TopDown::Location.new(0, 0, 0)
+    char_reader.location.should eq TopDown::Location.new(0, 0, 0, 0)
     18.times { char_reader.next_char }
-    char_reader.location.should eq TopDown::Location.new(18, line_number: 0, line_pos: 18)
+    char_reader.location.should eq TopDown::Location.new(18, line_number: 0, line_pos: 18, token_pos: 0)
     char_reader.next_char.should eq '\n'
-    char_reader.location.should eq TopDown::Location.new(19, line_number: 1, line_pos: 0)
+    char_reader.location.should eq TopDown::Location.new(19, line_number: 1, line_pos: 0, token_pos: 0)
 
     12.times { char_reader.next_char }
-    char_reader.location.should eq TopDown::Location.new(31, line_number: 1, line_pos: 12)
+    char_reader.location.should eq TopDown::Location.new(31, line_number: 1, line_pos: 12, token_pos: 0)
     char_reader.next_char.should eq '💎'
-    char_reader.location.should eq TopDown::Location.new(35, line_number: 1, line_pos: 13)
+    char_reader.location.should eq TopDown::Location.new(35, line_number: 1, line_pos: 13, token_pos: 0)
   end
 
   it "set location" do
@@ -93,14 +93,14 @@ describe TopDown::CharReader do
       puts "Hello ♥"
       SOURCE
 
-    char_reader.location.should eq TopDown::Location.new(0, 0, 0)
+    char_reader.location.should eq TopDown::Location.new(0, 0, 0, 0)
 
-    char_reader.location = TopDown::Location.new(49, line_number: 2, line_pos: 12)
-    char_reader.location.should eq TopDown::Location.new(49, line_number: 2, line_pos: 12)
+    char_reader.location = TopDown::Location.new(49, line_number: 2, line_pos: 12, token_pos: 0)
+    char_reader.location.should eq TopDown::Location.new(49, line_number: 2, line_pos: 12, token_pos: 0)
     char_reader.peek_char.should eq '♥'
 
-    char_reader.location = TopDown::Location.new(31, line_number: 1, line_pos: 12)
-    char_reader.location.should eq TopDown::Location.new(31, line_number: 1, line_pos: 12)
+    char_reader.location = TopDown::Location.new(31, line_number: 1, line_pos: 12, token_pos: 0)
+    char_reader.location.should eq TopDown::Location.new(31, line_number: 1, line_pos: 12, token_pos: 0)
     char_reader.peek_char.should eq '💎'
   end
 end

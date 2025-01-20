@@ -4,9 +4,9 @@ module TopDown
   # TODO docs
   abstract class AST
     # TODO docs
-    getter location = Location.new(0, 0, 0)
+    getter location = Location.new(0, 0, 0, 0)
     # TODO docs
-    getter end_location = Location.new(0, 0, 0)
+    getter end_location = Location.new(0, 0, 0, 0)
 
     # TODO docs
     def at(@location : Location, @end_location : Location = location)

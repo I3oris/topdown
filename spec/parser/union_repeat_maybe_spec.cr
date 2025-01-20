@@ -1,6 +1,6 @@
 require "./union_repeat_maybe_spec_helper"
 
-zero = TopDown::Location.new(0, 0, 0)
+zero = TopDown::Location.new(0, 0, 0, 0)
 
 describe TopDown::Parser do
   it "parses union" do

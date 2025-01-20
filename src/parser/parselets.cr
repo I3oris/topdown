@@ -236,7 +236,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   private macro parselet_word(string, raises? = false, error = nil, at = nil)
     %begin_location = self.location
     %result = parselet_string({{string}}, {{raises?}}, {{error}}, {{at}})
-    if peek_char.alphanumeric?
+    if peek_char.alphanumeric? || peek_char == '_'
       self.location = %begin_location
       break Fail.new
     end

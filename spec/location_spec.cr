@@ -1,10 +1,10 @@
 require "./spec_helper"
 
-zero = TopDown::Location.new(0, 0, 0)
-l1 = TopDown::Location.new(5, line_number: 0, line_pos: 5)
-l2 = TopDown::Location.new(17, line_number: 0, line_pos: 17)
-l3 = TopDown::Location.new(32, line_number: 1, line_pos: 13)
-l_end_line = TopDown::Location.new(18, line_number: 0, line_pos: 18)
+zero = TopDown::Location.new(0, 0, 0, 0)
+l1 = TopDown::Location.new(5, line_number: 0, line_pos: 5, token_pos: 0)
+l2 = TopDown::Location.new(17, line_number: 0, line_pos: 17, token_pos: 0)
+l3 = TopDown::Location.new(32, line_number: 1, line_pos: 13, token_pos: 0)
+l_end_line = TopDown::Location.new(18, line_number: 0, line_pos: 18, token_pos: 0)
 
 source = <<-SOURCE
   puts "Hello World"
@@ -81,8 +81,8 @@ describe TopDown::Location do
 
   it "substract" do
     (l1 - zero).should eq l1
-    (l2 - l1).should eq TopDown::Location.new(12, line_number: 0, line_pos: 12)
-    (l3 - l2).should eq TopDown::Location.new(15, line_number: 1, line_pos: -4)
+    (l2 - l1).should eq TopDown::Location.new(12, line_number: 0, line_pos: 12, token_pos: 0)
+    (l3 - l2).should eq TopDown::Location.new(15, line_number: 1, line_pos: -4, token_pos: 0)
   end
 
   it "compare" do

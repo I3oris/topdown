@@ -8,7 +8,8 @@
 record TopDown::Location,
   pos : Int32,
   line_number : Int32,
-  line_pos : Int32 do
+  line_pos : Int32,
+  token_pos : Int32 do
   include Comparable(Location)
 
   # Displays this location in *source*.
@@ -96,7 +97,7 @@ record TopDown::Location,
   # l3 - l2 # => TopDown::Location(@pos=15, @line_number=1, @line_pos=-4)
   # ```
   def -(other : Location)
-    Location.new(@pos - other.pos, @line_number - other.line_number, @line_pos - other.line_pos)
+    Location.new(@pos - other.pos, @line_number - other.line_number, @line_pos - other.line_pos, @token_pos - other.token_pos)
   end
 
   # Compares two locations by their `pos` only.

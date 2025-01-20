@@ -1,6 +1,6 @@
 require "./parser_spec_helper"
 
-zero = TopDown::Location.new(0, 0, 0)
+zero = TopDown::Location.new(0, 0, 0, 0)
 
 describe TopDown::Parser do
   it "parses char" do
@@ -151,7 +151,7 @@ describe TopDown::Parser do
     parser.spec_parse_str_empty.should eq ""
     parser.spec_parse_str_not_abc.should eq '*'
     parser.spec_parse_str_not_foo_bar_baz.should eq '+'
-    parser.location.should eq TopDown::Location.new(23, line_number: 0, line_pos: 23)
+    parser.location.should eq TopDown::Location.new(23, line_number: 0, line_pos: 23, token_pos: 0)
   end
 
   it "fails parsing string" do
@@ -382,11 +382,11 @@ describe TopDown::Parser do
 
     parser.source = " a  b   bcc"
     parser.spec_parse_with_skip.should eq ['a']
-    parser.location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 2)
+    parser.location.should eq TopDown::Location.new(2, line_number: 0, line_pos: 2, token_pos: 0)
 
     parser.source = "abb"
     parser.spec_parse_with_skip.should eq ['a']
-    parser.location.should eq TopDown::Location.new(1, line_number: 0, line_pos: 1)
+    parser.location.should eq TopDown::Location.new(1, line_number: 0, line_pos: 1, token_pos: 0)
   end
 
   it "parses with skip syntax" do

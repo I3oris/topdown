@@ -3,6 +3,13 @@ require "../spec_helper"
 module TopDown::Spec
   extend self
 
+  def verify_token(token, name, value = nil)
+    token.should_not be_nil if token.nil?
+
+    token.name.should eq name
+    token.value.should eq value
+  end
+
   class BaseTokenParser < TopDown::Parser
     syntax(:int) do
       capture do
@@ -14,7 +21,7 @@ module TopDown::Spec
     end
 
     def spec_next_token
-      self.skip_chars
+      self.skip_chars!
       self.parse_token?
     end
 
@@ -26,6 +33,10 @@ module TopDown::Spec
       def spec_parse_{{def_name.id}}_with_error!(_precedence_ = 0)
         handle_fail { parse!({{parselet}}, error: {{error}}) }
       end
+    end
+
+    def spec_load_tokens
+      load_tokens
     end
   end
 
@@ -53,19 +64,6 @@ module TopDown::Spec
     end
   end
 
-  class TokenParserWithEOF < TokenParser
-    tokens do
-      token("+")
-      token("*")
-      token("=")
-      token("int", :int, &.to_i)
-      token("name", /\w+/) { $0 }
-      token("EOF", '\0')
-    end
-
-    def_parse_wrapper(["EOF"], :eof, "Custom Error: got:%{got}, expected:%{expected}")
-  end
-
   class DocsTokenParser < TokenParser
     tokens do
       token("+")
@@ -91,6 +89,5 @@ module TopDown::Spec
 
   class_getter token_parser = TokenParser.new("")
   class_getter token_parser_with_skip = TokenParserWithSkip.new("")
-  class_getter token_parser_with_eof = TokenParserWithEOF.new("")
   class_getter docs_token_parser = DocsTokenParser.new("")
 end

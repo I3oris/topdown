@@ -204,11 +204,13 @@ abstract class TopDown::Parser < TopDown::CharReader
   # Expects `eof` after parsing root syntax.
   # Raises `SyntaxError` if fail to parse.
   def parse
+    load_tokens
     result = parse_root
     if result.is_a? Fail
       raise_syntax_error error_message(->hook_expected_syntax(Char, Symbol), got: peek_char, expected: :root)
     end
 
+    skip_chars!
     parse!('\0')
     result
   end
@@ -640,6 +642,10 @@ abstract class TopDown::Parser < TopDown::CharReader
   end
 
   private def skip_chars
+    skip_chars!
+  end
+
+  private def skip_chars!
   end
 
   # Defines what is ignored during the parsing.
@@ -669,7 +675,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # end
   # ```
   macro skip(&members)
-    private def skip_chars
+    private def skip_chars!
       if @no_skip_nest == 0
         no_skip do
           loop do

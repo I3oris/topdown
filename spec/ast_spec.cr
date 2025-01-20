@@ -115,16 +115,16 @@ describe TopDown::AST do
     ast = ast_parser.spec_parse_ast
 
     m = ast.as(TopDown::Spec::MultiAST)
-    m.location.should eq TopDown::Location.new(0, 0, 0)
-    m.end_location.should eq TopDown::Location.new(148, line_number: 9, line_pos: 1)
+    m.location.should eq TopDown::Location.new(0, 0, 0, 0)
+    m.end_location.should eq TopDown::Location.new(148, line_number: 9, line_pos: 1, token_pos: 0)
 
     e = m.c.as(TopDown::Spec::EnumerableAST)
-    e.location.should eq TopDown::Location.new(45, line_number: 3, line_pos: 2)
-    e.end_location.should eq TopDown::Location.new(146, line_number: 8, line_pos: 3)
+    e.location.should eq TopDown::Location.new(45, line_number: 3, line_pos: 2, token_pos: 0)
+    e.end_location.should eq TopDown::Location.new(146, line_number: 8, line_pos: 3, token_pos: 0)
 
     mx = e.b[0].as(TopDown::Spec::MixedAST)
-    mx.location.should eq TopDown::Location.new(80, line_number: 5, line_pos: 4)
-    mx.end_location.should eq TopDown::Location.new(104, line_number: 5, line_pos: 28)
+    mx.location.should eq TopDown::Location.new(80, line_number: 5, line_pos: 4, token_pos: 0)
+    mx.end_location.should eq TopDown::Location.new(104, line_number: 5, line_pos: 28, token_pos: 0)
   end
 
   it "to_s" do

@@ -52,3 +52,13 @@ end
 #            Crystal JSON 877.55  (  1.14ms) (±15.84%)   228kB/op        fastest
 #            TopDown JSON 281.64  (  3.55ms) (± 8.67%)  0.97MB/op   3.12× slower
 # TopDown JSON with token 255.37  (  3.92ms) (±26.02%)  1.14MB/op   3.44× slower
+
+# v0.2.0 (20/01/2025):
+# === Small JSON ===
+#            Crystal JSON 359.30k (  2.78µs) (± 5.96%)  2.75kB/op        fastest
+#            TopDown JSON 147.49k (  6.78µs) (± 5.49%)  7.84kB/op   2.44× slower
+# TopDown JSON with token 118.59k (  8.43µs) (± 3.64%)  12.6kB/op   3.03× slower
+# === Big JSON ===
+#            Crystal JSON   1.35k (741.43µs) (±12.96%)   228kB/op        fastest
+#            TopDown JSON 797.39  (  1.25ms) (± 8.35%)  0.95MB/op   1.69× slower
+# TopDown JSON with token 661.97  (  1.51ms) (± 6.70%)  1.87MB/op   2.04× slower
