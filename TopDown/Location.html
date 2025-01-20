@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.11.2">
+<meta name="generator" content="Crystal Docs 1.14.0">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="topdown">
 
@@ -182,7 +182,7 @@
   </h2>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/location.cr#L8" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/location.cr#L8" target="_blank">
         location.cr
       </a>
     
@@ -204,7 +204,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28pos%3AInt32%2Cline_number%3AInt32%2Cline_pos%3AInt32%29-class-method" class="signature"><strong>.new</strong>(pos : Int32, line_number : Int32, line_pos : Int32)</a>
+        <a href="#new%28pos%3AInt32%2Cline_number%3AInt32%2Cline_pos%3AInt32%2Ctoken_pos%3AInt32%29-class-method" class="signature"><strong>.new</strong>(pos : Int32, line_number : Int32, line_pos : Int32, token_pos : Int32)</a>
         
       </li>
     
@@ -246,7 +246,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#copy_with%28pos_pos%3D%40pos%2Cline_number_line_number%3D%40line_number%2Cline_pos_line_pos%3D%40line_pos%29-instance-method" class="signature"><strong>#copy_with</strong>(pos _pos = @pos, line_number _line_number = @line_number, line_pos _line_pos = @line_pos)</a>
+        <a href="#copy_with%28pos_pos%3D%40pos%2Cline_number_line_number%3D%40line_number%2Cline_pos_line_pos%3D%40line_pos%2Ctoken_pos_token_pos%3D%40token_pos%29-instance-method" class="signature"><strong>#copy_with</strong>(pos _pos = @pos, line_number _line_number = @line_number, line_pos _line_pos = @line_pos, token_pos _token_pos = @token_pos)</a>
         
       </li>
     
@@ -269,6 +269,11 @@
         <a href="#show_in_source%28io%3AIO%2Csource%3AString%2Cradius%3AInt32%3D2%2Cend_location%3ALocation%3Dself%29-instance-method" class="signature"><strong>#show_in_source</strong>(io : IO, source : String, radius : Int32 = <span class="n">2</span>, end_location : Location = <span class="k">self</span>)</a>
         
           <div class="summary"><p>Displays this location in <em>source</em>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#token_pos%3AInt32-instance-method" class="signature"><strong>#token_pos</strong> : Int32</a>
         
       </li>
     
@@ -342,18 +347,18 @@
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(pos:Int32,line_number:Int32,line_pos:Int32)-class-method">
+    <div class="entry-detail" id="new(pos:Int32,line_number:Int32,line_pos:Int32,token_pos:Int32)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(pos : Int32, line_number : Int32, line_pos : Int32)
+        def self.<strong>new</strong>(pos : Int32, line_number : Int32, line_pos : Int32, token_pos : Int32)
 
-        <a class="method-permalink" href="#new%28pos%3AInt32%2Cline_number%3AInt32%2Cline_pos%3AInt32%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28pos%3AInt32%2Cline_number%3AInt32%2Cline_pos%3AInt32%2Ctoken_pos%3AInt32%29-class-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/location.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/location.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -397,7 +402,7 @@ l3 <span class="o">-</span> l2 <span class="c"># =&gt; TopDown::Location(@pos=15
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/location.cr#L97" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/location.cr#L98" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -419,7 +424,7 @@ l3 <span class="o">-</span> l2 <span class="c"># =&gt; TopDown::Location(@pos=15
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/location.cr#L105" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/location.cr#L106" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -435,23 +440,23 @@ l3 <span class="o">-</span> l2 <span class="c"># =&gt; TopDown::Location(@pos=15
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/location.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/location.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="copy_with(pos_pos=@pos,line_number_line_number=@line_number,line_pos_line_pos=@line_pos)-instance-method">
+    <div class="entry-detail" id="copy_with(pos_pos=@pos,line_number_line_number=@line_number,line_pos_line_pos=@line_pos,token_pos_token_pos=@token_pos)-instance-method">
       <div class="signature">
         
-        def <strong>copy_with</strong>(pos _pos = @pos, line_number _line_number = @line_number, line_pos _line_pos = @line_pos)
+        def <strong>copy_with</strong>(pos _pos = @pos, line_number _line_number = @line_number, line_pos _line_pos = @line_pos, token_pos _token_pos = @token_pos)
 
-        <a class="method-permalink" href="#copy_with%28pos_pos%3D%40pos%2Cline_number_line_number%3D%40line_number%2Cline_pos_line_pos%3D%40line_pos%29-instance-method">#</a>
+        <a class="method-permalink" href="#copy_with%28pos_pos%3D%40pos%2Cline_number_line_number%3D%40line_number%2Cline_pos_line_pos%3D%40line_pos%2Ctoken_pos_token_pos%3D%40token_pos%29-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/location.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/location.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -539,7 +544,21 @@ l1.show_in_source(<span class="t">STDOUT</span>, source, end_location: l2)
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/location.cr#L41" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/location.cr#L42" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="token_pos:Int32-instance-method">
+      <div class="signature">
+        
+        def <strong>token_pos</strong> : Int32
+
+        <a class="method-permalink" href="#token_pos%3AInt32-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
         
       </div>
     </div>

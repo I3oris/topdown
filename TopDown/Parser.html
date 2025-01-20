@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.11.2">
+<meta name="generator" content="Crystal Docs 1.14.0">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="topdown">
 
@@ -156,7 +156,7 @@
 <p>which will parse anything but EOF.</p>
 <p><code><a href="../TopDown/Parser.html#root%28parselet%29-macro">root</a></code> indicate the starting point of parsing, the rest is to do inside <code><a href="../TopDown/Parser.html#syntax%28syntax_name%2C%2Aprefixs%2Cend%21%3Dnil%2C%26block%29-macro">syntax</a></code>.</p>
 <p>Syntax are like functions, in which, any code can be added.
-Inside it, <code><a href="../TopDown/Parser.html#parse-instance-method">#parse</a></code> &amp; <code><a href="../TopDown/Parser.html#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro">parse!</a></code> can be used to define what to parse.</p>
+Inside it, <code><a href="../TopDown/Parser.html#parse-instance-method">#parse</a></code> &amp; <code><a href="../TopDown/Parser.html#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2Coptions%3Dnil%2C%26block%29-macro">parse!</a></code> can be used to define what to parse.</p>
 <pre><code class="language-crystal">syntax <span class="n">:expression</span> <span class="k">do</span>
   a <span class="o">=</span> parse(<span class="s">&#39;a&#39;</span>)
   parse(<span class="o">/</span>( )<span class="o">+</span><span class="o">/</span>)
@@ -174,8 +174,8 @@ In this documentation, <code>&quot;foo&quot; # ~&gt; result</code> is used as a 
 But <code>parse('a')</code> don't raises, instead it use a <code>break</code> (<code>break <a href="../TopDown/Parser/Fail.html#new-class-method">Fail.new</a></code>) to stop the current sequence to be parsed.
 This failure is caught by the <code>root :expression</code>, that why it next raises an exception.</p>
 <p>This difference is important because is on what is based <code><a href="../TopDown.html">TopDown</a></code>, using <code><a href="../TopDown/Parser.html#parse-instance-method">#parse</a></code> let a change to the surrounding context to handle the failure, whereas
-<code><a href="../TopDown/Parser.html#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro">parse!</a></code> permit the raise directly, leading to better errors.</p>
-<p>For example, using <code><a href="../TopDown/Parser.html#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro">parse!</a></code> above:</p>
+<code><a href="../TopDown/Parser.html#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2Coptions%3Dnil%2C%26block%29-macro">parse!</a></code> permit the raise directly, leading to better errors.</p>
+<p>For example, using <code><a href="../TopDown/Parser.html#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2Coptions%3Dnil%2C%26block%29-macro">parse!</a></code> above:</p>
 <pre><code class="language-crystal">syntax <span class="n">:expression</span> <span class="k">do</span>
   a <span class="o">=</span> parse!(<span class="s">&#39;a&#39;</span>)
   parse!(<span class="o">/</span>( )<span class="o">+</span><span class="o">/</span>)
@@ -315,42 +315,42 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
   </h2>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L96" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/ast.cr#L96" target="_blank">
         ast.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L1" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L1" target="_blank">
         hooks.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parselets.cr#L1" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parselets.cr#L1" target="_blank">
         parser/parselets.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L200" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L200" target="_blank">
         parser/parser.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/syntax_error.cr#L1" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/syntax_error.cr#L1" target="_blank">
         parser/syntax_error.cr
       </a>
     
     <br/>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L1" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L1" target="_blank">
         parser/tokens.cr
       </a>
     
@@ -393,6 +393,13 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
         <a href="#capture%28%26%29-macro" class="signature"><strong>capture</strong>(&)</a>
         
           <div class="summary"><p>Captures all characters parsed inside the <em>block</em>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#contexts%28%2Acontexts%29-macro" class="signature"><strong>contexts</strong>(*contexts)</a>
+        
+          <div class="summary"><p><span class="flag orange">TODO</span>  docs</p></div>
         
       </li>
     
@@ -453,14 +460,14 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
       </li>
     
       <li class="entry-summary">
-        <a href="#parse%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro" class="signature"><strong>parse</strong>(parselet, with_precedence = <span class="n">nil</span>, &block)</a>
+        <a href="#parse%28parselet%2Cwith_precedence%3Dnil%2Coptions%3Dnil%2C%26block%29-macro" class="signature"><strong>parse</strong>(parselet, with_precedence = <span class="n">nil</span>, options = <span class="n">nil</span>, &block)</a>
         
           <div class="summary"><p>Parses the given <em>parselet</em> (<code><a href="../TopDown/Parser/ParseletLiteral.html">ParseletLiteral</a></code>), and yield/return the according result.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro" class="signature"><strong>parse!</strong>(parselet, error = <span class="n">nil</span>, at = <span class="n">nil</span>, with_precedence = <span class="n">nil</span>, &block)</a>
+        <a href="#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2Coptions%3Dnil%2C%26block%29-macro" class="signature"><strong>parse!</strong>(parselet, error = <span class="n">nil</span>, at = <span class="n">nil</span>, with_precedence = <span class="n">nil</span>, options = <span class="n">nil</span>, &block)</a>
         
           <div class="summary"><p>Similar to <a href="#parse(parselet,with_precedence=nil,&amp;block)-macro"><code>Parser.parse</code></a>, but raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> if the parsing fail.</p></div>
         
@@ -474,7 +481,7 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
       </li>
     
       <li class="entry-summary">
-        <a href="#peek%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro" class="signature"><strong>peek</strong>(parselet, with_precedence = <span class="n">nil</span>, &block)</a>
+        <a href="#peek%28parselet%2Cwith_precedence%3Dnil%2Coptions%3Dnil%2C%26block%29-macro" class="signature"><strong>peek</strong>(parselet, with_precedence = <span class="n">nil</span>, options = <span class="n">nil</span>, &block)</a>
         
           <div class="summary"><p><span class="flag orange">TODO</span>  docs parse parselet if succeed, don't move the cursor and return parselet result else, don't move the cursor and break a failure</p></div>
         
@@ -483,7 +490,7 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
       <li class="entry-summary">
         <a href="#prefix%28precedence%2Cparselet%2C%26block%29-macro" class="signature"><strong>prefix</strong>(precedence, parselet, &block)</a>
         
-          <div class="summary"><p>Equivalent to <code><a href="../TopDown/Parser.html#parse%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro">parse(parselet, with_precedence: precedence)</a></code></p></div>
+          <div class="summary"><p>Equivalent to <code>parse(parselet, with_precedence: precedence)</code></p></div>
         
       </li>
     
@@ -570,7 +577,7 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
       </li>
     
       <li class="entry-summary">
-        <a href="#token%28token_name%2Cparselet%3Dnil%2C%26block%29-macro" class="signature"><strong>token</strong>(token_name, parselet = <span class="n">nil</span>, &block)</a>
+        <a href="#token%28token_name%2Cparselet%3Dnil%2Ccontext%3Dnil%2C%26block%29-macro" class="signature"><strong>token</strong>(token_name, parselet = <span class="n">nil</span>, context = <span class="n">nil</span>, &block)</a>
         
           <div class="summary"><p>Defines a token to parse.</p></div>
         
@@ -612,7 +619,7 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#each_token%28eof%3Dnil%2C%26%29%3ANil-instance-method" class="signature"><strong>#each_token</strong>(eof = <span class="n">nil</span>, &) : Nil</a>
+        <a href="#each_token%28%26%29%3ANil-instance-method" class="signature"><strong>#each_token</strong>(&) : Nil</a>
         
           <div class="summary"><p>Yields successively parsed tokens.</p></div>
         
@@ -694,6 +701,13 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
       </li>
     
       <li class="entry-summary">
+        <a href="#location%3ALocation-instance-method" class="signature"><strong>#location</strong> : Location</a>
+        
+          <div class="summary"><p>Returns the current cursor location.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#location%3D%28location%3ALocation%29-instance-method" class="signature"><strong>#location=</strong>(location : Location)</a>
         
           <div class="summary"><p>Move the cursor to the new <em>location</em>.</p></div>
@@ -710,33 +724,33 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
       <li class="entry-summary">
         <a href="#raise_syntax_error%28message%3AString%2Catlocation%3ALocation%3Dself.location%2Csource%3AString%3Dself.source%29-instance-method" class="signature"><strong>#raise_syntax_error</strong>(message : String, at location : Location = <span class="k">self</span>.location, source : String = <span class="k">self</span>.source)</a>
         
-          <div class="summary"><p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p></div>
+          <div class="summary"><p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code><a href="../TopDown/Parser.html#location%3ALocation-instance-method">#location</a></code> and current <code>source</code>.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#raise_syntax_error%28message%3AString%2Catlocation%3ARange%28Location%2CLocation%29%2Csource%3AString%3Dself.source%29-instance-method" class="signature"><strong>#raise_syntax_error</strong>(message : String, at location : Range(Location, Location), source : String = <span class="k">self</span>.source)</a>
         
-          <div class="summary"><p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p></div>
+          <div class="summary"><p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code><a href="../TopDown/Parser.html#location%3ALocation-instance-method">#location</a></code> and current <code>source</code>.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#raise_syntax_error%28message%3AString%2Catlocation%3ARange%28Location%2CNil%29%2Csource%3AString%3Dself.source%29-instance-method" class="signature"><strong>#raise_syntax_error</strong>(message : String, at location : Range(Location, Nil), source : String = <span class="k">self</span>.source)</a>
         
-          <div class="summary"><p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p></div>
+          <div class="summary"><p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code><a href="../TopDown/Parser.html#location%3ALocation-instance-method">#location</a></code> and current <code>source</code>.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#source%3D%28source%3AString%29-instance-method" class="signature"><strong>#source=</strong>(source : String)</a>
         
-          <div class="summary"><p>Modifies the <em>source</em> and reset the cursor <code>location</code> to zero.</p></div>
+          <div class="summary"><p>Modifies the <em>source</em> and reset the cursor <code><a href="../TopDown/Parser.html#location%3ALocation-instance-method">#location</a></code> to zero.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#tokens%28eof%3Dnil%29-instance-method" class="signature"><strong>#tokens</strong>(eof = <span class="n">nil</span>)</a>
+        <a href="#tokens-instance-method" class="signature"><strong>#tokens</strong></a>
         
           <div class="summary"><p>Returns the array of parsed tokens.</p></div>
         
@@ -766,6 +780,11 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
     <a href="../TopDown/CharReader.html#location%3D%28location%3ALocation%29-instance-method" class="tooltip">
       <span>location=(location : Location)</span>
     location=</a>, 
+    
+  
+    <a href="../TopDown/CharReader.html#next_assci_char%3F%3AChar%7CNil-instance-method" class="tooltip">
+      <span>next_assci_char? : Char | Nil</span>
+    next_assci_char?</a>, 
     
   
     <a href="../TopDown/CharReader.html#next_char%3AChar-instance-method" class="tooltip">
@@ -872,7 +891,7 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/ast.cr#L98" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/ast.cr#L98" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -894,7 +913,7 @@ but we except a <code>:</code> right after, so it fails (got '+', expected ':').
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L378" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L380" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -924,7 +943,28 @@ end</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L757" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L763" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="contexts(*contexts)-macro">
+      <div class="signature">
+        
+        macro <strong>contexts</strong>(*contexts)
+
+        <a class="method-permalink" href="#contexts%28%2Acontexts%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag orange">TODO</span>  docs</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L236" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -947,7 +987,7 @@ Changes inside an <code><a href="../TopDown/Parser.html#infix%28precedence%2Cpar
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L371" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L373" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -975,7 +1015,7 @@ parse(/foo\b/) { nil }</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L824" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L830" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1005,7 +1045,7 @@ result <span class="o">=</span> forward_fail(result)
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L732" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L738" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1026,7 +1066,7 @@ result <span class="o">=</span> forward_fail(result)
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L314" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L316" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1062,7 +1102,7 @@ result <span class="o">=</span> forward_fail(result)
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L363" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L365" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1095,7 +1135,7 @@ x <span class="o">+</span> (y <span class="o">||</span> <span class="n">0</span>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L474" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L476" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1116,7 +1156,7 @@ x <span class="o">+</span> (y <span class="o">||</span> <span class="n">0</span>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L634" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L636" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1137,17 +1177,17 @@ x <span class="o">+</span> (y <span class="o">||</span> <span class="n">0</span>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L688" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L694" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="parse(parselet,with_precedence=nil,&amp;block)-macro">
+    <div class="entry-detail" id="parse(parselet,with_precedence=nil,options=nil,&amp;block)-macro">
       <div class="signature">
         
-        macro <strong>parse</strong>(parselet, with_precedence = <span class="n">nil</span>, &block)
+        macro <strong>parse</strong>(parselet, with_precedence = <span class="n">nil</span>, options = <span class="n">nil</span>, &block)
 
-        <a class="method-permalink" href="#parse%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro">#</a>
+        <a class="method-permalink" href="#parse%28parselet%2Cwith_precedence%3Dnil%2Coptions%3Dnil%2C%26block%29-macro">#</a>
       </div>
       
         <div class="doc">
@@ -1183,17 +1223,17 @@ Allow to handle multi-precedence for ternary-or-more operator.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L284" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L286" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="parse!(parselet,error=nil,at=nil,with_precedence=nil,&amp;block)-macro">
+    <div class="entry-detail" id="parse!(parselet,error=nil,at=nil,with_precedence=nil,options=nil,&amp;block)-macro">
       <div class="signature">
         
-        macro <strong>parse!</strong>(parselet, error = <span class="n">nil</span>, at = <span class="n">nil</span>, with_precedence = <span class="n">nil</span>, &block)
+        macro <strong>parse!</strong>(parselet, error = <span class="n">nil</span>, at = <span class="n">nil</span>, with_precedence = <span class="n">nil</span>, options = <span class="n">nil</span>, &block)
 
-        <a class="method-permalink" href="#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2C%26block%29-macro">#</a>
+        <a class="method-permalink" href="#parse%21%28parselet%2Cerror%3Dnil%2Cat%3Dnil%2Cwith_precedence%3Dnil%2Coptions%3Dnil%2C%26block%29-macro">#</a>
       </div>
       
         <div class="doc">
@@ -1224,7 +1264,7 @@ This would raises before the surrounding context could try an other solution.</p
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L304" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L306" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1254,17 +1294,17 @@ end</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L780" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L786" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="peek(parselet,with_precedence=nil,&amp;block)-macro">
+    <div class="entry-detail" id="peek(parselet,with_precedence=nil,options=nil,&amp;block)-macro">
       <div class="signature">
         
-        macro <strong>peek</strong>(parselet, with_precedence = <span class="n">nil</span>, &block)
+        macro <strong>peek</strong>(parselet, with_precedence = <span class="n">nil</span>, options = <span class="n">nil</span>, &block)
 
-        <a class="method-permalink" href="#peek%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro">#</a>
+        <a class="method-permalink" href="#peek%28parselet%2Cwith_precedence%3Dnil%2Coptions%3Dnil%2C%26block%29-macro">#</a>
       </div>
       
         <div class="doc">
@@ -1278,7 +1318,7 @@ else, don't move the cursor and break a failure</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L328" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L330" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1293,13 +1333,13 @@ else, don't move the cursor and break a failure</p>
       
         <div class="doc">
           
-          <p>Equivalent to <code><a href="../TopDown/Parser.html#parse%28parselet%2Cwith_precedence%3Dnil%2C%26block%29-macro">parse(parselet, with_precedence: precedence)</a></code></p>
+          <p>Equivalent to <code>parse(parselet, with_precedence: precedence)</code></p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L309" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L311" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1332,7 +1372,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L508" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L510" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1365,7 +1405,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L571" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L573" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1386,7 +1426,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L615" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L617" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1402,7 +1442,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L522" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L524" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1423,7 +1463,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L598" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L600" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1444,7 +1484,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L588" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L590" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1465,7 +1505,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L607" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L609" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1486,7 +1526,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L625" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L627" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1508,7 +1548,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L223" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L225" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1535,7 +1575,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L797" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L803" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1576,7 +1616,7 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L671" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L677" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1609,17 +1649,17 @@ x</code></pre>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L248" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L250" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="token(token_name,parselet=nil,&amp;block)-macro">
+    <div class="entry-detail" id="token(token_name,parselet=nil,context=nil,&amp;block)-macro">
       <div class="signature">
         
-        macro <strong>token</strong>(token_name, parselet = <span class="n">nil</span>, &block)
+        macro <strong>token</strong>(token_name, parselet = <span class="n">nil</span>, context = <span class="n">nil</span>, &block)
 
-        <a class="method-permalink" href="#token%28token_name%2Cparselet%3Dnil%2C%26block%29-macro">#</a>
+        <a class="method-permalink" href="#token%28token_name%2Cparselet%3Dnil%2Ccontext%3Dnil%2C%26block%29-macro">#</a>
       </div>
       
         <div class="doc">
@@ -1646,7 +1686,7 @@ The <em>block</em> indicate the value of the resulting <code><a href="../TopDown
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L137" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L153" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1673,7 +1713,7 @@ The <em>block</em> indicate the value of the resulting <code><a href="../TopDown
     token(<span class="s">&quot;new_line&quot;</span>, <span class="s">&#39;\n&#39;</span>)
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
-<p>Use <code><a href="../TopDown/Parser.html#token%28token_name%2Cparselet%3Dnil%2C%26block%29-macro">Parser.token</a></code> to define how a token is parsed</p>
+<p>Use <code><a href="../TopDown/Parser.html#token%28token_name%2Cparselet%3Dnil%2Ccontext%3Dnil%2C%26block%29-macro">Parser.token</a></code> to define how a token is parsed</p>
 <p>The order of token matter, because there are parsed in this order.
 Hence, if <code>*</code> is moved before <code>**</code>, the result will be two token <code>*</code> parsed instead of one <code>**</code>.</p>
 <p>In addition, characters are never skipped while parsing tokens (and all inner syntax calls), see <code><a href="../TopDown/Parser.html#no_skip%28%26%29-macro">no_skip</a></code>.</p>
@@ -1682,7 +1722,7 @@ Hence, if <code>*</code> is moved before <code>**</code>, the result will be two
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L88" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L90" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1749,7 +1789,7 @@ A union act as follow:</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L447" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L449" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1770,7 +1810,7 @@ A union act as follow:</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L452" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L454" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1787,26 +1827,23 @@ A union act as follow:</p>
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="each_token(eof=nil,&amp;):Nil-instance-method">
+    <div class="entry-detail" id="each_token(&amp;):Nil-instance-method">
       <div class="signature">
         
-        def <strong>each_token</strong>(eof = <span class="n">nil</span>, &) : Nil
+        def <strong>each_token</strong>(&) : Nil
 
-        <a class="method-permalink" href="#each_token%28eof%3Dnil%2C%26%29%3ANil-instance-method">#</a>
+        <a class="method-permalink" href="#each_token%28%26%29%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
           <p>Yields successively parsed tokens.</p>
-<p>Stops when EOF is hit, or raises if a token fail to parse.</p>
-<p>The token name <em>eof</em> can be given to stop at that name.
-Can be useful if a EOF token have been defined.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L188" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L204" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1827,7 +1864,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L18" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L18" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1848,7 +1885,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L42" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L42" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1869,7 +1906,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L47" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L47" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1890,7 +1927,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L8" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1911,7 +1948,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L52" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L52" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1932,7 +1969,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L3" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L3" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1953,7 +1990,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L28" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L28" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1974,7 +2011,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L33" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L33" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1995,7 +2032,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L13" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L13" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -2016,7 +2053,7 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L23" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L23" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -2032,7 +2069,34 @@ Can be useful if a EOF token have been defined.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/hooks.cr#L37" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/hooks.cr#L37" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="location:Location-instance-method">
+      <div class="signature">
+        
+        def <strong>location</strong> : <a href="../TopDown/Location.html">Location</a>
+
+        <a class="method-permalink" href="#location%3ALocation-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns the current cursor location.</p>
+<p>The location can be used later to raise an error at that point.</p>
+<pre><code class="language-crystal">loc <span class="o">=</span> <span class="k">self</span>.location
+parse(<span class="s">&#39;(&#39;</span>)
+exp <span class="o">=</span> parse!(<span class="n">:expression</span>)
+parse!(<span class="s">&#39;)&#39;</span>, error: <span class="s">&quot;Unterminated parenthesis expression&quot;</span>, at: loc)
+exp</code></pre>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L31" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -2049,7 +2113,7 @@ Can be useful if a EOF token have been defined.</p>
           
           <p>Move the cursor to the new <em>location</em>.</p>
 <p>The <em>location</em> should be well formed, otherwise error display won't be right.
-It is recommended to always use a location got by <code>self.location</code>.</p>
+It is recommended to always use a location got by <code>self<a href="../TopDown/Parser.html#location%3ALocation-instance-method">.location</a></code>.</p>
 <p>This methods is used to backtrack the parser.
 However, prefer using <code><a href="../TopDown/Parser.html#union%28%26members%29-macro">Parser.union</a></code>, <code><a href="../TopDown/Parser.html#maybe%28parselet%3Dnil%2C%26%29-macro">Parser.maybe</a></code>, and <code><a href="../TopDown/Parser.html#repeat%28parselet%3Dnil%2C%26%29-macro">Parser.repeat</a></code> over manual backtracks.</p>
         </div>
@@ -2057,7 +2121,7 @@ However, prefer using <code><a href="../TopDown/Parser.html#union%28%26members%2
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L30" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L36" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -2081,7 +2145,7 @@ Raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code>
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/parser.cr#L206" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/parser.cr#L206" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -2096,14 +2160,14 @@ Raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code>
       
         <div class="doc">
           
-          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
-<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
+          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code><a href="../TopDown/Parser.html#location%3ALocation-instance-method">#location</a></code> and current <code>source</code>.</p>
+<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self<a href="../TopDown/Parser.html#location%3ALocation-instance-method">.location</a></code>.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/syntax_error.cr#L45" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/syntax_error.cr#L45" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -2118,14 +2182,14 @@ Raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code>
       
         <div class="doc">
           
-          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
-<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
+          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code><a href="../TopDown/Parser.html#location%3ALocation-instance-method">#location</a></code> and current <code>source</code>.</p>
+<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self<a href="../TopDown/Parser.html#location%3ALocation-instance-method">.location</a></code>.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/syntax_error.cr#L50" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/syntax_error.cr#L50" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -2140,14 +2204,14 @@ Raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code>
       
         <div class="doc">
           
-          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code>location</code> and current <code>source</code>.</p>
-<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self.location</code>.</p>
+          <p>Raises a <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code> at current <code><a href="../TopDown/Parser.html#location%3ALocation-instance-method">#location</a></code> and current <code>source</code>.</p>
+<p><em>location</em> could be a range between two <code><a href="../TopDown/Location.html">Location</a></code>. A endless range mean a location up to <code>self<a href="../TopDown/Parser.html#location%3ALocation-instance-method">.location</a></code>.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/syntax_error.cr#L55" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/syntax_error.cr#L55" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -2162,37 +2226,34 @@ Raises <code><a href="../TopDown/Parser/SyntaxError.html">SyntaxError</a></code>
       
         <div class="doc">
           
-          <p>Modifies the <em>source</em> and reset the cursor <code>location</code> to zero.</p>
+          <p>Modifies the <em>source</em> and reset the cursor <code><a href="../TopDown/Parser.html#location%3ALocation-instance-method">#location</a></code> to zero.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L24" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L24" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="tokens(eof=nil)-instance-method">
+    <div class="entry-detail" id="tokens-instance-method">
       <div class="signature">
         
-        def <strong>tokens</strong>(eof = <span class="n">nil</span>)
+        def <strong>tokens</strong>
 
-        <a class="method-permalink" href="#tokens%28eof%3Dnil%29-instance-method">#</a>
+        <a class="method-permalink" href="#tokens-instance-method">#</a>
       </div>
       
         <div class="doc">
           
           <p>Returns the array of parsed tokens.</p>
-<p>Stops when EOF is hit, or raises if a token fail to parse.</p>
-<p>The token name <em>eof</em> can be given to stop at that name.
-Can be useful if a EOF token have been defined.</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L207" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L213" target="_blank">View source</a>]
         
       </div>
     </div>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.11.2">
+<meta name="generator" content="Crystal Docs 1.14.0">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="topdown">
 
@@ -154,7 +154,7 @@
   </h2>
   
     
-      <a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L2" target="_blank">
+      <a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L2" target="_blank">
         parser/tokens.cr
       </a>
     
@@ -176,7 +176,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28name%3ASymbol%2Cvalue%3AValueType%29-class-method" class="signature"><strong>.new</strong>(name : Symbol, value : ValueType)</a>
+        <a href="#new%28name%3ASymbol%2Cvalue%3AValueType%2Cend_location%3ALocation%29-class-method" class="signature"><strong>.new</strong>(name : Symbol, value : ValueType, end_location : Location)</a>
         
       </li>
     
@@ -204,7 +204,12 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#copy_with%28name_name%3D%40name%2Cvalue_value%3D%40value%29-instance-method" class="signature"><strong>#copy_with</strong>(name _name = @name, value _value = @value)</a>
+        <a href="#copy_with%28name_name%3D%40name%2Cvalue_value%3D%40value%2Cend_location_end_location%3D%40end_location%29-instance-method" class="signature"><strong>#copy_with</strong>(name _name = @name, value _value = @value, end_location _end_location = @end_location)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#end_location%3ALocation-instance-method" class="signature"><strong>#end_location</strong> : Location</a>
         
       </li>
     
@@ -223,7 +228,7 @@
       <li class="entry-summary">
         <a href="#to_s%28io%29-instance-method" class="signature"><strong>#to_s</strong>(io)</a>
         
-          <div class="summary"><p><code>Token.new(:&quot;+&quot;)<a href="../../TopDown/Parser/Token.html#to_s%28io%29-instance-method">.to_s</a>         # =&gt; &quot;[+]&quot; <a href="../../TopDown/Parser/Token.html#new%28name%3ASymbol%2Cvalue%3AValueType%29-class-method">Token.new(:name, &quot;foo&quot;)</a><a href="../../TopDown/Parser/Token.html#to_s%28io%29-instance-method">.to_s</a> # =&gt; &quot;[name:foo]&quot;</code></p></div>
+          <div class="summary"><p>Display the token.</p></div>
         
       </li>
     
@@ -289,18 +294,18 @@
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(name:Symbol,value:ValueType)-class-method">
+    <div class="entry-detail" id="new(name:Symbol,value:ValueType,end_location:Location)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(name : Symbol, value : ValueType)
+        def self.<strong>new</strong>(name : Symbol, value : ValueType, end_location : <a href="../../TopDown/Location.html">Location</a>)
 
-        <a class="method-permalink" href="#new%28name%3ASymbol%2Cvalue%3AValueType%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28name%3ASymbol%2Cvalue%3AValueType%2Cend_location%3ALocation%29-class-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L2" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L2" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -332,23 +337,37 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L2" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L2" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="copy_with(name_name=@name,value_value=@value)-instance-method">
+    <div class="entry-detail" id="copy_with(name_name=@name,value_value=@value,end_location_end_location=@end_location)-instance-method">
       <div class="signature">
         
-        def <strong>copy_with</strong>(name _name = @name, value _value = @value)
+        def <strong>copy_with</strong>(name _name = @name, value _value = @value, end_location _end_location = @end_location)
 
-        <a class="method-permalink" href="#copy_with%28name_name%3D%40name%2Cvalue_value%3D%40value%29-instance-method">#</a>
+        <a class="method-permalink" href="#copy_with%28name_name%3D%40name%2Cvalue_value%3D%40value%2Cend_location_end_location%3D%40end_location%29-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L2" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L2" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="end_location:Location-instance-method">
+      <div class="signature">
+        
+        def <strong>end_location</strong> : <a href="../../TopDown/Location.html">Location</a>
+
+        <a class="method-permalink" href="#end_location%3ALocation-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
         
       </div>
     </div>
@@ -369,7 +388,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L15" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L15" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -398,14 +417,15 @@
       
         <div class="doc">
           
-          <pre><code class="language-crystal"><span class="t">Token</span>.new(<span class="n">:&quot;+&quot;</span>).to_s         <span class="c"># =&gt; &quot;[+]&quot;</span>
+          <p>Display the token.</p>
+<pre><code class="language-crystal"><span class="t">Token</span>.new(<span class="n">:&quot;+&quot;</span>).to_s         <span class="c"># =&gt; &quot;[+]&quot;</span>
 <span class="t">Token</span>.new(<span class="n">:name</span>, <span class="s">&quot;foo&quot;</span>).to_s <span class="c"># =&gt; &quot;[name:foo]&quot;</span></code></pre>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/I3oris/topdown/blob/4665ded4a53432255beef2e2e439167a98508ce5/src/parser/tokens.cr#L9" target="_blank">View source</a>]
+          [<a href="https://github.com/I3oris/topdown/blob/4d23f0eb399c60982188300cf0941db50f1a19d5/src/parser/tokens.cr#L9" target="_blank">View source</a>]
         
       </div>
     </div>
