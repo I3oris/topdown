@@ -249,7 +249,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   # ```
   macro syntax(syntax_name, *prefixs, end! = nil, &block)
     @[AlwaysInline]
-    private def parse_{{syntax_name.id}}(_left_, _precedence_)
+    private def parse_{{syntax_name.id}}(_left_, _precedence_, **options)
       _begin_location_ = self.location
 
       handle_fail do
@@ -283,8 +283,8 @@ abstract class TopDown::Parser < TopDown::CharReader
   # *with_precedence* (`NumberLiteral`) changes the `current_precedence`, the given *parselet* will be parsed as if the contained syntax have this precedence.
   # Allow to handle multi-precedence for ternary-or-more operator.
   #
-  macro parse(parselet, with_precedence = nil, &block)
-    parselet({{parselet}}, with_precedence: {{with_precedence}}) {{ block }}
+  macro parse(parselet, with_precedence = nil, options = nil, &block)
+    parselet({{parselet}}, with_precedence: {{with_precedence}}, options: {{options}}) {{ block }}
   end
 
   # Similar to [`Parser.parse`](#parse(parselet,with_precedence=nil,&block)-macro), but raises `SyntaxError` if the parsing fail.
@@ -303,8 +303,8 @@ abstract class TopDown::Parser < TopDown::CharReader
   # This would raises before the surrounding context could try an other solution.
   #
   # However, this should generally be used everywhere else, to allow more localized errors.
-  macro parse!(parselet, error = nil, at = nil, with_precedence = nil, &block)
-    parselet({{parselet}}, true, {{error}}, {{at}}, {{with_precedence}}) {{ block }}
+  macro parse!(parselet, error = nil, at = nil, with_precedence = nil, options = nil, &block)
+    parselet({{parselet}}, true, {{error}}, {{at}}, {{with_precedence}}, options: {{options}}) {{ block }}
   end
 
   # Equivalent to `parse(parselet, with_precedence: precedence)`
@@ -327,10 +327,10 @@ abstract class TopDown::Parser < TopDown::CharReader
   # parse parselet
   # if succeed, don't move the cursor and return parselet result
   # else, don't move the cursor and break a failure
-  macro peek(parselet, with_precedence = nil, &block)
+  macro peek(parselet, with_precedence = nil, options = nil, &block)
     %location = self.location
     handle_fail do
-      parselet({{parselet}}, with_precedence: {{with_precedence}}) {{ block }}
+      parselet({{parselet}}, with_precedence: {{with_precedence}}, options: {{options}}) {{ block }}
     ensure
       self.location = %location
     end.tap do |result|

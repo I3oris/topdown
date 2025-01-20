@@ -39,7 +39,7 @@ abstract class TopDown::Parser < TopDown::CharReader
   class ParseletLiteral
   end
 
-  private macro parselet(parselet, raises? = false, error = nil, at = nil, with_precedence = nil, left = nil, &block)
+  private macro parselet(parselet, raises? = false, error = nil, at = nil, with_precedence = nil, left = nil, options = nil, &block)
     {% parselet = parselet.expressions[0] if parselet.is_a?(Expressions) && parselet.expressions.size == 1 %}
 
     skip_chars
@@ -57,7 +57,7 @@ abstract class TopDown::Parser < TopDown::CharReader
         parselet_regex({{parselet}}, {{raises?}}, {{error}}, {{at}})
 
       {% elsif parselet.is_a? SymbolLiteral %}
-        parselet_syntax({{parselet}}, {{raises?}}, {{error}}, {{at}}, {{with_precedence}}, {{left}})
+        parselet_syntax({{parselet}}, {{raises?}}, {{error}}, {{at}}, {{with_precedence}}, {{left}}, options: {{options}})
 
       {% elsif parselet.is_a? Call && parselet.name == "|" %}
         parselet_union([parselet({{parselet.receiver}}), parselet({{parselet.args[0]}})], {{raises?}}, {{error}}, {{at}})
@@ -176,9 +176,9 @@ abstract class TopDown::Parser < TopDown::CharReader
     end
   end
 
-  private macro parselet_syntax(syntax_name, raises? = false, error = nil, at = nil, with_precedence = nil, left = nil)
+  private macro parselet_syntax(syntax_name, raises? = false, error = nil, at = nil, with_precedence = nil, left = nil, options = nil)
     %begin_location = self.location
-    %result = parse_{{syntax_name.id}}({{left}}, {{with_precedence || "_precedence_".id}})
+    %result = parse_{{syntax_name.id}}({{left}}, {{with_precedence || "_precedence_".id}}, {{options.double_splat if options}})
     if %result.is_a? Fail
       fail {{raises?}}, error_message({{error}} || ->hook_expected_syntax(Char, Symbol), got: peek_char, expected: {{syntax_name}}), at: ({{at || "self.location".id}}) \
         ensure self.location = %begin_location

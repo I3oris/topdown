@@ -307,7 +307,7 @@ describe TopDown::Parser do
 
   it "parses syntax" do
     parser = TopDown::Spec.syntax_parser
-    parser.source = "abbc;abbcc;abbccc;abbcccc;abbccc;abbcc;abbc;abbcc;"
+    parser.source = "abbc;abbcc;abbccc;abbcccc;abbccc;abbcc;abbc;abbcc;aaa;aaaaa;"
     parser.spec_parse_syn.should eq({a: 'a', b: "bb", c: "c"})
     parser.spec_parse_syn!.should eq({a: 'a', b: "bb", c: "cc"})
     parser.spec_parse_syn_with_error!.should eq({a: 'a', b: "bb", c: "ccc"})
@@ -318,6 +318,8 @@ describe TopDown::Parser do
     parser.spec_parse_syn_empty.should eq(Tuple.new)
     parser.spec_parse_syn_with_prefix.should eq({a: 'a', b: "bb", c: "c"})
     parser.spec_parse_syn_blockless.should eq({'a', "bb", "cc", ';'})
+    parser.spec_parse_syn_with_options_3.should eq(['a', 'a', 'a'])
+    parser.spec_parse_syn_with_options_5.should eq(['a', 'a', 'a', 'a', 'a'])
   end
 
   it "fails parsing syntax" do

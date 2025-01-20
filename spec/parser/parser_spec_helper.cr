@@ -84,6 +84,8 @@ module TopDown::Spec
     def_parse_wrapper :syn_empty { parse(:empty_syntax) }
     def_parse_wrapper :syn_with_prefix { parse(:syntax_with_prefix) }
     def_parse_wrapper :syn_blockless { parse(:blockless_syntax) }
+    def_parse_wrapper :syn_with_options_3 { parse(:syntax_with_options, options: {count: 3}) }
+    def_parse_wrapper :syn_with_options_5 { parse(:syntax_with_options, options: {count: 5}) }
 
     syntax(:syntax) do
       a = parse('a')
@@ -100,6 +102,12 @@ module TopDown::Spec
     end
 
     syntax(:blockless_syntax, 'a', "bb", /c+/, ';')
+
+    syntax(:syntax_with_options) do
+      results = (0...options[:count]).map { parse!('a') }
+      parse!(';')
+      results
+    end
   end
 
   class SkipParser < ParserBase
